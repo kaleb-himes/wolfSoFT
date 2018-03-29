@@ -31,6 +31,9 @@ enum {
     FILE_ERR
 };
 
+/* a fixed array of options to ignore if found when scrubbing the output
+ * of configure help menu
+ */
 #define MOST_IGNORES 22
 static char ignore_opts[MOST_CONFIGS][LONGEST_CONFIG] = {
 {"jobserver"},              /* 1 */
@@ -56,22 +59,109 @@ static char ignore_opts[MOST_CONFIGS][LONGEST_CONFIG] = {
 {"asyncthreads"},           /* 21 */
 };
 
+/*
+ * quick one-liner to check a return value
+ * @p1 - value returned from function call
+ * @p2 - target value to compare against
+ * @p3 - msg to print on failure (debug indicator)
+ * example: check_ret(value, 0, "my_api_name");
+ *          this call will compare value to 0 and if not equal will abort the
+ *          program and print the msg: "my_api_name".
+ */
 void check_ret(int, int, char*);
+/*
+ * @p1 - value returned from function call
+ * @p2 - target value to compare against
+ * @p3 - msg to print on failure (debug indicator)
+ * See notes for check_ret, does same except checks to make sure that
+ * p1 is not less than or equal to p2
+ */
 void check_ret_nlte(int, int, char*);
+/*
+ * aborts the configurator early
+ */
 void configurator_abort(void);
 
+/*
+ * A function to zero out a buffer.
+ *
+ * @p1 - a buffer to zero-out
+ * uses XMEMSET to zero a command of LONGEST_COMMAND length
+ * TODO: needs some sanity checks, could behave badly if called with shorter
+ *       buffers.
+ */
 void clear_command(char*);
+/*
+ * A function to build up ANY command with optional parameters
+ *
+ * @p1 - buffer to store concatenated strings in.
+ * @p2 - string to concatenate to end of whatever is in p1. If p1 is empty this
+ *       will be the first string in p1.
+ *       if p2 is NULL it will be skipped.
+ * @p3 - same as p2
+ * @p4 - same as p2
+ * @p5 - same as p2
+ */
 void build_cmd(char*, char*, char*, char*, char*);
+/*
+ * A useful way to build up a change to directory command
+ *
+ * @p1 - buffer to store concatenated strings.
+ * @p2 - concat to the string "cd "
+ * example: calling build_cd_cmd(buffer, "/Users/uname/wolfssl");
+ *          will result in a buffer containing the string:
+ *          "cd /Users/uname/wolfssl"
+ */
 void build_cd_cmd(char*, char*);
+
+/*
+ * A function to build the name of file + some path to that file.
+ *
+ * @p1 - buffer to store concatenated strings
+ * @p2 - the name of the file without a path
+ * @p3 - the path to where the file lives IE path-to-working dir of that file
+ *
+ * NOTE: This function will zero out p1 unlike build_cmd and build_cd_cmd.
+ *
+ * example: calling build_fname_cmd(buffer, "/tests/unit.test", $PWD"/wolfssl");
+ *          will result in a buffer containing the string:
+ *          $PWD"/wolfssl/tests/unit.test"
+ */
 void build_fname_cmd(char*, char*, char*);
 
+/*
+ * @p1 - the name of the file to be opened
+ * opens the file and uses fseek to get the length. Closes the file and returns
+ * the file length.
+ *
+ * NOTE: include the  path+fname if not in current dir.
+ * See also: build_fname_cmd
+ */
 int get_file_size(char*);
 
+/*
+ * @p1 - path to cd to before executing the command. If NULL will default to the
+ *       directory where this program is executing from and add on "/wolfssl/"
+ *       to the end of that current working directory.
+ * @p2 - The set of configure options to run, no assumptions are made for the
+ *       configure options passed in and there are no sanity checks at this time
+ */
 int run_config_opts(char*, char*);
-void scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
-
+/*
+ * A function for checking the increase footprint size of wolfSSL when
+ * configured with p1
+ *
+ * @p1 - a default average size IE baseline to compare against.
+ * @p2 - the configure part to test.
+ *
+ * NOTE: Assumptions are being made about configure options in this function.
+ *       Assumption1: configPart contains no leading - and no preceeding enable
+ */
 void check_increase(int, char*);
 void check_decrease(int, char*);
+
+void scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
+
 
 
 #endif /* C_CONF_COMMN */

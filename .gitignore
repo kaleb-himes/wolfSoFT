@@ -1,0 +1,4 @@
+run
+/src/*.o
+config-out.txt
+wolfssl/

@@ -1,4 +1,4 @@
-Beta v0.1
+Alpha version 0.1
 
 Use provided makefile to build sources.
 Execute program with ./run

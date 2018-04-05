@@ -164,7 +164,7 @@ PP_OPT* cfg_iterate_over_pp_list(PP_OPT* in)
 PP_OPT* cfg_backup_to_head(PP_OPT* in)
 {
     PP_OPT* tmp;
-    int counter;
+    int counter = 0;
 
     while (in->previous != NULL) {
        tmp = in->previous;

@@ -1,7 +1,7 @@
 #include <configurator_common.h>
 #include <configurator_scrub_out.h>
 
-void scrub_config_out(char* configOutFname,
+void cfg_scrub_config_out(char* configOutFname,
                       char(*allConfigSingles)[LONGEST_CONFIG])
 {
     FILE* fStream;
@@ -22,13 +22,13 @@ void scrub_config_out(char* configOutFname,
 
     fStream = fopen(configOutFname, "rb");
     if (fStream == NULL)
-        configurator_abort();
+        cfg_abort();
 
     while ((read = getline(&line, &len, fStream)) != -1) {
 
         if (strstr(line, eOp) || strstr(line, dOp)) {
 
-            truncate_trim_line(line, truncLine);
+            cfg_truncate_trim_line(line, truncLine);
             addOp = 1;
 
             for (j = 0; j < MOST_IGNORES; j++) {
@@ -57,7 +57,7 @@ void scrub_config_out(char* configOutFname,
     return;
 }
 
-void truncate_trim_line(char* line, char* truncatedLine)
+void cfg_truncate_trim_line(char* line, char* truncatedLine)
 {
     char* a = line;
     char* b = line + 1;

@@ -1,75 +1,128 @@
 #include <configurator_common.h>
+#include <dirent.h>
 
-#define FULL_BUILD
-
-int main(void)
+int main(int argc, char** argv)
 {
-    char c_pwd[LONGEST_PATH];
-    char c_cmd[LONGEST_COMMAND];
-    char* gitCmd = "git clone https://github.com/wolfssl/wolfssl.git";
-    char* configOutFname = "config-out.txt";
-    int ret;
-    int default_baseline = 0;
-    int difference;
-    char allConfigSingles[MOST_CONFIGS][LONGEST_CONFIG];
     int i, j;
 
-    clear_command(c_pwd);
-    clear_command(c_cmd);
-
-#ifdef FULL_BUILD
-    (void) default_baseline;
-    build_cmd(c_cmd, gitCmd, NULL, NULL, NULL);
-    system(c_cmd);
-    clear_command(c_cmd);
-
-    /* get path to working directory */
-    if (getcwd(c_pwd, LONGEST_PATH) == NULL)
-        configurator_abort();
-
-    /* cd to wolfssl root dir and run autogen.sh */
-    build_cd_cmd(c_cmd, c_pwd);
-    build_cmd(c_cmd, "/wolfssl", " && ./autogen.sh", " > /dev/null", " 2&>1");
-    system(c_cmd);
-    clear_command(c_cmd);
-
-    build_cd_cmd(c_cmd, c_pwd);
-    system(c_cmd);
-    clear_command(c_cmd);
-
-    /* get a baseline for comparison */
-    default_baseline = run_config_opts(c_pwd, DEFAULT_CONFIG);
-#endif
-
-    /* run configure to output the help menu */
-    /* echo the result to file */
-    clear_command(c_cmd);
-    build_cd_cmd(c_cmd, c_pwd);
-    build_cmd(c_cmd, "/wolfssl && ./configure -h > ../",
-              configOutFname, NULL, NULL);
-    system(c_cmd);
-    clear_command(c_cmd);
-
-    /* scrub the file for configure options */
-    /* store configure options in a char[][] */
-    for (i = 0; i < MOST_CONFIGS; i++) {
-        XMEMSET(allConfigSingles[i], 0, LONGEST_CONFIG);
+    if (argc >= 2) {
+        switch (argv[SECOND_WORD][FIRST_POSITION]) {
+            case 'b':
+                cfg_bench_all_configs();
+                break;
+            default:
+                printf("Invalid option %c\n", argv[SECOND_WORD][FIRST_POSITION]);
+                break;
+        }
     }
 
-    scrub_config_out(configOutFname, allConfigSingles);
-    /* read out the options one at a time and compare to baseline */
-    for (i = 0; i < MOST_CONFIGS; i++) {
-        if (XSTRNCMP(allConfigSingles[i], "LAST_LINE", 9) == 0) {
-            printf("aborting at %d\n", i);
-            break;
+/* --------- next stuff to get working, port to own API after solved -------- */
+    DIR* dStream;
+    char* targetDir = "wolfssl/src";
+    struct dirent* currF;
+    FILE* currFStream;
+    char cmdArray[LONGEST_COMMAND];
+    char* line = NULL;
+    ssize_t read;
+    size_t lengthOfLine;
+    PP_OPT* head = NULL;
+
+    cfg_clear_cmd(cmdArray);
+    cfg_clone_target_repo("wolfssl/wolfssl");
+
+    dStream = opendir(targetDir);
+    cfg_assrt_ne_null(dStream, "Opening wolfssl/src/ directory");
+
+    while ( (currF = readdir(dStream)) ) {
+        if (XSTRNCMP(currF->d_name, ".", 1) == 0)
+            continue;
+        if (XSTRNCMP(currF->d_name, "..", 2) == 0)
+            continue;
+
+        if (getcwd(cmdArray, LONGEST_PATH) == NULL)
+            cfg_abort();
+
+        cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
+        currFStream = fopen(cmdArray, "rb");
+        printf("fileName + path = %s\n", cmdArray);
+
+        cfg_clear_cmd(cmdArray);
+        cfg_build_cmd(cmdArray, "Opening ", currF->d_name, " file", NULL);
+        cfg_assrt_ne_null(currFStream, cmdArray);
+        cfg_clear_cmd(cmdArray);
+        printf("Successfully opened %s\n", currF->d_name);
+
+        /* read file line by line and check for ifdef, ifndef, defined */
+        /* found ifdef, look for first capitol letter between A - Z or _  */
+        /* if not found on line move on, same for ifndef */
+        /* found defined, look for first ( then look for first capitol A - Z or
+         * _ if not found move on, check line for more than one "define" keyword
+          */
+        while ( (read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
+            if (strstr(line, "#ifdef")) {
+                printf("Found \"ifdef\" in \"%s\"\n", line);
+                head = cfg_init_pp_opt(head);
+                cfg_get_pp_macro_single(head, line, (int)lengthOfLine);
+            }
+
+            if (strstr(line, "#ifndef"))
+                printf("Found \"ifndef\" in \"%s\"\n", line);
+            if (strstr(line, "defined") && strstr(line, "#if"))
+                printf("Found \"defined\" in \"%s\"\n", line);
+            
         }
-        /* TODO: if default on don't run */
-        check_increase(default_baseline, allConfigSingles[i]);
-        /* TODO: if default off don't run */
-        check_decrease(default_baseline, allConfigSingles[i]);
+
+        fclose(currFStream);
+        //temp break for testing
+        break;
     }
 
     return 0;
 }
 
+void cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz)
+{
+    PP_OPT* next;
+    int i, j;
+    int lFlag = 0;
 
+    printf("DEBUG: we're working with line: \"%s\"", line);
+    printf("DEBUG: length of line is: %d\n", lSz);
+    cfg_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
+
+    next = curr->next;
+
+    if (next != NULL) {
+        printf("Called get_pp_macro_single with a node that has a next\n");
+        cfg_abort();
+    }
+
+    next = (PP_OPT*) malloc(sizeof(PP_OPT));
+    cfg_assrt_ne_null(next, "creating next in get_pp_macro_single");
+
+    /* Start at the front of line and inter till space */
+    j = 0;
+    for (i = 0; i < lSz; i++) {
+        if ( (line[i] >= UPPER_A && line[i] <= UPPER_Z)  /* regex = [A-Z]+ */
+             || (line[i] == UNDERSCORE)                  /* regex = TODO:  */
+           ) {
+            printf("%c", line[i]);
+            curr->pp_opt[j] = line[i];
+            j++;
+        }
+    }
+}
+
+PP_OPT* cfg_init_pp_opt(PP_OPT* in)
+{
+    if (in == NULL) {
+        in = (PP_OPT*) malloc(sizeof(PP_OPT));
+        cfg_assrt_ne_null(in, "cfg_init_pp_opt");
+    }
+
+    in->previous = NULL;
+    in->next = NULL;
+    XMEMSET(in, 0, LONGEST_PP_OPT);
+
+    return in;
+}

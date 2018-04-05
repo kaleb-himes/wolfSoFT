@@ -1,38 +1,46 @@
 #include <configurator_common.h>
 
 
-void check_ret(int ret, int target, char* API)
+void cfg_check_ret(int ret, int target, char* API)
 {
     if (ret != target) {
         printf("%s call failed with return %d\n", API, ret);
-        configurator_abort();
+        cfg_abort();
     }
     return;
 }
 
-void check_ret_nlte(int ret, int target, char* API)
+void cfg_check_ret_nlte(int ret, int target, char* API)
 {
     if (ret <= target) {
         printf("%s call failed with return %d\n", API, ret);
-        configurator_abort();
+        cfg_abort();
     }
     return;
 }
 
-void configurator_abort(void)
+void cfg_assrt_ne_null(void* in, char* activity_description)
+{
+    if (in == NULL) {
+        printf("%s failed\n", activity_description);
+        cfg_abort();
+    }
+}
+
+void cfg_abort(void)
 {
     printf("Configurator aborting\n");
     exit(-1);
 }
 
 
-void clear_command(char* cmd)
+void cfg_clear_cmd(char* cmd)
 {
     XMEMSET(cmd, 0, LONGEST_COMMAND);
     return;
 }
 
-void build_cmd(char* cmd, char* a, char* b, char* c, char* d)
+void cfg_build_cmd(char* cmd, char* a, char* b, char* c, char* d)
 {
 
     if (a != NULL)
@@ -47,7 +55,7 @@ void build_cmd(char* cmd, char* a, char* b, char* c, char* d)
     return;
 }
 
-void build_cd_cmd(char* cmd, char* pwd)
+void cfg_build_cd_cmd(char* cmd, char* pwd)
 {
     char* part1 = "cd ";
     unsigned long part1Sz = XSTRLEN(part1);
@@ -58,16 +66,16 @@ void build_cd_cmd(char* cmd, char* pwd)
     return;
 }
 
-void build_fname_cmd(char* cmd, char* fname, char* pwd)
+void cfg_build_fname_cmd(char* cmd, char* fname, char* pwd)
 {
-    clear_command(cmd);
+    cfg_clear_cmd(cmd);
     XSTRNCAT(cmd, pwd, XSTRLEN(pwd));
     XSTRNCAT(cmd, fname, XSTRLEN(fname));
 
     return;
 }
 
-int get_file_size(char* fname)
+int cfg_get_file_size(char* fname)
 {
     FILE* fStream;
     int fSize = -1;
@@ -85,4 +93,17 @@ int get_file_size(char* fname)
     fclose(fStream);
 
     return fSize;
+}
+
+void cfg_clone_target_repo(char* repo)
+{
+    char c_cmd[LONGEST_COMMAND];
+    char* gitCmd = "git clone https://github.com/";
+
+    cfg_clear_cmd(c_cmd);
+    printf("Cloning: %s\n", repo);
+    cfg_build_cmd(c_cmd, gitCmd, repo, ".git", NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+
 }

@@ -4,32 +4,63 @@
 #include <stdio.h>
 #include <stdlib.h> /* For system calls */
 #include <unistd.h> /* path to working directory */
+#include <regex.h>
+
 #include <wolfssl/options.h>
 #include <wolfssl/ssl.h>
 
 #include <configurator_configs.h>
 
+/*----------------------------------------------------------------------------*/
+/* DEFINES */
+/*----------------------------------------------------------------------------*/
 /* known ascii char hex values for comparison purposes */
 #define SPACE 0x20      /* self explanitory = ' '  */
 #define DASH 0x2D       /* self explanitory = '-'  */
 #define L_BRACKET 0x5B  /* self explanitory = '['  */
 #define CRET 0xD        /* Carriage Return  = '\r' */
 #define NLRET 0xA       /* New Line Return  = '\n' */
-
-/* useful enums to avoid magic numbers */
+#define UPPER_A 0x41    /* uppercase A      = 'A'  */
+#define UPPER_Z 0x5A    /* uppercase Z      = 'Z'  */
+#define LPARAN 0X28     /* Left Parna       = '('  */
+#define RPARAN 0x29     /* Right Paran      = ')'  */
+#define UNDERSCORE 0x5F /* Underscore       = '_'  */
+/*----------------------------------------------------------------------------*/
+/* ENUMS */
+/*----------------------------------------------------------------------------*/
 enum {
-    LONGEST_PATH = 4096,
-    LONGEST_COMMAND = 4096,
-    NUM_BINARIES = 3,
-    MOST_CONFIGS = 200,
-    LONGEST_CONFIG = 75,
+    SECOND_WORD          = 1,
+    SINGLE_CHAR          = 1,
+    LONGEST_PATH         = 4096,
+    MOST_CONFIGS         = 200,
+    NUM_BINARIES         = 3,
+    LONGEST_CONFIG       = 75,
+    FIRST_POSITION       = 0,
+    LONGEST_COMMAND      = 4096,
     CONFIG_NOT_SUPPORTED = 256,
+    LONGEST_PP_OPT       = 50,
 };
 
 /* errors */
 enum {
     FILE_ERR
 };
+
+/*----------------------------------------------------------------------------*/
+/* STRUCTS */
+/*----------------------------------------------------------------------------*/
+
+typedef struct PP_OPT
+{
+    struct PP_OPT* previous;
+    struct PP_OPT* next;
+    char pp_opt[LONGEST_PP_OPT];
+} PP_OPT;
+
+/*----------------------------------------------------------------------------*/
+/* Static strings */
+/*----------------------------------------------------------------------------*/
+
 
 /* a fixed array of options to ignore if found when scrubbing the output
  * of configure help menu
@@ -59,6 +90,10 @@ static char ignore_opts[MOST_CONFIGS][LONGEST_CONFIG] = {
 {"asyncthreads"},           /* 21 */
 };
 
+/*----------------------------------------------------------------------------*/
+/* FUNCTIONS */
+/*----------------------------------------------------------------------------*/
+
 /*
  * quick one-liner to check a return value
  * @p1 - value returned from function call
@@ -68,7 +103,7 @@ static char ignore_opts[MOST_CONFIGS][LONGEST_CONFIG] = {
  *          this call will compare value to 0 and if not equal will abort the
  *          program and print the msg: "my_api_name".
  */
-void check_ret(int, int, char*);
+void cfg_check_ret(int, int, char*);
 /*
  * @p1 - value returned from function call
  * @p2 - target value to compare against
@@ -76,11 +111,15 @@ void check_ret(int, int, char*);
  * See notes for check_ret, does same except checks to make sure that
  * p1 is not less than or equal to p2
  */
-void check_ret_nlte(int, int, char*);
+void cfg_check_ret_nlte(int, int, char*);
+
+/* assert not null */
+void cfg_assrt_ne_null(void*, char*);
+
 /*
  * aborts the configurator early
  */
-void configurator_abort(void);
+void cfg_abort(void);
 
 /*
  * A function to zero out a buffer.
@@ -90,7 +129,7 @@ void configurator_abort(void);
  * TODO: needs some sanity checks, could behave badly if called with shorter
  *       buffers.
  */
-void clear_command(char*);
+void cfg_clear_cmd(char*);
 /*
  * A function to build up ANY command with optional parameters
  *
@@ -102,7 +141,7 @@ void clear_command(char*);
  * @p4 - same as p2
  * @p5 - same as p2
  */
-void build_cmd(char*, char*, char*, char*, char*);
+void cfg_build_cmd(char*, char*, char*, char*, char*);
 /*
  * A useful way to build up a change to directory command
  *
@@ -112,7 +151,7 @@ void build_cmd(char*, char*, char*, char*, char*);
  *          will result in a buffer containing the string:
  *          "cd /Users/uname/wolfssl"
  */
-void build_cd_cmd(char*, char*);
+void cfg_build_cd_cmd(char*, char*);
 
 /*
  * A function to build the name of file + some path to that file.
@@ -127,7 +166,7 @@ void build_cd_cmd(char*, char*);
  *          will result in a buffer containing the string:
  *          $PWD"/wolfssl/tests/unit.test"
  */
-void build_fname_cmd(char*, char*, char*);
+void cfg_build_fname_cmd(char*, char*, char*);
 
 /*
  * @p1 - the name of the file to be opened
@@ -137,7 +176,7 @@ void build_fname_cmd(char*, char*, char*);
  * NOTE: include the  path+fname if not in current dir.
  * See also: build_fname_cmd
  */
-int get_file_size(char*);
+int cfg_get_file_size(char*);
 
 /*
  * @p1 - path to cd to before executing the command. If NULL will default to the
@@ -146,7 +185,7 @@ int get_file_size(char*);
  * @p2 - The set of configure options to run, no assumptions are made for the
  *       configure options passed in and there are no sanity checks at this time
  */
-int run_config_opts(char*, char*);
+int cfg_run_config_opts(char*, char*);
 /*
  * A function for checking the increase footprint size of wolfSSL when
  * configured with p1
@@ -157,11 +196,13 @@ int run_config_opts(char*, char*);
  * NOTE: Assumptions are being made about configure options in this function.
  *       Assumption1: configPart contains no leading - and no preceeding enable
  */
-void check_increase(int, char*);
-void check_decrease(int, char*);
+void cfg_check_increase(int, char*);
+void cfg_check_decrease(int, char*);
 
-void scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
-
-
+void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
+void cfg_bench_all_configs(void);
+void cfg_clone_target_repo(char*);
+void cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz);
+PP_OPT* cfg_init_pp_opt(PP_OPT*);
 
 #endif /* C_CONF_COMMN */

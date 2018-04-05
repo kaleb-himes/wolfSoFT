@@ -23,7 +23,7 @@ void cfg_bench_all_configs(void)
     /* cd to wolfssl root dir and run autogen.sh */
     printf("Getting the library ready for testing...\n");
     cfg_build_cd_cmd(c_cmd, c_pwd);
-    cfg_build_cmd(c_cmd, "/wolfssl", " && ./autogen.sh", " > /dev/null", " 2&>1");
+    cfg_build_cmd(c_cmd, "/wolfssl", " && ./autogen.sh", NULL, NULL);
     system(c_cmd);
     cfg_clear_cmd(c_cmd);
 

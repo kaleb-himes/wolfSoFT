@@ -26,6 +26,8 @@ int main(int argc, char** argv)
     ssize_t read;
     size_t lengthOfLine;
     PP_OPT* head = NULL;
+    PP_OPT* tmp;
+    int counter = 0;
 
     cfg_clear_cmd(cmdArray);
     cfg_clone_target_repo("wolfssl/wolfssl");
@@ -57,18 +59,19 @@ int main(int argc, char** argv)
         /* if not found on line move on, same for ifndef */
         /* found defined, look for first ( then look for first capitol A - Z or
          * _ if not found move on, check line for more than one "define" keyword
-          */
+         */
+        head = cfg_init_pp_opt(head);
         while ( (read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
             if (strstr(line, "#ifdef")) {
-                printf("Found \"ifdef\" in \"%s\"\n", line);
-                head = cfg_init_pp_opt(head);
-                cfg_get_pp_macro_single(head, line, (int)lengthOfLine);
+                tmp = cfg_get_pp_macro_single(head, line, (int)lengthOfLine);
+                head = tmp;
+                printf("DEBUG: %s = %d'th line found\n", line, counter++);
             }
 
-            if (strstr(line, "#ifndef"))
-                printf("Found \"ifndef\" in \"%s\"\n", line);
-            if (strstr(line, "defined") && strstr(line, "#if"))
-                printf("Found \"defined\" in \"%s\"\n", line);
+//            if (strstr(line, "#ifndef"))
+//                printf("DEBUG: Found \"ifndef\" in \"%s\"\n", line);
+//            if (strstr(line, "defined") && strstr(line, "#if"))
+//                printf("DEBUG: Found \"defined\" in \"%s\"\n", line);
             
         }
 
@@ -77,17 +80,17 @@ int main(int argc, char** argv)
         break;
     }
 
+    printf("DEBUG: Checking the list\n");
+    cfg_iterate_over_pp_list(head);
     return 0;
 }
 
-void cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz)
+PP_OPT* cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz)
 {
     PP_OPT* next;
     int i, j;
     int lFlag = 0;
 
-    printf("DEBUG: we're working with line: \"%s\"", line);
-    printf("DEBUG: length of line is: %d\n", lSz);
     cfg_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
 
     next = curr->next;
@@ -97,20 +100,27 @@ void cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz)
         cfg_abort();
     }
 
-    next = (PP_OPT*) malloc(sizeof(PP_OPT));
+    next = cfg_init_pp_opt(next);;
     cfg_assrt_ne_null(next, "creating next in get_pp_macro_single");
 
     /* Start at the front of line and inter till space */
     j = 0;
     for (i = 0; i < lSz; i++) {
-        if ( (line[i] >= UPPER_A && line[i] <= UPPER_Z)  /* regex = [A-Z]+ */
-             || (line[i] == UNDERSCORE)                  /* regex = TODO:  */
+        if ( (line[i] >= UPPER_A && line[i] <= UPPER_Z)      /* regex= [A-Z]+ */
+             || (line[i] == UNDERSCORE)                      /* regex= TODO:  */
+             || (line[i] >= NUM_ZERO && line[i] <= NUM_NINE) /* regex= [0-9]+ */
            ) {
-            printf("%c", line[i]);
             curr->pp_opt[j] = line[i];
             j++;
         }
+        if ( (line[i] == NLRET || line[i] == CRET ) ) {
+            curr->pp_opt[j] = '\0';
+            break;
+        }
     }
+    curr->next = next;
+    next->previous = curr;
+    return next;
 }
 
 PP_OPT* cfg_init_pp_opt(PP_OPT* in)
@@ -124,5 +134,43 @@ PP_OPT* cfg_init_pp_opt(PP_OPT* in)
     in->next = NULL;
     XMEMSET(in, 0, LONGEST_PP_OPT);
 
+    return in;
+}
+
+/* return the one passed in to keep your place in the list when this
+ * is called */
+PP_OPT* cfg_iterate_over_pp_list(PP_OPT* in)
+{
+    PP_OPT* storeRet = in;
+    PP_OPT* head;
+    PP_OPT* tmp;
+    int nodeC = 0;
+
+    cfg_assrt_ne_null(in->pp_opt, "cfg_iterate_over_pp_list called with"
+                                  " node that has no value\n");
+
+    head = cfg_backup_to_head(in);
+
+    while(head->next != NULL) {
+        printf("DEBUG: node %d has value %s\n", nodeC, head->pp_opt);
+        tmp = head->next;
+        head = tmp;
+        nodeC++;
+    }
+
+    return storeRet;
+}
+
+PP_OPT* cfg_backup_to_head(PP_OPT* in)
+{
+    PP_OPT* tmp;
+    int counter;
+
+    while (in->previous != NULL) {
+       tmp = in->previous;
+        in = tmp;
+        counter++;
+        printf("Backed up %d\n", counter);
+    }
     return in;
 }

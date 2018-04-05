@@ -25,6 +25,8 @@
 #define LPARAN 0X28     /* Left Parna       = '('  */
 #define RPARAN 0x29     /* Right Paran      = ')'  */
 #define UNDERSCORE 0x5F /* Underscore       = '_'  */
+#define NUM_ZERO   0x30 /* number zero      = '0'  */
+#define NUM_NINE   0x39 /* number nine      = '9'  */
 /*----------------------------------------------------------------------------*/
 /* ENUMS */
 /*----------------------------------------------------------------------------*/
@@ -202,7 +204,9 @@ void cfg_check_decrease(int, char*);
 void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
 void cfg_bench_all_configs(void);
 void cfg_clone_target_repo(char*);
-void cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz);
+PP_OPT* cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz);
 PP_OPT* cfg_init_pp_opt(PP_OPT*);
+PP_OPT* cfg_iterate_over_pp_list(PP_OPT* in);
+PP_OPT* cfg_backup_to_head(PP_OPT* in);
 
 #endif /* C_CONF_COMMN */

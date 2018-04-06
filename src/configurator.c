@@ -204,8 +204,11 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
     int breakCheck = KEEP_GOING;
 
     for (i = 0; i < lSz; i++) {
-        if (line[i] == BACKSLASH && (line[i+1] == NLRET || line[i+1] == CRET))
+        if (line[i] == BACKSLASH || line[i] == NLRET || line[i] == CRET) {
+            if (*optsFound > 0)
+                *optsFound -= 1;
             break;
+        }
         if (line[i] == LPARAN) {
             /* special case for "#if (defined(THIS) && !defined(THAT))
              * due to the leading LPARAN */

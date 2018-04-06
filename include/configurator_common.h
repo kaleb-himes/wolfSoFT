@@ -27,20 +27,29 @@
 #define UNDERSCORE 0x5F /* Underscore       = '_'  */
 #define NUM_ZERO   0x30 /* number zero      = '0'  */
 #define NUM_NINE   0x39 /* number nine      = '9'  */
+#define LOWER_A    0x61 /* lowercase a      = 'a'  */
+#define LOWER_Z    0x7A /* lowercase z      = 'z'  */
+#define HASHTAG    0x23 /* the hashtag      = '#'  */
+#define BACKSLASH  0x5C /* the escape char  = '\'  */
 /*----------------------------------------------------------------------------*/
 /* ENUMS */
 /*----------------------------------------------------------------------------*/
 enum {
+    NO_DUP               = 0,
+    FOUND_DUP            = 1,
+    STOP_GOING           = 1,
+    KEEP_GOING           = 0,
     SECOND_WORD          = 1,
     SINGLE_CHAR          = 1,
     LONGEST_PATH         = 4096,
     MOST_CONFIGS         = 200,
     NUM_BINARIES         = 3,
+    OPTS_IN_A_LINE       = 5,
     LONGEST_CONFIG       = 75,
     FIRST_POSITION       = 0,
+    LONGEST_PP_OPT       = 50,
     LONGEST_COMMAND      = 4096,
     CONFIG_NOT_SUPPORTED = 256,
-    LONGEST_PP_OPT       = 50,
 };
 
 /* errors */
@@ -204,9 +213,12 @@ void cfg_check_decrease(int, char*);
 void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
 void cfg_bench_all_configs(void);
 void cfg_clone_target_repo(char*);
-PP_OPT* cfg_get_pp_macro_single(PP_OPT* curr, char* line, int lSz);
-PP_OPT* cfg_init_pp_opt(PP_OPT*);
-PP_OPT* cfg_iterate_over_pp_list(PP_OPT* in);
-PP_OPT* cfg_backup_to_head(PP_OPT* in);
+PP_OPT* cfg_pp_node_fill_single(PP_OPT*, char*, int);
+void cfg_pp_string_extract_multi(char(*)[LONGEST_PP_OPT], char*, int, int*);
+PP_OPT* cfg_pp_node_init(PP_OPT*);
+PP_OPT* cfg_pp_list_iterate(PP_OPT*);
+PP_OPT* cfg_pp_list_get_head(PP_OPT*);
+void cfg_pp_list_free(PP_OPT*);
+int cfg_pp_list_check_for_dup(PP_OPT*, char*);
 
 #endif /* C_CONF_COMMN */

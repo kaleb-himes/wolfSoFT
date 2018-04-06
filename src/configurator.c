@@ -242,10 +242,6 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
             breakCheck = KEEP_GOING;
             j++;
         }
-
-        if ( (line[i] == NLRET || line[i] == CRET ) ) {
-            break;
-        }
     }
 }
 

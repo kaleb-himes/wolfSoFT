@@ -45,7 +45,7 @@
 #define OPTS_IN_A_LINE          5
 #define LONGEST_CONFIG          80
 #define FIRST_POSITION          0
-#define LONGEST_PP_OPT          35*sizeof(char)
+#define LONGEST_PP_OPT          36*sizeof(char)
 #define LONGEST_COMMAND         4096
 #define CONFIG_NOT_SUPPORTED    256
 #define LONGEST_LINE            80

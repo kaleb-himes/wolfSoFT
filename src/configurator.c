@@ -262,7 +262,7 @@ PP_OPT* cfg_pp_node_init(PP_OPT* in)
 
     in->previous = NULL;
     in->next = NULL;
-    XMEMSET(in, 0, LONGEST_PP_OPT);
+    XMEMSET(in->pp_opt, 0, sizeof(in->pp_opt));
 
     return in;
 }

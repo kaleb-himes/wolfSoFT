@@ -1,7 +1,8 @@
 #include <configurator_common.h>
 #include <dirent.h>
 
-#define DEBUG_CFG
+//#define DEBUG_CFG
+//#define DEBUG_CFG_CHECK_ITERATE
 
 int main(int argc, char** argv)
 {
@@ -37,6 +38,7 @@ int main(int argc, char** argv)
 
     dStream = opendir(targetDir);
     cfg_assrt_ne_null(dStream, "Opening wolfssl/src/ directory");
+    curr = cfg_pp_node_init(curr);
 
 
     while ( (currF = readdir(dStream)) ) {
@@ -49,8 +51,8 @@ int main(int argc, char** argv)
             cfg_abort();
 
 //tmp for testing
-        if (XSTRNCMP(currF->d_name, "ssl.c", 5) != 0)
-            continue;
+//        if (XSTRNCMP(currF->d_name, "ssl.c", 5) != 0)
+//            continue;
 //end tmp for testing
         cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
         currFStream = fopen(cmdArray, "rb");
@@ -64,27 +66,36 @@ int main(int argc, char** argv)
         /* read file line by line and check for ifdef, ifndef, defined */
         /* found ifdef, look for first capitol letter between A - Z or _  */
         /* if not found on line move on, same for ifndef */
-        curr = cfg_pp_node_init(curr);
         while ( (read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
             if (strstr(line, "#ifdef")) {
+#ifdef DEBUG_CFG
                 printf("DEBUG: Found \"#ifdef\" in %s\n", line);
+#endif
                 cfg_pp_string_extract_single(multiOpts, line,
                                              (int) lengthOfLine);
                 curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                (int) XSTRLEN(multiOpts[0]));
+#ifdef DEBUG_CFG_CHECK_ITERATE
             cfg_pp_list_iterate(curr);
+#endif
             }
 
             if (strstr(line, "#ifndef")) {
+#ifdef DEBUG_CFG
                 printf("DEBUG: Found \"ifndef\" in \"%s\"\n", line);
+#endif
                 cfg_pp_string_extract_single(multiOpts, line,
                                              (int) lengthOfLine);
                 curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                (int) XSTRLEN(multiOpts[0]));
+#ifdef DEBUG_CFG_CHECK_ITERATE
             cfg_pp_list_iterate(curr);
+#endif
             }
             if (strstr(line, "defined") && strstr(line, "#if")) {
+#ifdef DEBUG_CFG
                 printf("DEBUG: Found \"defined\" in \"%s\"\n", line);
+#endif
                 /* call fill single with each string in array */
                 for (i = 0; i < OPTS_IN_A_LINE; i++) {
                     XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
@@ -100,13 +111,17 @@ int main(int argc, char** argv)
                 for (i = 0; i < OPTS_IN_A_LINE; i++) {
                     XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                 }
+                /* reset optsFound */
+                optsFound = 0;
+#ifdef DEBUG_CFG_CHECK_ITERATE
             cfg_pp_list_iterate(curr);
+#endif
             }
         }
 
         fclose(currFStream);
         //temp break for testing
-        break;
+//        break;
     }
     if (line)
         free(line);
@@ -199,7 +214,9 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT],
         out[0][j] = line[i];
         j++;
     }
+#ifdef DEBUG_CFG
     printf("DEBUG: extract single got %s\n", out[0]);
+#endif
 }
 
 void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
@@ -218,6 +235,9 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
             /* special case for "#if (defined(THIS) && !defined(THAT))
              * due to the leading LPARAN */
             if (line[i + 1] == 'd' && line[i+2] == 'e' && line[i+3] == 'f')
+                breakCheck = KEEP_GOING;
+            else if (line[i+1] == '!' && line[i+2] == 'd' && line[i+3] == 'e'
+                     && line[i+4] == 'f')
                 breakCheck = KEEP_GOING;
             else
                 breakCheck = STOP_GOING;
@@ -241,11 +261,15 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
         if (line[i] == RPARAN) {
             *optsFound += 1;
             out[j][k] = '\0';
+#ifdef DEBUG_CFG
             printf("DEBUG: ----> In Multi, found this PP MACRO: %s\n", out[j]);
             printf("DEBUG: ----> ");
-            for (k = 0; k < LONGEST_PP_OPT; k++)
-                printf("[%c]", out[j][k]);
+#endif
+#ifdef DEBUG_CFG_LVL2
+            for (k = 0; k < (int) sizeof(out[j]); k++)
+                printf("%c", out[j][k]);
             printf("\n");
+#endif
             k = 0;
             breakCheck = KEEP_GOING;
             j++;
@@ -274,6 +298,7 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
     PP_OPT* storeRet = in;
     PP_OPT* curr;
     int nodeC = 0;
+    int i;
 
     cfg_assrt_ne_null(in, "cfg_pp_list_iterate called with null PP_OPT");
 
@@ -281,7 +306,7 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
 
     printf("-------------------- LIST -------------------------------------\n");
     while(curr->next != NULL) {
-#ifdef DEBUG_CFG
+#ifdef DEBUG_CFG_CHECK_ITERATE
             printf("--> %p\n", curr);
             if (curr->previous != NULL)
                 printf("\t\t|-->%p\n", curr->previous);
@@ -291,14 +316,16 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
                 printf("\t\t|-->%p\n", curr->next);
             else
                 printf("\t\t|-->(null)\n");
-            {
-                int i;
-                printf("\t\t|-->");
-                for (i = 0; i < sizeof(curr->pp_opt); i++)
-                    printf("%c", curr->pp_opt[i]);
-                printf("\n");
-            }
+
+            printf("\t\t|-->");
+            for (i = 0; i < sizeof(curr->pp_opt); i++)
+                printf("%c", curr->pp_opt[i]);
+            printf("\n");
 #endif
+        for (i = 0; i < sizeof(curr->pp_opt); i++)
+            printf("%c", curr->pp_opt[i]);
+        printf("\n");
+
         curr = curr->next;
         if (curr == NULL)
             break;
@@ -321,8 +348,8 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
     while (in->previous != NULL) {
         in = in->previous;
         counter++;
-#ifdef DEBUG_CFG
-//        printf("DEBUG: Backed up %d\n", counter);
+#ifdef DEBUG_CFG_LVL2
+        printf("DEBUG: Backed up %d\n", counter);
 #endif
         if (in == NULL)
             break;

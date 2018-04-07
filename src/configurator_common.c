@@ -27,7 +27,7 @@ void cfg_assrt_ne_null(void* in, char* activity_description)
     }
 }
 
-void cfg_abort(void)
+void __attribute__((noreturn)) cfg_abort(void)
 {
     printf("Configurator aborting\n");
     exit(-1);
@@ -82,7 +82,7 @@ int cfg_get_file_size(char* fname)
 
     fStream = fopen(fname, "rb");
     if (fStream == NULL)
-        return FILE_ERR;
+        return 0;
 
     fseek(fStream, 0L, SEEK_END);
 

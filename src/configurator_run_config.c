@@ -6,13 +6,13 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
     int ret;
     char c_cmd[LONGEST_COMMAND];
 
-    char* c_fNm1 = "/wolfssl/tests/unit.test";
-    char* c_fNm2 = "/wolfssl/examples/client/client";
-    char* c_fNm3 = "/wolfssl/examples/server/server";
-    int c_fSz1, c_fSz2, c_fSz3;
+    /* On a mac */
+    char* c_fNm1 = "/wolfssl/src/.libs/libwolfssl.dylib";
+    /* Linux */
+    char* c_fNm2 = "/wolfssl/src/.libs/libwolfssl.so";
+    int c_fSz1, c_fSz2;
 
     int c_sumSz;
-    int c_avgSz;
     int mallocFlag = 0;
 
     if (c_pwd == NULL) {
@@ -62,36 +62,16 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
 
     cfg_build_fname_cmd(c_cmd, c_fNm1, c_pwd);
     c_fSz1 = cfg_get_file_size(c_cmd);
-    if (ret != 0 && mallocFlag == 1) {
-        free(c_pwd);
-        return ret;
-    }
-    cfg_check_ret_nlte(c_fSz1, 0, "c_fSz1 check");
 
     cfg_build_fname_cmd(c_cmd, c_fNm2, c_pwd);
     c_fSz2 = cfg_get_file_size(c_cmd);
-    if (ret != 0 && mallocFlag == 1) {
-        free(c_pwd);
-        return ret;
-    }
-    cfg_check_ret_nlte(c_fSz2, 0, "c_fSz2 check");
 
-    cfg_build_fname_cmd(c_cmd, c_fNm3, c_pwd);
-    c_fSz3 = cfg_get_file_size(c_cmd);
-    if (ret != 0 && mallocFlag == 1) {
-        free(c_pwd);
-        return ret;
-    }
-    cfg_check_ret_nlte(c_fSz3, 0, "c_fSz3 check");
-
-    c_sumSz = c_fSz1 + c_fSz2 + c_fSz3;
-
-    c_avgSz = c_sumSz / NUM_BINARIES;
+    c_sumSz = c_fSz1 + c_fSz2;
 
     if (mallocFlag)
         free(c_pwd);
 
-    return c_avgSz;
+    return c_sumSz;
 }
 
 void cfg_check_increase(int baseLine, char* configPart)
@@ -120,7 +100,7 @@ void cfg_check_increase(int baseLine, char* configPart)
         increase = tmp * 100;
 
         printf("--enable-%s increases the build by ---> "
-               " %04f percent\n", configPart, increase);
+               " %04f percent\n", configPart, (double) increase);
     } else {
         printf("--enable-%s had no impact\n", configPart);
     }
@@ -153,7 +133,7 @@ void cfg_check_decrease(int baseLine, char* configPart)
         decrease = tmp * 100;
 
         printf("--disable-%s decreases the build by --->"
-               " %04f percent\n", configPart, decrease);
+               " %04f percent\n", configPart, (double) decrease);
     } else {
         printf("--disable-%s had no impact\n", configPart);
     }

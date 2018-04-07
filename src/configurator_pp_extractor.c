@@ -11,7 +11,6 @@ void cfg_pp_extract_from_dir(char* targetDir)
     ssize_t read;
     size_t lengthOfLine;
     PP_OPT* curr = NULL;
-    int counter = 0;
     char multiOpts[OPTS_IN_A_LINE][LONGEST_PP_OPT];
     int optsFound = 0;
     int i;
@@ -117,12 +116,9 @@ void cfg_pp_extract_from_dir(char* targetDir)
 PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
 {
     PP_OPT* next;
-    int i, j;
-    int startPoint = 0;
-    int lFlag = 0;
+    int i;
     int duplicateCheck = -1;
     char c_tmp[LONGEST_PP_OPT];
-    int breakCheck = KEEP_GOING;
 
     XMEMSET(c_tmp, 0, sizeof(c_tmp));
 
@@ -275,7 +271,6 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
     PP_OPT* storeRet = in;
     PP_OPT* curr;
     int nodeC = 0;
-    int i;
 
     cfg_assrt_ne_null(in, "cfg_pp_list_iterate called with null PP_OPT");
 
@@ -284,20 +279,23 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
     printf("-------------------- LIST -------------------------------------\n");
     while(curr->next != NULL) {
 #ifdef DEBUG_CFG_CHECK_ITERATE
-            printf("--> %p\n", curr);
-            if (curr->previous != NULL)
-                printf("\t\t|-->%p\n", curr->previous);
-            else
-                printf("\t\t|-->(null)\n");
-            if (curr->next != NULL)
-                printf("\t\t|-->%p\n", curr->next);
-            else
-                printf("\t\t|-->(null)\n");
+            {
+                int i;
+                printf("--> %p\n", curr);
+                if (curr->previous != NULL)
+                    printf("\t\t|-->%p\n", curr->previous);
+                else
+                    printf("\t\t|-->(null)\n");
+                if (curr->next != NULL)
+                    printf("\t\t|-->%p\n", curr->next);
+                else
+                    printf("\t\t|-->(null)\n");
 
-            printf("\t\t|-->");
-            for (i = 0; i < sizeof(curr->pp_opt); i++)
-                printf("%c", curr->pp_opt[i]);
-            printf("\n");
+                printf("\t\t|-->");
+                for (i = 0; i < sizeof(curr->pp_opt); i++)
+                    printf("%c", curr->pp_opt[i]);
+                printf("\n");
+            }
 #endif
         printf("%s\n", curr->pp_opt);
         curr = curr->next;

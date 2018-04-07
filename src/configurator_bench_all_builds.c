@@ -5,11 +5,9 @@ void cfg_bench_all_configs(void)
     char c_pwd[LONGEST_PATH];
     char c_cmd[LONGEST_COMMAND];
     char* configOutFname = "config-out.txt";
-    int ret;
     int default_baseline = 0;
-    int difference;
     char allConfigSingles[MOST_CONFIGS][LONGEST_CONFIG];
-    int i, j;
+    int i;
 
     cfg_clear_cmd(c_pwd);
     cfg_clear_cmd(c_cmd);

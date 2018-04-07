@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h> /* For system calls */
 #include <unistd.h> /* path to working directory */
-#include <regex.h>
+#include <dirent.h>
 
 #include <wolfssl/options.h>
 #include <wolfssl/ssl.h>
@@ -37,15 +37,16 @@
 #define FOUND_DUP               1
 #define STOP_GOING              1
 #define KEEP_GOING              0
-#define SECOND_WORD             1
 #define SINGLE_CHAR             1
+#define THIRD_INPUT             2
+#define SECOND_INPUT            1
 #define LONGEST_PATH            4096
 #define MOST_CONFIGS            200
 #define NUM_BINARIES            3
 #define OPTS_IN_A_LINE          5
 #define LONGEST_CONFIG          80
 #define FIRST_POSITION          0
-#define LONGEST_PP_OPT          50*sizeof(char)
+#define LONGEST_PP_OPT          80*sizeof(char)
 #define LONGEST_COMMAND         4096
 #define CONFIG_NOT_SUPPORTED    256
 #define LONGEST_LINE            80
@@ -54,7 +55,8 @@
 /*----------------------------------------------------------------------------*/
 /* errors */
 enum {
-    FILE_ERR
+    FILE_ERR,
+    INPUT_ERR
 };
 
 /*----------------------------------------------------------------------------*/
@@ -221,5 +223,6 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT*);
 PP_OPT* cfg_pp_list_get_head(PP_OPT*);
 void cfg_pp_list_free(PP_OPT*);
 int cfg_pp_list_check_for_dup(PP_OPT*, char*);
+void cfg_pp_extract_from_dir(char*);
 
 #endif /* C_CONF_COMMN */

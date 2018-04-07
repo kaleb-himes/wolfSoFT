@@ -8,8 +8,8 @@ program_INCLUDE_DIRS :=./include
 program_LIBRARY_DIRS :=
 program_LIBRARIES :=
 
-program_INCLUDE_DIRS += /Users/kalebhimes/work/testDir/wolf-install-dir-for-testing/include
-program_LIBRARY_DIRS += /Users/kalebhimes/work/testDir/wolf-install-dir-for-testing/lib
+program_INCLUDE_DIRS += /usr/local/include
+program_LIBRARY_DIRS += /usr/local/lib
 program_LIBRARIES += wolfssl
 
 CPPFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
@@ -17,6 +17,7 @@ CPPFLAGS += -Werror
 #CPPFLAGS += -Weverything
 CPPFLAGS += -Wsign-conversion
 CPPFLAGS += -Wshorten-64-to-32
+CPPFLAGS += -g
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))
 

@@ -31,27 +31,27 @@
 #define LOWER_Z    0x7A /* lowercase z      = 'z'  */
 #define HASHTAG    0x23 /* the hashtag      = '#'  */
 #define BACKSLASH  0x5C /* the escape char  = '\'  */
+
+
+#define NO_DUP                  0
+#define FOUND_DUP               1
+#define STOP_GOING              1
+#define KEEP_GOING              0
+#define SECOND_WORD             1
+#define SINGLE_CHAR             1
+#define LONGEST_PATH            4096
+#define MOST_CONFIGS            200
+#define NUM_BINARIES            3
+#define OPTS_IN_A_LINE          5
+#define LONGEST_CONFIG          80
+#define FIRST_POSITION          0
+#define LONGEST_PP_OPT          80*sizeof(char)
+#define LONGEST_COMMAND         4096
+#define CONFIG_NOT_SUPPORTED    256
+#define LONGEST_LINE            80
 /*----------------------------------------------------------------------------*/
 /* ENUMS */
 /*----------------------------------------------------------------------------*/
-enum {
-    NO_DUP               = 0,
-    FOUND_DUP            = 1,
-    STOP_GOING           = 1,
-    KEEP_GOING           = 0,
-    SECOND_WORD          = 1,
-    SINGLE_CHAR          = 1,
-    LONGEST_PATH         = 4096,
-    MOST_CONFIGS         = 200,
-    NUM_BINARIES         = 3,
-    OPTS_IN_A_LINE       = 5,
-    LONGEST_CONFIG       = 75,
-    FIRST_POSITION       = 0,
-    LONGEST_PP_OPT       = 50,
-    LONGEST_COMMAND      = 4096,
-    CONFIG_NOT_SUPPORTED = 256,
-};
-
 /* errors */
 enum {
     FILE_ERR
@@ -215,6 +215,7 @@ void cfg_bench_all_configs(void);
 void cfg_clone_target_repo(char*);
 PP_OPT* cfg_pp_node_fill_single(PP_OPT*, char*, int);
 void cfg_pp_string_extract_multi(char(*)[LONGEST_PP_OPT], char*, int, int*);
+void cfg_pp_string_extract_single(char(*)[LONGEST_PP_OPT], char*, int);
 PP_OPT* cfg_pp_node_init(PP_OPT*);
 PP_OPT* cfg_pp_list_iterate(PP_OPT*);
 PP_OPT* cfg_pp_list_get_head(PP_OPT*);

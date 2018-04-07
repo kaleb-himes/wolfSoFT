@@ -1,7 +1,7 @@
 #include <configurator_common.h>
 #include <dirent.h>
 
-//#define DEBUG_CFG
+#define DEBUG_CFG
 
 int main(int argc, char** argv)
 {
@@ -38,6 +38,7 @@ int main(int argc, char** argv)
     dStream = opendir(targetDir);
     cfg_assrt_ne_null(dStream, "Opening wolfssl/src/ directory");
 
+
     while ( (currF = readdir(dStream)) ) {
         if (XSTRNCMP(currF->d_name, ".", 1) == 0)
             continue;
@@ -67,16 +68,28 @@ int main(int argc, char** argv)
         while ( (read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
             if (strstr(line, "#ifdef")) {
                 printf("DEBUG: Found \"#ifdef\" in %s\n", line);
-                curr = cfg_pp_node_fill_single(curr, line, (int)lengthOfLine);
+                cfg_pp_string_extract_single(multiOpts, line,
+                                             (int) lengthOfLine);
+                curr = cfg_pp_node_fill_single(curr, multiOpts[0],
+                                               (int) XSTRLEN(multiOpts[0]));
+            cfg_pp_list_iterate(curr);
             }
 
             if (strstr(line, "#ifndef")) {
                 printf("DEBUG: Found \"ifndef\" in \"%s\"\n", line);
-                curr = cfg_pp_node_fill_single(curr, line, (int) lengthOfLine);
+                cfg_pp_string_extract_single(multiOpts, line,
+                                             (int) lengthOfLine);
+                curr = cfg_pp_node_fill_single(curr, multiOpts[0],
+                                               (int) XSTRLEN(multiOpts[0]));
+            cfg_pp_list_iterate(curr);
             }
             if (strstr(line, "defined") && strstr(line, "#if")) {
                 printf("DEBUG: Found \"defined\" in \"%s\"\n", line);
                 /* call fill single with each string in array */
+                for (i = 0; i < OPTS_IN_A_LINE; i++) {
+                    XMEMSET(multiOpts[i], 0, LONGEST_PP_OPT);
+                }
+
                 cfg_pp_string_extract_multi(multiOpts, line, (int) lengthOfLine,
                                                                     &optsFound);
                 for (i = 0; i < optsFound; i++) {
@@ -84,15 +97,16 @@ int main(int argc, char** argv)
                                                    (int) XSTRLEN(multiOpts[i]));
                 }
                 /* clear out the arrays */
-                for (i = 0; i < optsFound; i++) {
+                for (i = 0; i < OPTS_IN_A_LINE; i++) {
                     XMEMSET(multiOpts[i], 0, LONGEST_PP_OPT);
                 }
+            cfg_pp_list_iterate(curr);
             }
         }
 
         fclose(currFStream);
         //temp break for testing
-//        break;
+        break;
     }
     if (line)
         free(line);
@@ -127,63 +141,19 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
         cfg_abort();
     }
 
-
     next = cfg_pp_node_init(next);;
     cfg_assrt_ne_null(next, "creating next in get_pp_macro_single");
-
-    if (strstr(line, "#ifndef")) {
-        while (breakCheck == KEEP_GOING) {
-            if (line[startPoint] == HASHTAG) {
-                startPoint+=6;
-                breakCheck = STOP_GOING;
-            }
-            startPoint++;
-        }
-    }
-
-    if (strstr(line, "#ifdef")) {
-        while (breakCheck == KEEP_GOING) {
-            if (line[startPoint] == HASHTAG) {
-                startPoint+=5;
-                breakCheck = STOP_GOING;
-            }
-            startPoint++;
-        }
-    }
-
-    j = 0;
-    for (i = startPoint; i < lSz; i++) {
-        if (
-             (line[i] >= UPPER_A && line[i] <= UPPER_Z)   /* regex= [A-Z]+ */
-            ||
-             (line[i] == UNDERSCORE)                      /* regex= TODO:  */
-            ||
-             (line[i] >= NUM_ZERO && line[i] <= NUM_NINE) /* regex= [0-9]+ */
-            ||
-             (line[i] >= LOWER_A && line[i] <= LOWER_Z)   /* regex= [a-z]+ */
-           ) {
-
-            /* store in temp at first for duplicate check */
-            c_tmp[j] = line[i];
-            j++;
-        }
-
-        if ( (line[i] == NLRET || line[i] == CRET ) ) {
-            c_tmp[j] = '\0';
-            break;
-        }
-    }
 
 #ifdef IGNORE_DUPLICATES
     /* get all pre_processor macros regardless of duplicates */
     duplicateCheck = NO_DUP;
 #else
-    duplicateCheck = cfg_pp_list_check_for_dup(curr, c_tmp);
+    duplicateCheck = cfg_pp_list_check_for_dup(curr, line);
 #endif
 
     if (duplicateCheck == NO_DUP) {
-        for (i = 0; i < XSTRLEN(c_tmp); i++) {
-            curr->pp_opt[i] = c_tmp[i];
+        for (i = 0; i < lSz; i++) {
+            curr->pp_opt[i] = line[i];
         }
     } else {
         free(next);
@@ -193,6 +163,41 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
     curr->next = next;
     next->previous = curr;
     return next;
+}
+
+void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT],
+                                  char* line, int lSz)
+{
+    int i;
+    int j = 0;
+    int checkForSpaceAfter = 0;
+
+    for (i = 0; i < lSz; i++) {
+        if (line[i] == NLRET || line[i] == CRET) {
+            out[0][j] = '\0';
+            break;
+        }
+
+        if (line[i] == SPACE) {
+            if (checkForSpaceAfter == 1) {
+                out[0][j] = '\0';
+                break;
+            } else {
+                continue;
+            }
+        }
+        if (line[i] == HASHTAG) {
+            checkForSpaceAfter = 1;
+            if (strstr(line, "#ifdef"))
+                i+=6;
+            else if (strstr(line, "#ifndef"))
+                i+=7;
+            continue;
+        }
+        out[0][j] = line[i];
+        j++;
+    }
+    printf("DEBUG: extract single got %s\n", out[0]);
 }
 
 void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
@@ -205,8 +210,6 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
 
     for (i = 0; i < lSz; i++) {
         if (line[i] == BACKSLASH || line[i] == NLRET || line[i] == CRET) {
-            if (*optsFound > 0)
-                *optsFound -= 1;
             break;
         }
         if (line[i] == LPARAN) {
@@ -229,7 +232,6 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
              (line[i] >= LOWER_A && line[i] <= LOWER_Z)   /* regex= [a-z]+ */
            ) {
 
-            /* store in temp at first for duplicate check */
             out[j][k] = line[i];
             k++;
         }
@@ -237,8 +239,12 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
         if (line[i] == RPARAN) {
             *optsFound += 1;
             out[j][k] = '\0';
-            k = 0;
             printf("DEBUG: ----> In Multi, found this PP MACRO: %s\n", out[j]);
+            printf("DEBUG: ----> ");
+            for (k = 0; k < LONGEST_PP_OPT; k++)
+                printf("[%c]", out[j][k]);
+            printf("\n");
+            k = 0;
             breakCheck = KEEP_GOING;
             j++;
         }
@@ -274,7 +280,21 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
 
     printf("-------------------- LIST -------------------------------------\n");
     while(curr->next != NULL) {
-        printf("DEBUG: node %d has value %s\n", nodeC, curr->pp_opt);
+#ifdef DEBUG_CFG
+            printf("--> %p\n", curr);
+            if (curr->previous != NULL)
+                printf("\t\t|-->%p\n", curr->previous);
+            else
+                printf("\t\t|-->(null)\n");
+            if (curr->next != NULL)
+                printf("\t\t|-->%p\n", curr->next);
+            else
+                printf("\t\t|-->(null)\n");
+            if (XSTRLEN(curr->pp_opt) > 0)
+                printf("\t\t|-->%s\n", curr->pp_opt);
+            else
+                printf("\t\t|-->(null)\n");
+#endif
         curr = curr->next;
         nodeC++;
     }
@@ -291,7 +311,7 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
         in = in->previous;
         counter++;
 #ifdef DEBUG_CFG
-        printf("DEBUG: Backed up %d\n", counter);
+//        printf("DEBUG: Backed up %d\n", counter);
 #endif
     }
     return in;
@@ -315,12 +335,10 @@ int cfg_pp_list_check_for_dup(PP_OPT* in, char* target)
 {
     PP_OPT* curr;
 
+
     curr = cfg_pp_list_get_head(in);
     while (curr != NULL) {
         if (XSTRNCMP(curr->pp_opt, target, XSTRLEN(target)) == 0) {
-#ifdef DEBUG_CFG
-            printf("DEBUG: Found duplicate %s\n", target);
-#endif
             return FOUND_DUP;
         }
         curr = curr->next;

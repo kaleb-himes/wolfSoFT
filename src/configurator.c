@@ -87,7 +87,7 @@ int main(int argc, char** argv)
                 printf("DEBUG: Found \"defined\" in \"%s\"\n", line);
                 /* call fill single with each string in array */
                 for (i = 0; i < OPTS_IN_A_LINE; i++) {
-                    XMEMSET(multiOpts[i], 0, LONGEST_PP_OPT);
+                    XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                 }
 
                 cfg_pp_string_extract_multi(multiOpts, line, (int) lengthOfLine,
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
                 }
                 /* clear out the arrays */
                 for (i = 0; i < OPTS_IN_A_LINE; i++) {
-                    XMEMSET(multiOpts[i], 0, LONGEST_PP_OPT);
+                    XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                 }
             cfg_pp_list_iterate(curr);
             }
@@ -132,7 +132,7 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
     char c_tmp[LONGEST_PP_OPT];
     int breakCheck = KEEP_GOING;
 
-    XMEMSET(c_tmp, 0, LONGEST_PP_OPT);
+    XMEMSET(c_tmp, 0, sizeof(c_tmp));
 
     cfg_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
 
@@ -277,9 +277,6 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
 
     cfg_assrt_ne_null(in, "cfg_pp_list_iterate called with null PP_OPT");
 
-    cfg_assrt_ne_null(in->pp_opt, "cfg_pp_list_iterate called with"
-                                  " node that has no value\n");
-
     curr = cfg_pp_list_get_head(in);
 
     printf("-------------------- LIST -------------------------------------\n");
@@ -294,10 +291,13 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
                 printf("\t\t|-->%p\n", curr->next);
             else
                 printf("\t\t|-->(null)\n");
-            if (XSTRLEN(curr->pp_opt) > 0)
-                printf("\t\t|-->%s\n", curr->pp_opt);
-            else
-                printf("\t\t|-->(null)\n");
+            {
+                int i;
+                printf("\t\t|-->");
+                for (i = 0; i < sizeof(curr->pp_opt); i++)
+                    printf("%c", curr->pp_opt[i]);
+                printf("\n");
+            }
 #endif
         curr = curr->next;
         if (curr == NULL)
@@ -315,12 +315,17 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
 
     cfg_assrt_ne_null(in, "cfg_pp_list_get_head called with null PP_OPT");
 
+    if (in->previous == NULL)
+        return in;
+
     while (in->previous != NULL) {
         in = in->previous;
         counter++;
 #ifdef DEBUG_CFG
 //        printf("DEBUG: Backed up %d\n", counter);
 #endif
+        if (in == NULL)
+            break;
     }
     return in;
 }

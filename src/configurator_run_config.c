@@ -45,33 +45,43 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
     cfg_build_cd_cmd(c_cmd, c_pwd);
     cfg_build_cmd(c_cmd, "/wolfssl && make > /dev/null", NULL, NULL, NULL);
     ret = system(c_cmd);
-    if (ret != 0 && mallocFlag == 1)
+    if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
+        return ret;
+    }
     cfg_check_ret(ret, 0, "make library");
 
     cfg_clear_cmd(c_cmd);
     cfg_build_cd_cmd(c_cmd, c_pwd);
     ret = system(c_cmd);
-    if (ret != 0 && mallocFlag == 1)
+    if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
+        return ret;
+    }
     cfg_check_ret(ret, 0, "change directory");
 
     cfg_build_fname_cmd(c_cmd, c_fNm1, c_pwd);
     c_fSz1 = cfg_get_file_size(c_cmd);
-    if (c_fSz1 <= 0 && mallocFlag == 1)
+    if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
+        return ret;
+    }
     cfg_check_ret_nlte(c_fSz1, 0, "c_fSz1 check");
 
     cfg_build_fname_cmd(c_cmd, c_fNm2, c_pwd);
     c_fSz2 = cfg_get_file_size(c_cmd);
-    if (c_fSz2 <= 0 && mallocFlag == 1)
+    if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
+        return ret;
+    }
     cfg_check_ret_nlte(c_fSz2, 0, "c_fSz2 check");
 
     cfg_build_fname_cmd(c_cmd, c_fNm3, c_pwd);
     c_fSz3 = cfg_get_file_size(c_cmd);
-    if (c_fSz3 <= 0 && mallocFlag == 1)
+    if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
+        return ret;
+    }
     cfg_check_ret_nlte(c_fSz3, 0, "c_fSz3 check");
 
     c_sumSz = c_fSz1 + c_fSz2 + c_fSz3;

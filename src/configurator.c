@@ -115,8 +115,10 @@ int main(int argc, char** argv)
 #ifdef DEBUG_CFG
     printf("DEBUG: Checking the list\n");
 #endif
-    cfg_pp_list_iterate(curr);
-    cfg_pp_list_free(curr);
+    if (curr != NULL) {
+        cfg_pp_list_iterate(curr);
+        cfg_pp_list_free(curr);
+    }
     return 0;
 }
 
@@ -273,6 +275,8 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
     PP_OPT* curr;
     int nodeC = 0;
 
+    cfg_assrt_ne_null(in, "cfg_pp_list_iterate called with null PP_OPT");
+
     cfg_assrt_ne_null(in->pp_opt, "cfg_pp_list_iterate called with"
                                   " node that has no value\n");
 
@@ -296,6 +300,8 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
                 printf("\t\t|-->(null)\n");
 #endif
         curr = curr->next;
+        if (curr == NULL)
+            break;
         nodeC++;
     }
     printf("---------------------------------------------------------------\n");
@@ -306,6 +312,8 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
 PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
 {
     int counter = 0;
+
+    cfg_assrt_ne_null(in, "cfg_pp_list_get_head called with null PP_OPT");
 
     while (in->previous != NULL) {
         in = in->previous;

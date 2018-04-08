@@ -66,8 +66,10 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
     cfg_build_fname_cmd(c_cmd, c_fNm2, c_pwd);
     c_fSz2 = cfg_get_file_size(c_cmd);
 
-    printf("size of %s was %d\n", c_fNm1, c_fSz1);
-    printf("size of %s was %d\n", c_fNm2, c_fSz2);
+    #ifdef DEBUG_CFG
+      printf("size of %s was %d\n", c_fNm1, c_fSz1);
+      printf("size of %s was %d\n", c_fNm2, c_fSz2);
+    #endif
 
     c_sumSz = c_fSz1 + c_fSz2;
 

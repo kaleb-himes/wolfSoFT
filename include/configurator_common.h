@@ -209,27 +209,192 @@ int cfg_run_config_opts(char*, char*);
  * A function for checking the increase footprint size of wolfSSL when
  * configured with p1
  *
- * @p1 - a default average size IE baseline to compare against.
+ * @p1 - a default baseline to compare against.
  * @p2 - the configure part to test.
  *
  * NOTE: Assumptions are being made about configure options in this function.
- *       Assumption1: configPart contains no leading - and no preceeding enable
+ *       Assumption1: configPart contains no leading `-` and no preceeding
+ *       enable IE to test --enable-tls13 just pass in the string "tls13".
  */
 void cfg_check_increase(int, char*);
+/* same as cfg_check_increase but for --disable-option */
 void cfg_check_decrease(int, char*);
 
+/*
+ * @p1 - a file name to dump the output of "./configure -h"
+ * @p2 - a 2D array to hold the configure options identified when reading the
+ *       file line by line (p1)
+ *
+ * Scrubs the output of "./configure -h" help menu for configure options
+ * to test, will pick up new configure options added to wolfSSL
+ */
 void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
+
+/*
+ * Runs the configure options returned by cfg_scrub_config_out
+ */
 void cfg_bench_all_configs(void);
+
+/*
+ * @p1 - a String identifying the repo to clone
+ *
+ * Clones the repository, there are assumptions being made that the repo
+ * resides at https://github.com/, will not work against repos hosted on
+ * other servers.
+ *
+ * EXAMPLE: cfg_clone_target_repo("wolfssl/wolfssl");
+ * will clone "https://github.com/wolfssl/wolfssl.git"
+ */
 void cfg_clone_target_repo(char*);
+
+/*
+ * @p1 - The node to fill in the C Pre Processor macro
+ * @p2 - The pre-processor macro to put in the node (p1)
+ * @p3 - The length fo the pre-processor macro (p2)
+ *
+ * A function to populate a single node in a doubly linked list. Each node
+ * contains two parts, a pointer to the next node, a pointer to the previous
+ * node, and an array to hold the C Pre Processor macro extracted by either
+ * cfg_pp_string_extract_multi or cfg_pp_string_extract_single
+ */
 PP_OPT* cfg_pp_node_fill_single(PP_OPT*, char*, int);
+
+/*
+ * PRELUDE to the below API's
+ *----------------------------
+ * In the C Programming Language there are two constructs for checking if a Pre
+ * Processor macro is defined, the first construct is:
+ * "#ifdef OPT" or "#ifndef OPT".
+ * The above  construct only supports one following pre-processor macro.
+ * The other construct is:
+ * "#if defined(OPT) [ && / || ] !defined(OPT2)... etc. That construct supports
+ * multiple pre-processor macros per line and sometime across multiple lines.
+ *----------------------------
+ */
+
+/*
+ * @p1 - A 2D array for holding the C Pre-Processors extracted from (p2)
+ * @p2 - The line to extract Pre Processor Macros from
+ * @p3 - The length of p2
+ * @p4 - a variable to be updated letting the calling function know how many
+ *       Pre Processor Macros were found in p2
+ *
+ * cfg_pp_string_extract_multi is for handling lines that contain the key words
+ * "defined". It can handle a line with only a single pre-processor
+ * macro but it can also handle cases such as:
+ * #if defined(THIS) && defined (THAT) \
+ *     && !defined(OTHER)
+ */
 void cfg_pp_string_extract_multi(char(*)[LONGEST_PP_OPT], char*, int, int*);
+
+/*
+ * @p1 - A 2D array for holding the C Pre-Processor extracted from (p2)
+ * @p2 - The line to extract the single Pre Processor Macro from
+ * @p3 - The length of p2
+ *
+ * cfg_pp_string_extract_single is for handling lines that contain the key words
+ * "#ifdef" or "#ifndef". It can handle a line with only a single pre-processor
+ * macro.
+  */
 void cfg_pp_string_extract_single(char(*)[LONGEST_PP_OPT], char*, int);
+
+/*
+ * @p1 - a node from the doubly linked list to be initialized. Will set the
+ * previous to NULL, the next to NULL and zeroize the C Pre-Processor macro
+ * array.
+ *
+ * Will malloc the node if it has not already been malloced.
+ *
+ * RETURN: a pointer to the newly initialized node.
+ *
+ * EXAMPLE:
+ *          struct PP_OPT* myNode = NULL;
+ *          myNode = cfg_pp_init(myNode);
+ */
 PP_OPT* cfg_pp_node_init(PP_OPT*);
+
+/*
+ * @p1 - Any node in the doubly linked list
+ *
+ * This function will use cfg_pp_list_get_head to return to the head of the list
+ * once at the head this function will then traverse the entirety of the list
+ * printing out each pre-processor macro in every node. At the end will also
+ * print the number of pre-processor macros contained in the list.
+ *
+ * RETURN: a pointer to the original node passed in
+ *
+ * EXAMPLE:
+ *          currentNode = cfg_pp_list_iterate(currentNode);
+ *
+ * NOTE: All operations IE backing up to head and iterating over the list are
+ *       done with a COPY of the passed in node so the original node never gets
+ *       changed. You will retain your place in the list when calling this
+ *       function and not getting the return also IE:
+ *       cfg_pp_list_iterate(currentNode); // no return assignment also retains
+ *                                         // your place in the list.
+ */
 PP_OPT* cfg_pp_list_iterate(PP_OPT*);
+
+/*
+ * @p1 - Any node in the doubly linked list
+ *
+ * As described will back up until the head of the list is found.
+ *
+ * RETURN: returns a pointer to the head of the list.
+ */
 PP_OPT* cfg_pp_list_get_head(PP_OPT*);
+
+/*
+ * @p1 - Any node in the doubly linked list
+ *
+ * This function will first back up to the head of the list and the traverse
+ * the entire list freeing each node it encounters until the tail of the list is
+ * free'd
+ */
 void cfg_pp_list_free(PP_OPT*);
+
+/*
+ * @p1 - Any node in the doubly linked list
+ * @p2 - a string containing the C Pre-Processor macro that is being considered
+ *       for addition to the list.
+ *
+ * This function will first back up to the head of the list and traverse the
+ * list one node at a time checking if p2 already exists in the list.
+ * If a node is found that has the same value as p2 then FOUND_DUP is returned.
+ * Otherwise if no node is identified containing the same string the NO_DUP
+ * is returned.
+ *
+ * RETURN: An integer indicating if a duplicate was found or not.
+ */
 int cfg_pp_list_check_for_dup(PP_OPT*, char*);
-void cfg_pp_extract_from_dir(char*);
+
+/*
+ * @p1 - a string containing the name of a directory or the value NULL
+ * @p2 - a string containing the name of a directory or the value NULL
+ * @p3 - a string containing the name of a directory or the value NULL
+ * @p4 - a string containing the name of a directory or the value NULL
+ *
+ * This function assumes that the user will NOT call it in an
+ * invalid manner. The following are not supported where the word "valid"
+ * indicates a valid directory path:
+ *
+ * cfg_pp_extract_from_multi_dirs(NULL, valid, NULL, NULL);     // INVALID
+ * cfg_pp_extract_from_multi_dirs(NULL, NULL, valid, NULL);     // INVALID
+ * cfg_pp_extract_from_multi_dirs(NULL, NULL, NULL, valid);     // INVALID
+ * cfg_pp_extract_from_multi_dirs(NULL, valid, valid2, NULL);   // INVALID
+ * cfg_pp_extract_from_multi_dirs(NULL, NULL, valid, valid2);   // INVALID
+ * cfg_pp_extract_from_multi_dirs(NULL, valid, valid2, valid3); // INVALID
+ *
+ * If called in one of the above ways the NULL directory will fail to open
+ * and the configurator will detect it and abort the program exiting cleanly.
+ *
+ * The following ARE SUPPORTED and will run as expected:
+ *
+ * cfg_pp_extract_from_multi_dirs(valid, NULL, NULL, NULL);       // VALID
+ * cfg_pp_extract_from_multi_dirs(valid, valid2, NULL, NULL);     // VALID
+ * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, NULL);   // VALID
+ * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, valid4); // VALID
+ */
 void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*);
 
-#endif /* C_CONF_COMMN */
+#ensdif /* C_CONF_COMMN */

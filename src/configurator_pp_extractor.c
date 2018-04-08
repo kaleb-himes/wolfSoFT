@@ -1,137 +1,9 @@
 #include <configurator_common.h>
 
-void cfg_pp_extract_from_dir(char* targetDir)
-{
-/* --------- next stuff to get working, port to own API after solved -------- */
-    int     i;
-    int     optsFound     = 0;
-    ssize_t read          = 0;
-    size_t  lengthOfLine  = 0;
-    DIR*    dStream       = 0;
-    FILE*   currFStream   = NULL;
-    char*   line          = NULL;
-    struct  dirent* currF = NULL;
-    struct  PP_OPT* curr  = NULL;
-    char    cmdArray[LONGEST_COMMAND] = {0};
-    char    multiOpts[OPTS_IN_A_LINE][LONGEST_PP_OPT];
-
-    cfg_clear_cmd(cmdArray);
-    cfg_clone_target_repo("wolfssl/wolfssl");
-
-    dStream = opendir(targetDir);
-    if (dStream == NULL) {
-        printf("Failed to open %s directory\n", targetDir);
-        cfg_abort();
-    }
-    curr = cfg_pp_node_init(curr);
-
-
-    while ( (currF = readdir(dStream)) ) {
-
-        if (XSTRNCMP(currF->d_name, ".", 1) == 0)
-            continue;
-        if (XSTRNCMP(currF->d_name, "..", 2) == 0)
-            continue;
-
-        if (getcwd(cmdArray, LONGEST_PATH) == NULL)
-            cfg_abort();
-
-        cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
-        currFStream = fopen(cmdArray, "rb");
-        printf("fileName + path = %s\n", cmdArray);
-
-        cfg_clear_cmd(cmdArray);
-        cfg_build_cmd(cmdArray, "Opening ", currF->d_name, " file", NULL);
-        cfg_assrt_ne_null(currFStream, cmdArray);
-        cfg_clear_cmd(cmdArray);
-        printf("Successfully opened %s\n", currF->d_name);
-
-        while ( (read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
-            if (strstr(line, "#ifdef")) {
-
-                #ifdef DEBUG_CFG
-                  printf("DEBUG: Found \"#ifdef\" in %s\n", line);
-                #endif
-
-                cfg_pp_string_extract_single(multiOpts, line,
-                                             (int) lengthOfLine);
-                curr = cfg_pp_node_fill_single(curr, multiOpts[0],
-                                               (int) XSTRLEN(multiOpts[0]));
-                #ifdef DEBUG_CFG_CHECK_ITERATE
-                  cfg_pp_list_iterate(curr);
-                #endif
-
-            }
-
-            if (strstr(line, "#ifndef")) {
-
-                #ifdef DEBUG_CFG
-                  printf("DEBUG: Found \"ifndef\" in \"%s\"\n", line);
-                #endif
-
-                cfg_pp_string_extract_single(multiOpts, line,
-                                             (int) lengthOfLine);
-                curr = cfg_pp_node_fill_single(curr, multiOpts[0],
-                                               (int) XSTRLEN(multiOpts[0]));
-                #ifdef DEBUG_CFG_CHECK_ITERATE
-                  cfg_pp_list_iterate(curr);
-                #endif
-
-            }
-            if (strstr(line, "defined") && strstr(line, "#if")) {
-
-                #ifdef DEBUG_CFG
-                  printf("DEBUG: Found \"defined\" in \"%s\"\n", line);
-                #endif
-
-                /* call fill single with each string in array */
-                for (i = 0; i < OPTS_IN_A_LINE; i++) {
-                    XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
-                }
-
-                cfg_pp_string_extract_multi(multiOpts, line, (int) lengthOfLine,
-                                                                    &optsFound);
-                for (i = 0; i < optsFound; i++) {
-                    curr = cfg_pp_node_fill_single(curr, multiOpts[i],
-                                                   (int) XSTRLEN(multiOpts[i]));
-                }
-                /* clear out the arrays */
-                for (i = 0; i < OPTS_IN_A_LINE; i++) {
-                    XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
-                }
-                /* reset optsFound */
-                optsFound = 0;
-                #ifdef DEBUG_CFG_CHECK_ITERATE
-                  cfg_pp_list_iterate(curr);
-                #endif
-            }
-        }
-
-        fclose(currFStream);
-    }
-
-    if (line)
-        free(line);
-
-    closedir(dStream);
-
-    #ifdef DEBUG_CFG
-      printf("DEBUG: Checking the list\n");
-    #endif
-
-    if (curr != NULL) {
-        cfg_pp_list_iterate(curr);
-        cfg_pp_list_free(curr);
-    }
-
-    return;
-}
-
 /* allow up to four dirs for now, switch to more dynamic solution at a later
  * time if necessary or required */
 void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 {
-/* --------- next stuff to get working, port to own API after solved -------- */
     int     i, dCounter;
     int     numDirs       = 0;
     int     optsFound     = 0;
@@ -226,7 +98,13 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 
                 }
 
-                if (strstr(line, "defined") && strstr(line, "#if")) {
+                /* if (strstr(line, "defined") && strstr(line, "#if")) { */
+                /* previously using the above check missed lines such as:
+                 * "#if defined(THIS) \
+                 *     && !defined(THAT)"
+                 * The second line was being skipped.
+                 */
+                if (strstr(line, "defined")) {
 
                     #ifdef DEBUG_CFG
                       printf("DEBUG: Found \"defined\" in \"%s\"\n", line);

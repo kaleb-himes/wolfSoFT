@@ -38,8 +38,6 @@
 #define STOP_GOING              1
 #define KEEP_GOING              0
 #define SINGLE_CHAR             1
-#define THIRD_INPUT             2
-#define SECOND_INPUT            1
 #define LONGEST_PATH            4096
 #define MOST_CONFIGS            200
 #define NUM_BINARIES            3
@@ -59,6 +57,14 @@ enum {
     INPUT_ERR
 };
 
+enum {
+    FIRST_INPUT  = 0,
+    SECOND_INPUT = 1,
+    THIRD_INPUT  = 2,
+    FOURTH_INPUT = 3,
+    FIFTH_INPUT  = 4,
+    SIXTH_INPUT  = 5,
+};
 /*----------------------------------------------------------------------------*/
 /* STRUCTS */
 /*----------------------------------------------------------------------------*/
@@ -224,5 +230,6 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT*);
 void cfg_pp_list_free(PP_OPT*);
 int cfg_pp_list_check_for_dup(PP_OPT*, char*);
 void cfg_pp_extract_from_dir(char*);
+void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*);
 
 #endif /* C_CONF_COMMN */

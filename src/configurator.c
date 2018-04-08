@@ -16,6 +16,24 @@ int main(int argc, char** argv)
                     return INPUT_ERR;
                 }
                 cfg_pp_extract_from_dir(argv[THIRD_INPUT]);
+                break;
+            case 'm':
+                {
+                    char* tD1 = NULL;
+                    char* tD2 = NULL;
+                    char* tD3 = NULL;
+                    char* tD4 = NULL;
+                    if (argv[THIRD_INPUT])
+                        tD1 = argv[THIRD_INPUT];
+                    if (argv[FOURTH_INPUT])
+                        tD2 = argv[FOURTH_INPUT];
+                    if (argv[FIFTH_INPUT])
+                        tD3 = argv[FIFTH_INPUT];
+                    if (argv[SIXTH_INPUT])
+                        tD4 = argv[SIXTH_INPUT];
+                    cfg_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4);
+                }
+                break;
             default:
                 printf("TODO: Add Usage\n");
                 printf("Invalid option\n");

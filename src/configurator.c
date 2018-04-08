@@ -15,10 +15,8 @@ int main(int argc, char** argv)
                     printf("Invalid user input\n");
                     return INPUT_ERR;
                 }
-//                cfg_pp_extract_from_multi_dirs(argv[THIRD_INPUT],
-//                                               NULL, NULL, NULL);
-                cfg_pp_extract_from_multi_dirs(NULL, NULL, argv[THIRD_INPUT],
-                                               NULL);
+                cfg_pp_extract_from_multi_dirs(argv[THIRD_INPUT],
+                                               NULL, NULL, NULL);
                 break;
             case 'm':
                 {

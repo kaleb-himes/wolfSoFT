@@ -28,8 +28,11 @@ wolfssl/wolfssl/wolfcrypt > pp-out.txt
 The above would give you all the pre-processor macros found in the directories:
 
 wolfCFG/wolfssl/src
+
 wolfCFG/wolfssl/wolfcrypt/src
+
 wolfCFG/wolfssl/wolfssl/
+
 wolfCFG/wolfssl/wolfssl/wolfcrypt
 
 In addition to just listing the pre-processors found the above also accounts for

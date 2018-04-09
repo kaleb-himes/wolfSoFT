@@ -257,13 +257,20 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
         if (line[i] == LPARAN) {
             /* special case for "#if (defined(THIS) && !defined(THAT))
              * due to the leading LPARAN */
-            if (line[i + 1] == 'd' && line[i+2] == 'e' && line[i+3] == 'f')
+            if (line[i+1] == 'd' && line[i+2] == 'e' && line[i+3] == 'f' &&
+                line[i+4] == 'i')
                 breakCheck = KEEP_GOING;
             else if (line[i+1] == '!' && line[i+2] == 'd' && line[i+3] == 'e'
-                     && line[i+4] == 'f')
+                     && line[i+4] == 'f' && line[i+5] == 'i')
                 breakCheck = KEEP_GOING;
             else
                 breakCheck = STOP_GOING;
+        }
+
+        /* special case for "WOLFSSL_MSG(" blah ... not defined .... blah"); */
+        if (line[i] == 'd' && line[i+1] == 'e' && line[i+2] == 'f' &&
+            line[i+3] == 'i' && ( line[i+7] != '(' && line[i+8] != '(' ) ) {
+            breakCheck = KEEP_GOING;
         }
 
         if (breakCheck == KEEP_GOING)

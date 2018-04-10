@@ -1,4 +1,5 @@
 #include <configurator_common.h>
+#include <configurator_pp_extractor.h>
 
 /* allow up to four dirs for now, switch to more dynamic solution at a later
  * time if necessary or required */
@@ -7,6 +8,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
     int     i, dCounter;
     int     numDirs       = 0;
     int     optsFound     = 0;
+    int     shouldAdd     = 0;
     ssize_t read          = 0;
     size_t  lengthOfLine  = 0;
     char*   targetDir     = NULL;
@@ -75,8 +77,16 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 
                     cfg_pp_string_extract_single(multiOpts, line,
                                                  (int) lengthOfLine);
-                    curr = cfg_pp_node_fill_single(curr, multiOpts[0],
+
+                    shouldAdd = cfg_pp_check_ig(multiOpts[0]);
+
+                    if (shouldAdd == 0) {
+                        curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
+                    } else {
+                        shouldAdd = 0;
+                    }
+
                     #ifdef DEBUG_CFG_CHECK_ITERATE
                       cfg_pp_list_iterate(curr);
                     #endif
@@ -90,8 +100,16 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 
                     cfg_pp_string_extract_single(multiOpts, line,
                                                  (int) lengthOfLine);
-                    curr = cfg_pp_node_fill_single(curr, multiOpts[0],
+
+                    shouldAdd = cfg_pp_check_ig(multiOpts[0]);
+
+                    if (shouldAdd == 0) {
+                        curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
+                    } else {
+                        shouldAdd = 0;
+                    }
+
                     #ifdef DEBUG_CFG_CHECK_ITERATE
                       cfg_pp_list_iterate(curr);
                     #endif
@@ -118,8 +136,13 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
                     cfg_pp_string_extract_multi(multiOpts, line,
                                                 (int) lengthOfLine, &optsFound);
                     for (i = 0; i < optsFound; i++) {
-                        curr = cfg_pp_node_fill_single(curr, multiOpts[i],
+                        shouldAdd = cfg_pp_check_ig(multiOpts[i]);
+                        if (shouldAdd == 0) {
+                            curr = cfg_pp_node_fill_single(curr, multiOpts[i],
                                                    (int) XSTRLEN(multiOpts[i]));
+                        } else {
+                            shouldAdd = 0;
+                        }
                     }
                     /* clear out the arrays */
                     for (i = 0; i < OPTS_IN_A_LINE; i++) {
@@ -435,4 +458,29 @@ int cfg_pp_list_check_for_dup(PP_OPT* in, char* target)
     }
 
     return NO_DUP;
+}
+
+int cfg_pp_check_ig(char* pp_to_check)
+{
+    int i = 0;
+    char* endAlert = "END_OF_IGNORE_PP_OPTS";
+    int lenIn, lenChk, lenCmp;
+
+    lenIn = (int) XSTRLEN(pp_to_check);
+
+    while (XSTRNCMP(endAlert, ignore_pp_opts[i], sizeof(*endAlert)) != 0)
+    {
+        lenChk = (int) XSTRLEN(ignore_pp_opts[i]);
+
+        lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
+
+        if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], lenCmp) == 0) {
+            printf("DEBUG: Return 1, %s and %s match\n", pp_to_check, ignore_pp_opts[i]);
+            return 1;
+        }
+
+        i++;
+    }
+
+    return 0;
 }

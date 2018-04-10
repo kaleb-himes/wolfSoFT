@@ -397,4 +397,6 @@ int cfg_pp_list_check_for_dup(PP_OPT*, char*);
  */
 void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*);
 
+
+int cfg_pp_check_ig(char*);
 #endif /* C_CONF_COMMN */

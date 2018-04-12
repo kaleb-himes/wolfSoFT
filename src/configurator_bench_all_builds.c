@@ -53,14 +53,14 @@ void cfg_bench_all_configs(void)
     cfg_scrub_config_out(configOutFname, allConfigEnables, allConfigDisables);
 
     /* read out the options one at a time and compare to baseline */
-/*    for (i = 0; i < MOST_CONFIGS; i++) {
+    for (i = 0; i < MOST_CONFIGS; i++) {
         if (XSTRNCMP(allConfigEnables[i], "LAST_LINE", 9) == 0) {
             printf("Tested a total of %d enable options\n", i);
             break;
         }
         cfg_check_increase(default_baseline, allConfigEnables[i]);
     }
-*/
+
     for (i = 0; i < MOST_CONFIGS; i++) {
         if (XSTRNCMP(allConfigDisables[i], "LAST_LINE", 9) == 0) {
             printf("Tested a total of %d disable options\n", i);

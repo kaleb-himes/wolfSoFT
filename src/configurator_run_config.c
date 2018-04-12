@@ -120,7 +120,7 @@ void cfg_check_decrease(int baseLine, char* configPart)
     float newNum;
 
     cfg_clear_cmd(c_config);
-    cfg_build_cmd(c_config, DEFAULT_OPTS, " --enable-", configPart, NULL);
+    cfg_build_cmd(c_config, DEFAULT_OPTS, " --disable-", configPart, NULL);
 
     ret = cfg_run_config_opts(NULL, c_config);
 
@@ -138,7 +138,8 @@ void cfg_check_decrease(int baseLine, char* configPart)
         decrease = tmp * 100;
 
         printf("--disable-%s decreases the build by --->"
-               " %04f percent\n", configPart, (double) decrease);
+               " %04f percent\n", configPart,
+               ((double)(-1) * (double) decrease));
     } else {
         printf("--disable-%s had no impact\n", configPart);
     }

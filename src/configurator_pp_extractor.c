@@ -474,7 +474,7 @@ int cfg_pp_check_ig(char* pp_to_check)
 
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
-        if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], lenCmp) == 0) {
+        if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], (size_t) lenCmp) == 0) {
             printf("DEBUG: Return 1, %s and %s match\n", pp_to_check, ignore_pp_opts[i]);
             return 1;
         }

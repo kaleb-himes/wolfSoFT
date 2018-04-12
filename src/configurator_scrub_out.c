@@ -30,17 +30,18 @@ void cfg_scrub_config_out(char* configOutFname,
 
     while ((read = getline(&line, &len, fStream)) != -1) {
 
-        if (  (strstr(line, eOp) || strstr(line, dOp))
-              &&
-              (!strstr(line, defaultOn)) ) {
-            addOpE = 1;
-        } else if ( strstr(line, eOp) || strstr(line, dOp)) {
-            addOpD = 1;
-        } else {
-            printf("--------------------------------------------------\n");
-            printf("This line failed to meet the conditions specified:\n");
-            printf("%s\n", line);
-            printf("--------------------------------------------------\n");
+        if (strstr(line, eOp) || strstr(line, dOp)) {
+
+            if (!strstr(line, defaultOn)) {
+                addOpE = 1;
+            } else if ( strstr(line, defaultOn) || strstr(line, defaultOff)) {
+                addOpD = 1;
+            } else {
+                printf("--------------------------------------------------\n");
+                printf("This line failed to meet the conditions specified:\n");
+                printf("%s\n", line);
+                printf("--------------------------------------------------\n");
+            }
         }
 
         if (addOpE || addOpD) {

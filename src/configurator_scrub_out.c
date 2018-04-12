@@ -32,17 +32,20 @@ void cfg_scrub_config_out(char* configOutFname,
 
         if (  (strstr(line, eOp) || strstr(line, dOp))
               &&
-              (!strstr(line, defaultOn))
-           )
-        {
+              (!strstr(line, defaultOn)) ) {
             addOpE = 1;
-        } else if (( strstr(line, eOp) || strstr(line, dOp))
+        } else
+            printf("Not adding: %s to enables\n", line);
+
+        if (( strstr(line, eOp) || strstr(line, dOp))
                    &&
-                   (strstr(line, defaultOff))
-                   )
-        {
+                   (strstr(line, defaultOff)) ) {
             addOpD = 1;
-        } else if (strstr(line, eOp) || strstr(line, dOp)) {
+        } else
+            printf("Not adding: %s to disables\n", line);
+
+        if ( (strstr(line, eOp) || strstr(line, dOp))
+             && !addOpE && !addOpD) {
             printf("This line failed to meet the conditions specified:\n"
                    "\"%s\"\n", line);
         }

@@ -223,12 +223,14 @@ void cfg_check_decrease(int, char*);
 /*
  * @p1 - a file name to dump the output of "./configure -h"
  * @p2 - a 2D array to hold the configure options identified when reading the
- *       file line by line (p1)
+ *       file line by line (p1) to be tested with enable
+ * @p3 - same as p2 but to be tested with disable
  *
  * Scrubs the output of "./configure -h" help menu for configure options
  * to test, will pick up new configure options added to wolfSSL
  */
-void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG]);
+void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG],
+                          char(*)[LONGEST_CONFIG]);
 
 /*
  * Runs the configure options returned by cfg_scrub_config_out

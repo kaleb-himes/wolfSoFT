@@ -2,16 +2,20 @@
 #include <configurator_scrub_out.h>
 
 void cfg_scrub_config_out(char* configOutFname,
-                      char(*allConfigSingles)[LONGEST_CONFIG])
+                          char(*allConfigEnables)[LONGEST_CONFIG],
+                          char(*allConfigDisables)[LONGEST_CONFIG])
 {
     FILE* fStream;
     char* line = NULL;
     char truncLine[LONGEST_CONFIG];
-    int i = 0, j;
-    int addOp;
+    int i = 0, j, k = 0;
+    int addOpE = 0;
+    int addOpD = 0;
 
     char* eOp = "--enable-";
     char* dOp = "--disable-";
+    char* defaultOn = "enabled)";
+    char* defaultOff = "disabled)";
     char* lastLine = "LAST_LINE";
 
     size_t len = 0;
@@ -26,28 +30,53 @@ void cfg_scrub_config_out(char* configOutFname,
 
     while ((read = getline(&line, &len, fStream)) != -1) {
 
-        if (strstr(line, eOp) || strstr(line, dOp)) {
+        if (  (strstr(line, eOp) || strstr(line, dOp))
+              &&
+              (!strstr(line, defaultOn))
+           )
+        {
+            addOpE = 1;
+        } else if (( strstr(line, eOp) || strstr(line, dOp))
+                   &&
+                   (strstr(line, defaultOff))
+                   )
+        {
+            addOpD = 1;
+        } else if (strstr(line, eOp) || strstr(line, dOp)) {
+            printf("This line failed to meet the conditions specified:\n"
+                   "\"%s\"\n", line);
+        }
+
+        if (addOpE || addOpD) {
 
             cfg_truncate_trim_line(line, truncLine);
-            addOp = 1;
 
             for (j = 0; j < MOST_IGNORES; j++) {
                 if (XSTRNCMP(truncLine, ignore_opts[j],
                     XSTRLEN(truncLine)) == 0) {
-                    addOp = 0;
+                    if (addOpE)
+                        addOpE = 0;
+                    if (addOpD)
+                        addOpD = 0;
                     break;
                 }
             }
 
-            if (addOp == 1) {
-                XSTRNCAT(allConfigSingles[i], truncLine, XSTRLEN(truncLine));
+            if (addOpE == 1) {
+                XSTRNCAT(allConfigEnables[i], truncLine, XSTRLEN(truncLine));
                 i++;
+                addOpE = 0;
+            } else if (addOpD) {
+                XSTRNCAT(allConfigDisables[k], truncLine, XSTRLEN(truncLine));
+                k++;
+                addOpD = 0;
             }
 
             XMEMSET(truncLine, 0, LONGEST_CONFIG);
         }
     }
-    XSTRNCAT(allConfigSingles[i], lastLine, XSTRLEN(lastLine));
+    XSTRNCAT(allConfigEnables[i], lastLine, XSTRLEN(lastLine));
+    XSTRNCAT(allConfigDisables[k], lastLine, XSTRLEN(lastLine));
 
     fclose(fStream);
     if (line)

@@ -6,7 +6,8 @@ void cfg_bench_all_configs(void)
     char c_cmd[LONGEST_COMMAND];
     char* configOutFname = "config-out.txt";
     int default_baseline = 0;
-    char allConfigSingles[MOST_CONFIGS][LONGEST_CONFIG];
+    char allConfigEnables[MOST_CONFIGS][LONGEST_CONFIG];
+    char allConfigDisables[MOST_CONFIGS][LONGEST_CONFIG];
     int i;
 
     cfg_clear_cmd(c_pwd);
@@ -45,20 +46,26 @@ void cfg_bench_all_configs(void)
     /* scrub the file for configure options */
     /* store configure options in a char[][] */
     for (i = 0; i < MOST_CONFIGS; i++) {
-        XMEMSET(allConfigSingles[i], 0, LONGEST_CONFIG);
+        XMEMSET(allConfigEnables[i], 0, LONGEST_CONFIG);
+        XMEMSET(allConfigDisables[i], 0, LONGEST_CONFIG);
     }
 
-    cfg_scrub_config_out(configOutFname, allConfigSingles);
+    cfg_scrub_config_out(configOutFname, allConfigEnables, allConfigDisables);
     /* read out the options one at a time and compare to baseline */
     for (i = 0; i < MOST_CONFIGS; i++) {
-        if (XSTRNCMP(allConfigSingles[i], "LAST_LINE", 9) == 0) {
-            printf("aborting at %d\n", i);
+        if (XSTRNCMP(allConfigEnables[i], "LAST_LINE", 9) == 0) {
+            printf("Tested a total of %d enable options\n", i);
             break;
         }
-        /* TODO: if default on don't run */
-        cfg_check_increase(default_baseline, allConfigSingles[i]);
-        /* TODO: if default off don't run */
-        cfg_check_decrease(default_baseline, allConfigSingles[i]);
+        cfg_check_increase(default_baseline, allConfigEnables[i]);
+    }
+
+    for (i = 0; i < MOST_CONFIGS; i++) {
+        if (XSTRNCMP(allConfigDisables[i], "LAST_LINE", 9) == 0) {
+            printf("Tested a total of %d enable options\n", i);
+            break;
+        }
+        cfg_check_decrease(default_baseline, allConfigDisables[i]);
     }
 
 }

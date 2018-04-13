@@ -5,6 +5,10 @@
  * time if necessary or required */
 void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 {
+    #ifdef DEBUG_CFG
+      int     lineCount     = 0;
+    #endif
+
     int     i, dCounter;
     int     numDirs       = 0;
     int     optsFound     = 0;
@@ -69,9 +73,13 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 
             while ((read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
 
-                if (strstr(line, "#ifdef")) {
+                #ifdef DEBUG_CFG
+                  lineCount++;
+                #endif
 
+                if (strstr(line, "#ifdef")) {
                     #ifdef DEBUG_CFG
+                      printf("lineCount = %d\n", lineCount);
                       printf("DEBUG: Found \"#ifdef\" in %s\n", line);
                     #endif
 
@@ -95,6 +103,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
                 if (strstr(line, "#ifndef")) {
 
                     #ifdef DEBUG_CFG
+                      printf("lineCount = %d\n", lineCount);
                       printf("DEBUG: Found \"ifndef\" in \"%s\"\n", line);
                     #endif
 
@@ -157,6 +166,10 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
 
                 }
             } /* end file read while loop */
+
+            #ifdef DEBUG_CFG
+              lineCount = 0;
+            #endif
 
             fclose(currFStream);
         } /* end directory read while loop */
@@ -229,6 +242,7 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
     int j = 0;
     int checkForSpaceAfter = 0;
 
+
     for (i = 0; i < lSz; i++) {
 
         if (line[i] == NLRET || line[i] == CRET) {
@@ -245,7 +259,8 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
             }
         }
 
-        if (line[i] == HASHTAG) {
+        if (line[i] == HASHTAG && line[i+1] == 'i' && line[i+2] == 'f') {
+            XMEMSET(out[0], 0, sizeof(out[0]));
             checkForSpaceAfter = 1;
             if (strstr(line, "#ifdef"))
                 i+=6;
@@ -260,6 +275,7 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
 
     #ifdef DEBUG_CFG
       printf("DEBUG: extract single got %s\n", out[0]);
+      printf("We were processing line: \"%s\"\n", line);
     #endif
 }
 
@@ -475,7 +491,9 @@ int cfg_pp_check_ig(char* pp_to_check)
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
         if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], (size_t) lenCmp) == 0) {
+#ifdef DEBUG_CFG
             printf("DEBUG: Return 1, %s and %s match\n", pp_to_check, ignore_pp_opts[i]);
+#endif
             return 1;
         }
 

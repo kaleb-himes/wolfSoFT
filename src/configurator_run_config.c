@@ -104,8 +104,8 @@ void cfg_check_increase(int baseLine, char* configPart)
         tmp = increase / original;
         increase = tmp * 100;
 
-        printf("--enable-%s increases the build by ---> "
-               " %04f percent\n", configPart, (double) increase);
+        printf("[--enable-%s]\t\tFootprint Increase: [+"
+               "%04f] (Percent)\n", configPart, (double) increase);
     } else {
         printf("--enable-%s had no impact\n", configPart);
     }
@@ -137,8 +137,8 @@ void cfg_check_decrease(int baseLine, char* configPart)
         tmp = decrease / original;
         decrease = tmp * 100;
 
-        printf("--disable-%s decreases the build by --->"
-               " %04f percent\n", configPart,
+        printf("[--disable-%s]\t\tFootprint Decrease: [-"
+               "%04f] (Percent)\n", configPart,
                ((double)(-1) * (double) decrease));
     } else {
         printf("--disable-%s had no impact\n", configPart);

@@ -32,7 +32,7 @@ void cfg_bench_all_configs(void)
 
     /* get a baseline for comparison */
     printf("Configuring for baseline comparison...\n");
-    default_baseline = cfg_run_config_opts(c_pwd, DEFAULT_CONFIG);
+    default_baseline = cfg_run_config_opts(c_pwd, DEFAULT_OPTS);
 
     /* run configure to output the help menu */
     /* echo the result to file */

@@ -31,7 +31,6 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
     cfg_check_ret_nlte(numDirs, 0, "no valid directory strings");
 
     cfg_clear_cmd(cmdArray);
-    cfg_clone_target_repo("wolfssl/wolfssl");
 
     curr = cfg_pp_node_init(curr);
 

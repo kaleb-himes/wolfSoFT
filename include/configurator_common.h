@@ -31,7 +31,10 @@
 #define LOWER_Z    0x7A /* lowercase z      = 'z'  */
 #define HASHTAG    0x23 /* the hashtag      = '#'  */
 #define BACKSLASH  0x5C /* the escape char  = '\'  */
-
+#define UPPER_Y    0x59 /* uppercase Y      = 'Y'  */
+#define UPPER_N    0x4E /* uppercase N      = 'N'  */
+#define LOWER_Y    0x79 /* lowercase y      = 'y'  */
+#define LOWER_N    0x6E /* lowercase n      = 'n'  */
 
 #define NO_DUP                  0
 #define FOUND_DUP               1
@@ -401,4 +404,8 @@ void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*);
 
 
 int cfg_pp_check_ig(char*);
+void cfg_do_custom_build(char*);
+void cfg_custom_build_usage(void);
+int cfg_are_we_cloning(void);
+
 #endif /* C_CONF_COMMN */

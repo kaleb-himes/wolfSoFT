@@ -1,6 +1,6 @@
 #include <configurator_common.h>
 
-void cfg_bench_all_configs(void)
+void cfg_bench_all_configs()
 {
     char c_pwd[LONGEST_PATH];
     char c_cmd[LONGEST_COMMAND];
@@ -12,8 +12,6 @@ void cfg_bench_all_configs(void)
 
     cfg_clear_cmd(c_pwd);
     cfg_clear_cmd(c_cmd);
-
-    cfg_clone_target_repo("wolfssl/wolfssl");
 
     /* get path to working directory */
     if (getcwd(c_pwd, LONGEST_PATH) == NULL)

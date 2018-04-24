@@ -43,6 +43,7 @@ program_LIBRARIES :=\n\
 \n\
 program_INCLUDE_DIRS += ./\n\
 program_INCLUDE_DIRS += ./wolfssl/\n\
+program_LIBRARIES += pthread\n\
 \n\
 CPPFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))\n\
 CPPFLAGS += -Werror\n\
@@ -58,7 +59,7 @@ LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))\n\
 all: $(program_NAME)\n\
 \n\
 $(program_NAME): $(program_OBJS)\n\
-\t$(LINK.cc) $(program_OBJS) -o $(program_NAME)\n\
+\t$(LINK.cc) -pthread $(program_OBJS) -o $(program_NAME)\n\
 \n\
 clean:\n\
 \t@- $(RM) $(program_NAME)\n\

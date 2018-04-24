@@ -2459,6 +2459,7 @@ int aeskeywrap_test(void)
     return 0;
 }
 #endif /* HAVE_AES_KEYWRAP */
+#endif /* NO_AES */
 
 #ifdef HAVE_STACK_SIZE
 THREAD_RETURN WOLFSSL_THREAD wolfcrypt_test(void* args)
@@ -2519,7 +2520,6 @@ int wolfcrypt_test(void* args)
     EXIT_TEST(ret);
 }
 
-#endif /* NO_AES */
 int main (void)
 {
     func_args args;

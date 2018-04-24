@@ -51,6 +51,9 @@
 #define LONGEST_COMMAND         4096
 #define CONFIG_NOT_SUPPORTED    256
 #define LONGEST_LINE            80
+#define MOST_SETTINGS           80
+#define LONGEST_H_NAME          25
+#define LONGEST_S_NAME          25
 /*----------------------------------------------------------------------------*/
 /* ENUMS */
 /*----------------------------------------------------------------------------*/
@@ -407,5 +410,26 @@ int cfg_pp_check_ig(char*);
 void cfg_do_custom_build(char*);
 void cfg_custom_build_usage(void);
 int cfg_are_we_cloning(void);
+void cfg_setup_traditional(char*);
+void cfg_copy_crypto_hdr(char*, char*, char*);
+void cfg_copy_crypto_src(char*, char*, char*);
+void cfg_copy_tls_hdr(char*, char*, char*);
+void cfg_copy_tls_src(char*, char*, char*);
+void cfg_create_makefile(char*);
+void cfg_build_solution(char*);
+void cfg_copy_test_app(char*, char*);
+void cfg_create_user_settings(char*);
+void cfg_write_user_settings(char*, char*);
+void cfg_close_user_settings(char*);
+FILE* cfg_open_file_append_mode(char*);
+void cfg_check_fwrite_success(size_t, size_t);
+void cfg_build_aes_only(void);
+void cfg_build_rsa_pss_pkcs(char*, char*);
+void cfg_build_custom_specific(char*, char*,
+                               char(*)[LONGEST_H_NAME], int,
+                               char(*)[LONGEST_S_NAME], int,
+                               char(*)[LONGEST_H_NAME], int,
+                               char(*)[LONGEST_S_NAME], int,
+                               char(*)[LONGEST_PP_OPT]);
 
 #endif /* C_CONF_COMMN */

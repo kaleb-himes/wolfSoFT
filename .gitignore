@@ -1,5 +1,13 @@
 run
-/src/*.o
+*.o
+*.swp
+*cfg-custom-test.c
+*cfg_custom_test.c
 config-out.txt
 wolfssl/
 tags
+aes_only/
+rsa_pss_pkcs/
+rsa_pss_pkcs_sv_ned/
+sha256_ecc/
+cfg-custom-test-apps/test.c

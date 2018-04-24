@@ -29,3 +29,18 @@
 #./run b
 
 #----#
+
+
+# create a custom build that only includes a subset of wolfSSL functionality
+#
+# current custom supported builds are:
+# aes_only
+#
+#---- Uncomment to run #
+
+#./run c aes_only
+#./run c rsa_pss_pkcs
+#./run c rsa_pss_pkcs_sv_ned
+#./run c sha256_ecc
+
+#----#

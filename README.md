@@ -1,4 +1,4 @@
-Alpha version 0.1
+Alpha version 0.2
 
 Use provided makefile to build sources.
 Execute program with ./run <args>
@@ -94,4 +94,33 @@ and a support engineer can check the output log to answer customer questions of
 this nature.
 
 --------------------------------------------------------------------------------
+
+```
+./run c <custom build name>
+```
+
+Running with the ```c``` option will offer to clone the wolfSSL repository.
+You can select "Y" or "N" (not case sensitive) where yes sais do the clone and
+no means do not clone.
+
+Then the c option will invoke the custom build api with the <custom build name>
+specified. For example if you wish to ONLY build the necessary source files to
+get an application that just provides access to the wolfCrypt aes API's and
+nothing else you can do: ```./run c aes_only```.
+
+Currently only four custom builds are supported but more will be added over time
+
+```
+aes_only
+rsa_pss_pkcs
+rsa_pss_pkcs_sv_ned
+sha256_ecc
+```
+
+aes_only = self descriptive
+rsa_pss_pkcs = PKCS v1.5 and RSA_PSS support
+rsa_pss_pkcs_sv_ned = same as above but the test app only tests sign/verify ops
+                      and even though configured does not test Encrypt/Decrypt
+                      ops.
+sha256_ecc = sha256 and ecc support
 

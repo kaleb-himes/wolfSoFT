@@ -50,19 +50,19 @@ static char rsaPssPkcsCryptHeaders[RSA_PSS_PKCS_C_HNUM][LONGEST_H_NAME] = {
 };
 
 static char rsaPssPkcsCryptSrc[RSA_PSS_PKCS_C_SNUM][LONGEST_S_NAME] = {
-  {"rsa.c"},
-  {"misc.c"},
-  {"signature.c"},
-  {"tfm.c"},
-  {"asm.c"},
-  {"wolfmath.c"},
-  {"asn.c"},
-  {"coding.c"},
-  {"random.c"},
-  {"hash.c"},
-  {"sha256.c"},
-  {"memory.c"},
-  {"wc_port.c"},
+    {"rsa.c"},
+    {"misc.c"},
+    {"signature.c"},
+    {"tfm.c"},
+    {"asm.c"},
+    {"wolfmath.c"},
+    {"asn.c"},
+    {"coding.c"},
+    {"random.c"},
+    {"hash.c"},
+    {"sha256.c"},
+    {"memory.c"},
+    {"wc_port.c"},
 };
 
 static char rsaPssPkcsTlsHeaders[RSA_PSS_PKCS_T_HNUM][LONGEST_H_NAME] = {

@@ -2,6 +2,8 @@
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/wolfcrypt/error-crypt.h>
 #include <wolfssl/wolfcrypt/wc_encrypt.h>
+#include <wolfssl/wolfcrypt/mem_track.h>
+
 #define HAVE_AES_CBC
 
 #define HEAP_HINT NULL
@@ -2458,11 +2460,18 @@ int aeskeywrap_test(void)
 }
 #endif /* HAVE_AES_KEYWRAP */
 
-
-#endif /* NO_AES */
-int main (void)
+#ifdef HAVE_STACK_SIZE
+THREAD_RETURN WOLFSSL_THREAD wolfcrypt_test(void* args)
+#else
+int wolfcrypt_test(void* args)
+#endif
 {
     int ret;
+
+#ifdef WOLFSSL_TRACK_MEMORY
+    InitMemoryTracker();
+#endif
+
 #ifndef NO_AES
     if ( (ret = aes_test()) != 0)
         return err_sys("AES      test failed!\n", ret);
@@ -2502,6 +2511,25 @@ int main (void)
         printf( "AES Key Wrap test passed!\n");
 #endif
 #endif
-    return ret;
+
+#ifdef WOLFSSL_TRACK_MEMORY
+    ShowMemoryTracker();
+#endif
+
+    EXIT_TEST(ret);
+}
+
+#endif /* NO_AES */
+int main (void)
+{
+    func_args args;
+
+    #ifdef HAVE_STACK_SIZE
+        StackSizeCheck(&args, wolfcrypt_test);
+    #else
+        wolfcrypt_test(&args);
+    #endif
+
+    return 0;
 }
 

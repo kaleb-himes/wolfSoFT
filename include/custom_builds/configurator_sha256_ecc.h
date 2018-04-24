@@ -122,6 +122,7 @@ static char sha256EccSettings[MOST_SETTINGS][LONGEST_PP_OPT] = {
 {"NO_DES3"},
 {"NO_AES"},
 {"NO_RC4"},
+{"TFM_NO_ASM"},
 };
 
 

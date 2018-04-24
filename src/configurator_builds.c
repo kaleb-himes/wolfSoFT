@@ -340,6 +340,7 @@ void cfg_create_makefile(char* dst)
     FILE* fStream;
     char c_cmd[LONGEST_COMMAND];
 
+    printf("Creating a makefile in %s directory.\n", dst);
     cfg_clear_cmd(c_cmd);
     cfg_clear_cmd(fName);
     cfg_build_cmd(fName, "Makefile_", dst, NULL, NULL);
@@ -387,6 +388,8 @@ void cfg_create_user_settings(char* dst)
     FILE* fStream;
     char c_cmd[LONGEST_COMMAND];
     char fName[LONGEST_COMMAND];
+
+    printf("Creating custom user_settings.h in %s directory.\n", dst);
 
     cfg_clear_cmd(c_cmd);
     cfg_clear_cmd(fName);

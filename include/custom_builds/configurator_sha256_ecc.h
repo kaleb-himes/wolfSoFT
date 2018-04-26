@@ -40,89 +40,96 @@ cfg_build_custom_specific(SHA256_ECC_TEST_FILE,
 #include "configurator_common.h"
 
 /* Crypto */
-#define SHA256_ECC_C_HNUM 28 /* number of crypto header files */
+#define SHA256_ECC_C_HNUM 29 /* number of crypto header files */
 #define SHA256_ECC_C_SNUM 13 /* number of crypto source files */
 
 /* TLS */
-#define SHA256_ECC_T_HNUM 1  /* number of tls header files */
+#define SHA256_ECC_T_HNUM 5  /* number of tls header files */
 #define SHA256_ECC_T_SNUM 0  /* number of TLS source files */
 
 #define SHA256_ECC_TEST_FILE "cfg_sha256_ecc.c" //example myCustom.c
 #define SHA256_ECC_DST "sha256_ecc" // example myCustomDir
 
 static char sha256EccCryptHeaders[SHA256_ECC_C_HNUM][LONGEST_H_NAME] = {
-{"settings.h"},
-{"visibility.h"},
-{"ecc.h"},
-{"types.h"},
-{"wc_port.h"},
-{"memory.h"},
-{"random.h"},
-{"sha256.h"},
-{"error-crypt.h"},
-{"cpuid.h"},
-{"logging.h"},
-{"misc.h"},
-{"integer.h"},
-{"tfm.h"},
-{"wolfmath.h"},
-{"asn.h"},
-{"asn_public.h"},
-{"signature.h"},
-{"hash.h"},
-{"coding.h"},
-{"md2.h"},
-{"hmac.h"},
-{"pwdbased.h"},
-{"des3.h"},
-{"aes.h"},
-{"wc_encrypt.h"},
-{"chacha.h"},
-{"arc4.h"},
+    {"settings.h"},
+    {"visibility.h"},
+    {"ecc.h"},
+    {"types.h"},
+    {"wc_port.h"},
+    {"memory.h"},
+    {"random.h"},
+    {"sha256.h"},
+    {"error-crypt.h"},
+    {"cpuid.h"},
+    {"logging.h"},
+    {"misc.h"},
+    {"integer.h"},
+    {"tfm.h"},
+    {"wolfmath.h"},
+    {"asn.h"},
+    {"asn_public.h"},
+    {"signature.h"},
+    {"hash.h"},
+    {"coding.h"},
+    {"md2.h"},
+    {"hmac.h"},
+    {"pwdbased.h"},
+    {"des3.h"},
+    {"aes.h"},
+    {"wc_encrypt.h"},
+    {"chacha.h"},
+    {"arc4.h"},
+    {"mem_track.h"},
 };
 
 static char sha256EccCryptSrc[SHA256_ECC_C_SNUM][LONGEST_S_NAME] = {
-{"ecc.c"},
-{"sha256.c"},
-{"misc.c"},
-{"signature.c"},
-{"tfm.c"},
-{"asm.c"},
-{"asn.c"},
-{"coding.c"},
-{"wolfmath.c"},
-{"random.c"},
-{"hash.c"},
-{"wc_port.c"},
-{"memory.c"},
+    {"ecc.c"},
+    {"sha256.c"},
+    {"misc.c"},
+    {"signature.c"},
+    {"tfm.c"},
+    {"asm.c"},
+    {"asn.c"},
+    {"coding.c"},
+    {"wolfmath.c"},
+    {"random.c"},
+    {"hash.c"},
+    {"wc_port.c"},
+    {"memory.c"},
 };
 
 static char sha256EccTlsHeaders[SHA256_ECC_T_HNUM][LONGEST_H_NAME] = {
-{"certs_test.h"},
+    {"certs_test.h"},
+    {"ssl.h"},
+    {"version.h"},
+    {"wolfio.h"},
+    {"test.h"},
 };
 
 static char sha256EccTlsSrc[SHA256_ECC_T_SNUM][LONGEST_S_NAME] = {
 };
 
 static char sha256EccSettings[MOST_SETTINGS][LONGEST_PP_OPT] = {
-{"NO_RSA"},
-{"HAVE_ECC"},
-{"USE_FAST_MATH"},
-{"ECC_TIMING_RESISTANT"},
-{"TFM_TIMING_RESISTANT"},
-{"USE_CERT_BUFFERS_256"},
-{"NO_DH"},
-{"NO_DSA"},
-{"NO_SHA"},
-{"NO_MD5"},
-{"NO_MD4"},
-{"WOLFCRYPT_ONLY"},
-{"NO_ASM"},
-{"NO_PWDBASED"},
-{"NO_DES3"},
-{"NO_AES"},
-{"NO_RC4"},
-{"TFM_NO_ASM"},
+    {"NO_RSA"},
+    {"HAVE_ECC"},
+    {"USE_FAST_MATH"},
+    {"ECC_TIMING_RESISTANT"},
+    {"TFM_TIMING_RESISTANT"},
+    {"USE_CERT_BUFFERS_256"},
+    {"NO_DH"},
+    {"NO_DSA"},
+    {"NO_SHA"},
+    {"NO_MD5"},
+    {"NO_MD4"},
+    {"WOLFCRYPT_ONLY"},
+    {"NO_ASM"},
+    {"NO_PWDBASED"},
+    {"NO_DES3"},
+    {"NO_AES"},
+    {"NO_RC4"},
+    {"TFM_NO_ASM"},
+    {"HAVE_STACK_SIZE"},
+    {"WOLFSSL_TRACK_MEMORY"},
 };
 
 

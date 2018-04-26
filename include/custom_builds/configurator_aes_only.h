@@ -54,30 +54,30 @@ static char aesOnlyTlsHeaders[AES_ONLY_T_HNUM][LONGEST_H_NAME] = {
 static char aesOnlyTlsSrc[AES_ONLY_T_SNUM][LONGEST_S_NAME];
 
 static char aesOnlySettings[MOST_SETTINGS][LONGEST_PP_OPT] = {
-{"NO_RSA"},
-{"NO_SHA"},
-{"WOLFCRYPT_ONLY"},
-{"NO_DSA"},
-{"NO_CODING"},
-{"NO_RABBIT"},
-{"NO_HMAC"},
-{"NO_PWDBASED"},
-{"NO_SHA256"},
-{"WC_NO_HASHDRBG"},
-{"WC_NO_RNG"},
-{"CUSTOM_RAND_GENERATE_BLOCK"}, // This should not be required if WC_NO_HASHDRBG
-                                //TODO: Why is random.h still failing check on
-                                // line 96 without this setting ????
-{"NO_DES3"},
-{"NO_DES"},
-{"NO_MD5"},
-{"NO_MD4"},
-{"NO_RC4"},
-{"NO_ASN"},
-{"NO_DH"},
-{"NO_HC128"},
-//{"HAVE_STACK_SIZE"},
-//{"WOLFSSL_TRACK_MEMORY"},
+    {"NO_RSA"},
+    {"NO_SHA"},
+    {"WOLFCRYPT_ONLY"},
+    {"NO_DSA"},
+    {"NO_CODING"},
+    {"NO_RABBIT"},
+    {"NO_HMAC"},
+    {"NO_PWDBASED"},
+    {"NO_SHA256"},
+    {"WC_NO_HASHDRBG"},
+    {"WC_NO_RNG"},
+    {"CUSTOM_RAND_GENERATE_BLOCK"}, // This should not be required if WC_NO_HASHDRBG
+                                    //TODO: Why is random.h still failing check on
+                                    // line 96 without this setting ????
+    {"NO_DES3"},
+    {"NO_DES"},
+    {"NO_MD5"},
+    {"NO_MD4"},
+    {"NO_RC4"},
+    {"NO_ASN"},
+    {"NO_DH"},
+    {"NO_HC128"},
+    {"HAVE_STACK_SIZE"},
+    {"WOLFSSL_TRACK_MEMORY"},
 };
 
 #endif /* AESO_H */

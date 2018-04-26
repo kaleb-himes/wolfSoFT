@@ -4,6 +4,7 @@
 #include "custom_builds/configurator_rsa_pss_pkcs.h"
 #include "custom_builds/configurator_sha256_ecc.h"
 #include "custom_builds/configurator_sha512_only.h"
+#include "custom_builds/configurator_ecc_only.h"
 
 void cfg_do_custom_build(char* option)
 {
@@ -64,7 +65,6 @@ void cfg_do_custom_build(char* option)
                                   sha256EccSettings);
     }
 /*----------------------------------------------------------------------------*/
-
 /* SHA512 Only */
 /*----------------------------------------------------------------------------*/
     else if (XSTRNCMP(SHA512_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
@@ -77,6 +77,21 @@ void cfg_do_custom_build(char* option)
                                   sha512OnlyTlsHeaders, SHA512_ONLY_T_HNUM,
                                   sha512OnlyTlsSrc, SHA512_ONLY_T_SNUM,
                                   sha512OnlySettings);
+
+    }
+/*----------------------------------------------------------------------------*/
+/* ECC Only */
+/*----------------------------------------------------------------------------*/
+    else if (XSTRNCMP(ECC_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
+        printf("Alright! Building %s!\n", ECC_ONLY_DST);
+
+        cfg_build_custom_specific(ECC_ONLY_TEST_FILE,
+                                  ECC_ONLY_DST,
+                                  eccOnlyCryptHeaders, ECC_ONLY_C_HNUM,
+                                  eccOnlyCryptSrc, ECC_ONLY_C_SNUM,
+                                  eccOnlyTlsHeaders, ECC_ONLY_T_HNUM,
+                                  eccOnlyTlsSrc, ECC_ONLY_T_SNUM,
+                                  eccOnlySettings);
 
     }
 /*----------------------------------------------------------------------------*/

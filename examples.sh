@@ -43,5 +43,6 @@
 #./run c rsa_pss_pkcs_sv_ned
 #./run c sha256_ecc
 #./run c sha512_only
+#./run c ecc_only
 
 #----#

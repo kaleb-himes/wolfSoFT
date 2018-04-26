@@ -45,7 +45,7 @@
 #include "configurator_common.h"
 
 /* Crypto */
-#define SHA512_ONLY_C_HNUM 21 /* number of crypto header files */
+#define SHA512_ONLY_C_HNUM 22 /* number of crypto header files */
 #define SHA512_ONLY_C_SNUM 10 /* number of crypto source files */
 
 /* TLS */
@@ -77,6 +77,7 @@ static char sha512OnlyCryptHeaders[SHA512_ONLY_C_HNUM][LONGEST_H_NAME] = {
     {"mem_track.h"},
     {"asn_public.h"},
     {"random.h"},
+    {"aes.h"},
 };
 
 static char sha512OnlyCryptSrc[SHA512_ONLY_C_SNUM][LONGEST_S_NAME] = {

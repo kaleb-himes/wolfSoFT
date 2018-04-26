@@ -76,8 +76,8 @@ static char aesOnlySettings[MOST_SETTINGS][LONGEST_PP_OPT] = {
 {"NO_ASN"},
 {"NO_DH"},
 {"NO_HC128"},
-{"HAVE_STACK_SIZE"},
-{"WOLFSSL_TRACK_MEMORY"},
+//{"HAVE_STACK_SIZE"},
+//{"WOLFSSL_TRACK_MEMORY"},
 };
 
 #endif /* AESO_H */

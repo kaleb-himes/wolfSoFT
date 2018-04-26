@@ -3,6 +3,7 @@
 #include "custom_builds/configurator_aes_only.h"
 #include "custom_builds/configurator_rsa_pss_pkcs.h"
 #include "custom_builds/configurator_sha256_ecc.h"
+#include "custom_builds/configurator_sha512_only.h"
 
 void cfg_do_custom_build(char* option)
 {
@@ -10,7 +11,7 @@ void cfg_do_custom_build(char* option)
 /* Aes Only please */
 /*----------------------------------------------------------------------------*/
     if (XSTRNCMP(AES_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
-        printf("Alright! Building AES Only!\n");
+        printf("Alright! Building %s!\n", AES_ONLY_DST);
 
         cfg_build_custom_specific(AES_ONLY_TEST_FILE, AES_ONLY_DST,
                                   aesOnlyCryptHeaders, AES_ONLY_C_HNUM,
@@ -20,16 +21,10 @@ void cfg_do_custom_build(char* option)
                                   aesOnlySettings);
     }
 /*----------------------------------------------------------------------------*/
-/* SHA512 Only please  */
-/*----------------------------------------------------------------------------*/
-    else if (XSTRNCMP("sha512_only", option, (int)XSTRLEN(option)) == 0) {
-        printf("Alright! Building SHA512 Only!\n");
-    }
-/*----------------------------------------------------------------------------*/
 /* RSA PSS PKCS */
 /*----------------------------------------------------------------------------*/
     else if (XSTRNCMP(RSA_PSS_PKCS_DST, option, (int) XSTRLEN(option)) == 0) {
-        printf("Alright! Build RSA PSS and RSA PKCS!\n");
+        printf("Alright! Building %s!\n", RSA_PSS_PKCS_DST);
 
         cfg_build_custom_specific(RSA_PSS_PKCS_TEST_FILE, RSA_PSS_PKCS_DST,
                                   rsaPssPkcsCryptHeaders, RSA_PSS_PKCS_C_HNUM,
@@ -43,7 +38,7 @@ void cfg_do_custom_build(char* option)
 /*----------------------------------------------------------------------------*/
     else if (XSTRNCMP(RSA_PSS_PKCS_SV_NED_DST, option, (int) XSTRLEN(option))
                                                                          == 0) {
-        printf("Alright! Build RSA PSS and RSA PKCS!\n");
+        printf("Alright! Building %s!\n", RSA_PSS_PKCS_SV_NED_DST);
 
         cfg_build_custom_specific(RSA_PSS_PKCS_SV_NED_TEST_FILE,
                                   RSA_PSS_PKCS_SV_NED_DST,
@@ -58,7 +53,7 @@ void cfg_do_custom_build(char* option)
 /* SHA256 ECC */
 /*----------------------------------------------------------------------------*/
     else if (XSTRNCMP(SHA256_ECC_DST, option, (int) XSTRLEN(option)) == 0) {
-        printf("Alright! Build SHA256 and ECC!\n");
+        printf("Alright! Building %s!\n", SHA256_ECC_DST);
 
         cfg_build_custom_specific(SHA256_ECC_TEST_FILE,
                                   SHA256_ECC_DST,
@@ -67,6 +62,22 @@ void cfg_do_custom_build(char* option)
                                   sha256EccTlsHeaders, SHA256_ECC_T_HNUM,
                                   sha256EccTlsSrc, SHA256_ECC_T_SNUM,
                                   sha256EccSettings);
+    }
+/*----------------------------------------------------------------------------*/
+
+/* SHA512 Only */
+/*----------------------------------------------------------------------------*/
+    else if (XSTRNCMP(SHA512_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
+        printf("Alright! Building %s!\n", SHA512_ONLY_DST);
+
+        cfg_build_custom_specific(SHA512_ONLY_TEST_FILE,
+                                  SHA512_ONLY_DST,
+                                  sha512OnlyCryptHeaders, SHA512_ONLY_C_HNUM,
+                                  sha512OnlyCryptSrc, SHA512_ONLY_C_SNUM,
+                                  sha512OnlyTlsHeaders, SHA512_ONLY_T_HNUM,
+                                  sha512OnlyTlsSrc, SHA512_ONLY_T_SNUM,
+                                  sha512OnlySettings);
+
     }
 /*----------------------------------------------------------------------------*/
 /* No builds found */
@@ -144,7 +155,10 @@ void cfg_build_custom_specific(char* testFile, char* dst,
 void cfg_custom_build_usage(void)
 {
     printf("\t\taes_only\n");
-
+    printf("\t\trsa_pss_pkcs\n");
+    printf("\t\trsa_pss_pkcs_sv_ned\n");
+    printf("\t\tsha256_ecc\n");
+    printf("\t\tsha512_only\n");
     printf("\n");
     cfg_abort();
 }

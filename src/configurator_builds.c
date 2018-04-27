@@ -5,6 +5,7 @@
 #include "custom_builds/configurator_sha256_ecc.h"
 #include "custom_builds/configurator_sha512_only.h"
 #include "custom_builds/configurator_ecc_only.h"
+#include "custom_builds/configurator_sha256_only.h"
 
 void cfg_do_custom_build(char* option)
 {
@@ -92,6 +93,21 @@ void cfg_do_custom_build(char* option)
                                   eccOnlyTlsHeaders, ECC_ONLY_T_HNUM,
                                   eccOnlyTlsSrc, ECC_ONLY_T_SNUM,
                                   eccOnlySettings);
+
+    }
+/*----------------------------------------------------------------------------*/
+/* SHA256 Only */
+/*----------------------------------------------------------------------------*/
+    else if (XSTRNCMP(SHA256_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
+        printf("Alright! Building %s!\n", SHA256_ONLY_DST);
+
+        cfg_build_custom_specific(SHA256_ONLY_TEST_FILE,
+                                  SHA256_ONLY_DST,
+                                  sha256OnlyCryptHeaders, SHA256_ONLY_C_HNUM,
+                                  sha256OnlyCryptSrc, SHA256_ONLY_C_SNUM,
+                                  sha256OnlyTlsHeaders, SHA256_ONLY_T_HNUM,
+                                  sha256OnlyTlsSrc, SHA256_ONLY_T_SNUM,
+                                  sha256OnlySettings);
 
     }
 /*----------------------------------------------------------------------------*/

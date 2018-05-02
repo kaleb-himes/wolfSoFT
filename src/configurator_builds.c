@@ -478,7 +478,7 @@ void cfg_create_arm_thumb_makefile(char* dst, char* toolChain)
             ret = fwrite(commentIn, 1, writeLen, outputStream);
             cfg_check_fwrite_success(ret, writeLen);
 
-            cfg_build_cmd(c_cmd, "TOOLCHAIN = ", justThePath, NULL, NULL);
+            cfg_build_cmd(c_cmd, "TOOLCHAIN = ", justThePath, "\n", NULL);
             writeLen = (int) XSTRLEN(c_cmd);
             ret = fwrite(c_cmd, 1, writeLen, outputStream);
             cfg_check_fwrite_success(ret, writeLen);

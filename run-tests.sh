@@ -38,19 +38,29 @@
 #
 #---- Uncomment to run #
 
-runTest(){
-    printf '%s\n' "Test $1 $2"
-    echo 'n' | ./run c $1 $2 > /dev/null
+runDefaultTest(){
+    printf '%s\n' "Test ${1} ${2}"
+    echo 'n' | ./run c ${1} ${2} > /dev/null
+    RESULT=$?
+    printf '%s\n' "RESULT: $RESULT"
+    ./${1}/run
     RESULT=$?
     printf '%s\n' "RESULT: $RESULT"
 }
 
-runTest aes_only DEFAULT
-runTest rsa_pss_pkcs DEFAULT
-runTest rsa_pss_pkcs_sv_ned DEFAULT
-runTest sha256_ecc DEFAULT
-runTest sha512_only DEFAULT
-runTest ecc_only DEFAULT
-runTest rsa_pss_pkcs ARM-THUMB=/usr/local/gcc_arm/gcc-arm-none-eabi-7-2017-q4/bin/arm-none-eabi-
+runArmTest(){
+    printf '%s\n' "Test ${1} ${2}"
+    echo 'n' | ./run c ${1} ${2}
+    RESULT=$?
+    printf '%s\n' "RESULT: $RESULT"
+}
+
+runArmTest "rsa_pss_pkcs" "ARM-THUMB=/usr/local/gcc_arm/gcc-arm-none-eabi-7-2017-q4/bin/arm-none-eabi-"
+runDefaultTest aes_only DEFAULT
+runDefaultTest rsa_pss_pkcs DEFAULT
+runDefaultTest rsa_pss_pkcs_sv_ned DEFAULT
+runDefaultTest sha256_ecc DEFAULT
+runDefaultTest sha512_only DEFAULT
+runDefaultTest ecc_only DEFAULT
 
 #----#

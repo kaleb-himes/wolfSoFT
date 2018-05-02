@@ -46,7 +46,7 @@
 
 /* Crypto */
 #define SHA512_ONLY_C_HNUM 22 /* number of crypto header files */
-#define SHA512_ONLY_C_SNUM 10 /* number of crypto source files */
+#define SHA512_ONLY_C_SNUM 4 /* number of crypto source files */
 
 /* TLS */
 #define SHA512_ONLY_T_HNUM 4  /* number of tls header files */

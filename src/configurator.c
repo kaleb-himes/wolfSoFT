@@ -59,7 +59,7 @@ int main(int argc, char** argv)
                 if (doClone)
                     cfg_clone_target_repo("wolfssl/wolfssl");
 
-                cfg_do_custom_build(argv[THIRD_INPUT]);
+                cfg_do_custom_build(argv[THIRD_INPUT], argv[FOURTH_INPUT]);
                 break;
             default:
                 printf("TODO: Add Usage\n");

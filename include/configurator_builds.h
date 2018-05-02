@@ -1,6 +1,8 @@
 #ifndef CFG_BUILDS_H
 #define CFG_BUILDS_H
 
+#define ARM_THUMB "ARM-THUMB"
+
 static char MakefileBuf[] = "# wolfSSL-custom-makefile-project\n\
 #\n\
 # Copyright (C) 2006-2018 wolfSSL Inc.\n\
@@ -66,7 +68,6 @@ clean:\n\
 \t@- $(RM) $(program_OBJS)\n\
 \n\
 distclean: clean\n";
-
 
 
 #endif /* CFG_BUILDS_H */

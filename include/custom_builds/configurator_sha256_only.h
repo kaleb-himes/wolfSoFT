@@ -23,7 +23,7 @@
                                   sha256OnlyCryptSrc, SHA256_ONLY_C_SNUM,
                                   sha256OnlyTlsHeaders, SHA256_ONLY_T_HNUM,
                                   sha256OnlyTlsSrc, SHA256_ONLY_T_SNUM,
-                                  sha256OnlySettings);
+                                  sha256OnlySettings, toolChain);
 
     }
 

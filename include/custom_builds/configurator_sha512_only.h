@@ -32,7 +32,7 @@
                                   sha512OnlyCryptSrc, SHA512_ONLY_C_SNUM,
                                   sha512OnlyTlsHeaders, SHA512_ONLY_T_HNUM,
                                   sha512OnlyTlsSrc, SHA512_ONLY_T_SNUM,
-                                  sha512OnlySettings);
+                                  sha512OnlySettings, toolChain);
 
     }
 

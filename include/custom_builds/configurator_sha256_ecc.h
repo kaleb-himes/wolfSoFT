@@ -29,7 +29,7 @@ cfg_build_custom_specific(SHA256_ECC_TEST_FILE,
                           sha256EccCryptSrc, SHA256_ECC_C_SNUM,
                           sha256EccTlsHeaders, SHA256_ECC_T_HNUM,
                           sha256EccTlsSrc, SHA256_ECC_T_SNUM,
-                          sha256EccSettings);
+                          sha256EccSettings, toolChain);
 
  * -----------------------------------------------------------------------------
  */

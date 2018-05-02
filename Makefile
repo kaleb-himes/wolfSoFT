@@ -15,7 +15,7 @@ program_LIBRARIES += wolfssl
 CPPFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
 CPPFLAGS += -Werror
 #CPPFLAGS += -Weverything
-CPPFLAGS += -Wsign-conversion
+#CPPFLAGS += -Wsign-conversion
 CPPFLAGS += -Wshorten-64-to-32
 CPPFLAGS += -g
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))
@@ -31,5 +31,8 @@ $(program_NAME): $(program_OBJS)
 clean:
 	@- $(RM) $(program_NAME)
 	@- $(RM) $(program_OBJS)
+
+check:
+	./run-tests.sh
 
 distclean: clean

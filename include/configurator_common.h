@@ -407,7 +407,7 @@ void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*);
 
 
 int cfg_pp_check_ig(char*);
-void cfg_do_custom_build(char*);
+void cfg_do_custom_build(char*, char*);
 void cfg_custom_build_usage(void);
 int cfg_are_we_cloning(void);
 void cfg_setup_traditional(char*);
@@ -416,6 +416,7 @@ void cfg_copy_crypto_src(char*, char*, char*);
 void cfg_copy_tls_hdr(char*, char*, char*);
 void cfg_copy_tls_src(char*, char*, char*);
 void cfg_create_makefile(char*);
+void cfg_create_arm_thumb_makefile(char*, char*);
 void cfg_build_solution(char*);
 void cfg_copy_test_app(char*, char*);
 void cfg_create_user_settings(char*);
@@ -430,6 +431,6 @@ void cfg_build_custom_specific(char*, char*,
                                char(*)[LONGEST_S_NAME], int,
                                char(*)[LONGEST_H_NAME], int,
                                char(*)[LONGEST_S_NAME], int,
-                               char(*)[LONGEST_PP_OPT]);
+                               char(*)[LONGEST_PP_OPT], char*);
 
 #endif /* C_CONF_COMMN */

@@ -7,8 +7,14 @@
 #include "custom_builds/configurator_ecc_only.h"
 #include "custom_builds/configurator_sha256_only.h"
 
-void cfg_do_custom_build(char* option)
+void cfg_do_custom_build(char* option, char* toolChain)
 {
+
+    if (option == NULL || toolChain == NULL) {
+        printf("Invalid input\n");
+        cfg_custom_build_usage();
+    }
+
 /*----------------------------------------------------------------------------*/
 /* Aes Only please */
 /*----------------------------------------------------------------------------*/
@@ -20,7 +26,7 @@ void cfg_do_custom_build(char* option)
                                   aesOnlyCryptSrc, AES_ONLY_C_SNUM,
                                   aesOnlyTlsHeaders, AES_ONLY_T_HNUM,
                                   aesOnlyTlsSrc, AES_ONLY_T_SNUM,
-                                  aesOnlySettings);
+                                  aesOnlySettings, toolChain);
     }
 /*----------------------------------------------------------------------------*/
 /* RSA PSS PKCS */
@@ -33,7 +39,7 @@ void cfg_do_custom_build(char* option)
                                   rsaPssPkcsCryptSrc, RSA_PSS_PKCS_C_SNUM,
                                   rsaPssPkcsTlsHeaders, RSA_PSS_PKCS_T_HNUM,
                                   rsaPssPkcsTlsSrc, RSA_PSS_PKCS_T_SNUM,
-                                  rsaPssPkcsSettings);
+                                  rsaPssPkcsSettings, toolChain);
     }
 /*----------------------------------------------------------------------------*/
 /* RSA PSS PKCS "Sign/Verify" (sv) but "No Encrypt/Decrypt" (ned) */
@@ -48,7 +54,7 @@ void cfg_do_custom_build(char* option)
                                   rsaPssPkcsCryptSrc, RSA_PSS_PKCS_C_SNUM,
                                   rsaPssPkcsTlsHeaders, RSA_PSS_PKCS_T_HNUM,
                                   rsaPssPkcsTlsSrc, RSA_PSS_PKCS_T_SNUM,
-                                  rsaPssPkcsSettings);
+                                  rsaPssPkcsSettings, toolChain);
 
     }
 /*----------------------------------------------------------------------------*/
@@ -63,7 +69,7 @@ void cfg_do_custom_build(char* option)
                                   sha256EccCryptSrc, SHA256_ECC_C_SNUM,
                                   sha256EccTlsHeaders, SHA256_ECC_T_HNUM,
                                   sha256EccTlsSrc, SHA256_ECC_T_SNUM,
-                                  sha256EccSettings);
+                                  sha256EccSettings, toolChain);
     }
 /*----------------------------------------------------------------------------*/
 /* SHA512 Only */
@@ -77,7 +83,7 @@ void cfg_do_custom_build(char* option)
                                   sha512OnlyCryptSrc, SHA512_ONLY_C_SNUM,
                                   sha512OnlyTlsHeaders, SHA512_ONLY_T_HNUM,
                                   sha512OnlyTlsSrc, SHA512_ONLY_T_SNUM,
-                                  sha512OnlySettings);
+                                  sha512OnlySettings, toolChain);
 
     }
 /*----------------------------------------------------------------------------*/
@@ -92,7 +98,7 @@ void cfg_do_custom_build(char* option)
                                   eccOnlyCryptSrc, ECC_ONLY_C_SNUM,
                                   eccOnlyTlsHeaders, ECC_ONLY_T_HNUM,
                                   eccOnlyTlsSrc, ECC_ONLY_T_SNUM,
-                                  eccOnlySettings);
+                                  eccOnlySettings, toolChain);
 
     }
 /*----------------------------------------------------------------------------*/
@@ -107,15 +113,13 @@ void cfg_do_custom_build(char* option)
                                   sha256OnlyCryptSrc, SHA256_ONLY_C_SNUM,
                                   sha256OnlyTlsHeaders, SHA256_ONLY_T_HNUM,
                                   sha256OnlyTlsSrc, SHA256_ONLY_T_SNUM,
-                                  sha256OnlySettings);
+                                  sha256OnlySettings, toolChain);
 
     }
 /*----------------------------------------------------------------------------*/
 /* No builds found */
 /*----------------------------------------------------------------------------*/
     else {
-        printf("No valid options found.\n\n");
-        printf("Valid options are:\n");
         cfg_custom_build_usage();
     }
 }
@@ -129,7 +133,8 @@ void cfg_build_custom_specific(char* testFile, char* dst,
                                int tlsHdrALen,
                                char(* tlsSrcArr)[LONGEST_S_NAME],
                                int tlsSrcALen,
-                               char(* buildSettings)[LONGEST_PP_OPT])
+                               char(* buildSettings)[LONGEST_PP_OPT],
+                               char* toolChain)
 {
     int i;
     char c_cmd[LONGEST_COMMAND];
@@ -150,7 +155,11 @@ void cfg_build_custom_specific(char* testFile, char* dst,
     cfg_copy_test_app(src, dst);
 
     /* create the project makefile (generic solution) */
-    cfg_create_makefile(dst);
+
+    if (XSTRNCMP(ARM_THUMB, toolChain, (int)XSTRLEN(ARM_THUMB)) == 0)
+        cfg_create_arm_thumb_makefile(dst, toolChain);
+    else
+        cfg_create_makefile(dst);
 
     /* Copy in the crypto headers */
     for (i = 0; i < cryptHdrALen; i++) {
@@ -185,11 +194,21 @@ void cfg_build_custom_specific(char* testFile, char* dst,
 
 void cfg_custom_build_usage(void)
 {
+    printf("No valid options found.\n\n");
+    printf("Valid builds are:\n");
     printf("\t\taes_only\n");
     printf("\t\trsa_pss_pkcs\n");
     printf("\t\trsa_pss_pkcs_sv_ned\n");
     printf("\t\tsha256_ecc\n");
-    printf("\t\tsha512_only\n");
+    printf("\t\tsha512_only\n\n");
+    printf("Valid toolChain options are:\n");
+    printf("\t\tDEFAULT - This will use the default gcc compiler\n");
+    printf("\t\tARM-THUMB - This will use the arm thumb compiler\n");
+    printf("\t\t            NOTE: Set path with = IE ARM-THUMB=<path>/"
+                            "arm-none-eabi-\n\n");
+    printf("Examples:\n");
+    printf("\t\t\"./run c aes_only DEFAULT\"\n");
+    printf("\t\t\"./run c rsa_pss_pkcs ARM-THUMB=/usr/local/gcc_arm/gcc-arm-none-eabi-7-2017-q4/bin/arm-none-eabi-\"\n");
     printf("\n");
     cfg_abort();
 }
@@ -405,6 +424,85 @@ void cfg_create_makefile(char* dst)
     cfg_clear_cmd(c_cmd);
 
     fclose(fStream);
+
+    return;
+}
+
+void cfg_create_arm_thumb_makefile(char* dst, char* toolChain)
+{
+    char toolChainPath[] = "cfg-custom-toolchains/ARM-THUMB/";
+    char c_cmd[LONGEST_COMMAND];
+    char outFName[LONGEST_COMMAND];
+    FILE* fStream;
+    FILE* outputStream;
+    char* line = NULL;
+    size_t len = 0;
+    ssize_t read = 0;
+    int advancePtr = (int) (XSTRLEN(ARM_THUMB) + 1);
+    char* justThePath = toolChain+advancePtr;
+    size_t ret;
+
+    cfg_clear_cmd(c_cmd);
+    cfg_clear_cmd(outFName);
+
+    cfg_build_cmd(c_cmd, "cp ", toolChainPath, "* ", dst);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+
+    cfg_build_cmd(c_cmd, dst, "/Makefile.common", NULL, NULL);
+    cfg_build_cmd(outFName, dst, "/Makefile.common.tmp", NULL, NULL);
+
+    fStream = fopen(c_cmd, "rb");
+    if (fStream == NULL) {
+        printf("Failed to open %s\n", c_cmd);
+        cfg_abort();
+    }
+
+    cfg_clear_cmd(c_cmd);
+    cfg_build_cmd(c_cmd, "touch ", outFName, NULL, NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+
+    outputStream = fopen(outFName, "wb");
+    if (outputStream == NULL) {
+        printf("Failed to open %s\n", outFName);
+        cfg_abort();
+    }
+
+    while ((read = getline(&line, &len, fStream)) != EOF) {
+        if (strstr(line, "TOOLCHAIN = ")) {
+            int writeLen = 0;
+            char* commentIn = "#Custom insertion from wolfCFG\n";
+
+            writeLen = (int) XSTRLEN(commentIn);
+            ret = fwrite(commentIn, 1, writeLen, outputStream);
+            cfg_check_fwrite_success(ret, writeLen);
+
+            cfg_build_cmd(c_cmd, "TOOLCHAIN = ", justThePath, NULL, NULL);
+            writeLen = (int) XSTRLEN(c_cmd);
+            ret = fwrite(c_cmd, 1, writeLen, outputStream);
+            cfg_check_fwrite_success(ret, writeLen);
+
+            writeLen = (int) XSTRLEN(commentIn);
+            ret = fwrite(commentIn, 1, writeLen, outputStream);
+            cfg_check_fwrite_success(ret, writeLen);
+        } else {
+            ret = fwrite(line, 1, XSTRLEN(line), outputStream);
+            cfg_check_fwrite_success(ret, XSTRLEN(line));
+        }
+    }
+
+    fclose(outputStream);
+    fclose(fStream);
+    if (line)
+        free(line);
+
+    cfg_clear_cmd(c_cmd);
+    cfg_build_cmd(c_cmd, "mv ", outFName, " ", dst);
+    cfg_build_cmd(c_cmd, "/Makefile.common", NULL, NULL, NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+    cfg_clear_cmd(outFName);
 
     return;
 }

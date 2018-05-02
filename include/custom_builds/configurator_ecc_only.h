@@ -23,7 +23,7 @@
                                   eccOnlyCryptSrc, ECC_ONLY_C_SNUM,
                                   eccOnlyTlsHeaders, ECC_ONLY_T_HNUM,
                                   eccOnlyTlsSrc, ECC_ONLY_T_SNUM,
-                                  eccOnlySettings);
+                                  eccOnlySettings, toolChain);
 
     }
 

@@ -23,7 +23,7 @@
                                   <update-004>CryptSrc, <update-002>_C_SNUM,
                                   <update-004>TlsHeaders, <update-002>_T_HNUM,
                                   <update-004>TlsSrc, <update-002>_T_SNUM,
-                                  <update-004>Settings);
+                                  <update-004>Settings, toolChain);
 
     }
 

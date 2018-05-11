@@ -4,7 +4,7 @@
 /* allow up to four dirs for now, switch to more dynamic solution at a later
  * time if necessary or required */
 void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
-                                    int numDirs)
+                                    int numDirs, int runBuilder)
 {
     #ifdef DEBUG_CFG
       int     lineCount     = 0;
@@ -59,14 +59,16 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
             cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
             currFStream = fopen(cmdArray, "rb");
+    #ifdef DEBUG_CFG
             printf("fileName + path = %s\n", cmdArray);
-
+    #endif
             cfg_clear_cmd(cmdArray);
             cfg_build_cmd(cmdArray, "Opening ", currF->d_name, " file", NULL);
             cfg_assrt_ne_null(currFStream, cmdArray);
             cfg_clear_cmd(cmdArray);
+    #ifdef DEBUG_CFG
             printf("Successfully opened %s\n", currF->d_name);
-
+    #endif
             while ((read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
 
                 #ifdef DEBUG_CFG
@@ -181,9 +183,15 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
       printf("DEBUG: Checking the list\n");
     #endif
 
+
+
     if (curr != NULL) {
-        cfg_pp_list_iterate(curr);
-        cfg_pp_list_free(curr);
+        if (runBuilder == 1) {
+            cfg_pp_builder(curr);
+        } else {
+            cfg_pp_list_iterate(curr);
+            cfg_pp_list_free(curr);
+        }
     }
     return;
 }
@@ -497,4 +505,71 @@ int cfg_pp_check_ig(char* pp_to_check)
     }
 
     return 0;
+}
+
+void cfg_pp_builder(PP_OPT* in)
+{
+    struct PP_OPT* curr = NULL;
+
+
+    int i;
+    char c_cmd[LONGEST_COMMAND];
+    cfg_clear_cmd(c_cmd);
+    char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
+    char dst[] = "pp_build_dir";
+
+    curr = cfg_pp_list_get_head(in);
+
+    /* setup the directories to reflect traditional */
+    cfg_setup_traditional(dst);
+
+    /* set to a common test app */
+    cfg_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c", NULL,
+                  " cfg-custom-test-apps/cfg_custom_test.c", NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+
+    cfg_copy_test_app(src, dst);
+
+    /* create the project makefile (generic solution) */
+
+    cfg_create_makefile(dst);
+
+    /* Copy in the crypto headers */
+    cfg_copy_crypto_hdr(src, dst, "copyAll");
+
+    /* Copy in the tls headers */
+    cfg_copy_tls_hdr(src, dst, "copyAll");
+
+    /* Copy in the crypto sources */
+    cfg_copy_crypto_src(src, dst, "copyAll");
+
+    /* Copy in the tls sources */
+    cfg_copy_tls_src(src, dst, "copyAll");
+
+    cfg_create_user_settings(dst);
+
+    /* case 1, brute force */
+    /* iterate through the list, add one build option at a time */
+    /* if option causes failure test it alone to see if it's conflicting */
+    /* if alone test passes start over retaining current option till conflict
+     * is identified. Once found tag the pair as conflict. Start over building
+     * but don't allow conflict
+     */
+
+    cfg_write_user_settings(dst, "WC_RSA_BLINDING");
+    cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
+    cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
+    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
+    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
+
+//    for (i = 0; i < MOST_SETTINGS; i++) {
+//        cfg_write_user_settings(dst, buildSettings[i]);
+//    }
+
+    cfg_close_user_settings(dst);
+
+    /* Build the project */
+    cfg_build_solution(dst);
+
 }

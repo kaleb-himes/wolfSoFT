@@ -190,7 +190,7 @@ void cfg_build_custom_specific(char* testFile, char* dst,
     }
     /* Copy in the tls sources */
     for (i = 0; i < tlsSrcALen; i++) {
-        cfg_copy_crypto_src(src, dst, tlsSrcArr[i]);
+        cfg_copy_tls_src(src, dst, tlsSrcArr[i]);
     }
 
     cfg_create_user_settings(dst);
@@ -321,6 +321,7 @@ void cfg_copy_test_app(char* src, char* dst)
 
 void cfg_copy_crypto_hdr(char* src, char* dst, char* cryptoH)
 {
+    char allTrigger[] = "copyAll";
     char c_cmd[LONGEST_COMMAND];
     char srcPath[LONGEST_COMMAND];
     char dstPath[LONGEST_COMMAND];
@@ -329,9 +330,17 @@ void cfg_copy_crypto_hdr(char* src, char* dst, char* cryptoH)
     cfg_clear_cmd(srcPath);
     cfg_clear_cmd(dstPath);
 
-    cfg_build_cmd(srcPath, src, "/wolfssl/wolfcrypt/", cryptoH, " ");
-    cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/wolfcrypt/", cryptoH, NULL);
-    cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    if (XSTRNCMP(cryptoH, allTrigger, XSTRLEN(allTrigger)) == 0) {
+        cfg_build_cmd(srcPath, src, "/wolfssl/wolfcrypt/* ", NULL, NULL);
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/wolfcrypt/", NULL, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+
+    } else {
+        cfg_build_cmd(srcPath, src, "/wolfssl/wolfcrypt/", cryptoH, " ");
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/wolfcrypt/", cryptoH,
+                      NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    }
 
     system(c_cmd);
 
@@ -344,6 +353,7 @@ void cfg_copy_crypto_hdr(char* src, char* dst, char* cryptoH)
 
 void cfg_copy_tls_hdr(char* src, char* dst, char* tlsH)
 {
+    char allTrigger[] = "copyAll";
     char c_cmd[LONGEST_COMMAND];
     char srcPath[LONGEST_COMMAND];
     char dstPath[LONGEST_COMMAND];
@@ -352,9 +362,15 @@ void cfg_copy_tls_hdr(char* src, char* dst, char* tlsH)
     cfg_clear_cmd(srcPath);
     cfg_clear_cmd(dstPath);
 
-    cfg_build_cmd(srcPath, src, "/wolfssl/", tlsH, " ");
-    cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", tlsH, NULL);
-    cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    if (XSTRNCMP(tlsH, allTrigger, XSTRLEN(allTrigger)) == 0) {
+        cfg_build_cmd(srcPath, src, "/wolfssl/* ", NULL, NULL);
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", NULL, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    } else {
+        cfg_build_cmd(srcPath, src, "/wolfssl/", tlsH, " ");
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", tlsH, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    }
 
     system(c_cmd);
 
@@ -368,6 +384,7 @@ void cfg_copy_tls_hdr(char* src, char* dst, char* tlsH)
 
 void cfg_copy_crypto_src(char* src, char* dst, char* cryptoS)
 {
+    char allTrigger[] = "copyAll";
     char c_cmd[LONGEST_COMMAND];
     char srcPath[LONGEST_COMMAND];
     char dstPath[LONGEST_COMMAND];
@@ -377,9 +394,16 @@ void cfg_copy_crypto_src(char* src, char* dst, char* cryptoS)
     cfg_clear_cmd(c_cmd);
 
 
-    cfg_build_cmd(srcPath, src, "/wolfcrypt/src/", cryptoS, " ");
-    cfg_build_cmd(dstPath, dst, "/wolfssl/wolfcrypt/src/", cryptoS, NULL);
-    cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    if (XSTRNCMP(cryptoS, allTrigger, XSTRLEN(allTrigger)) == 0) {
+        cfg_build_cmd(srcPath, src, "/wolfcrypt/src/* ", NULL, NULL);
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfcrypt/src/", NULL, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    } else {
+        cfg_build_cmd(srcPath, src, "/wolfcrypt/src/", cryptoS, " ");
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfcrypt/src/", cryptoS, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    }
+
     system(c_cmd);
     cfg_clear_cmd(c_cmd);
     cfg_clear_cmd(srcPath);
@@ -390,6 +414,7 @@ void cfg_copy_crypto_src(char* src, char* dst, char* cryptoS)
 
 void cfg_copy_tls_src(char* src, char* dst, char* tlsS)
 {
+    char allTrigger[] = "copyAll";
     char c_cmd[LONGEST_COMMAND];
     char srcPath[LONGEST_COMMAND];
     char dstPath[LONGEST_COMMAND];
@@ -399,9 +424,16 @@ void cfg_copy_tls_src(char* src, char* dst, char* tlsS)
     cfg_clear_cmd(c_cmd);
 
 
-    cfg_build_cmd(srcPath, src, "/src/", tlsS, " ");
-    cfg_build_cmd(dstPath, dst, "/wolfssl/src/", tlsS, NULL);
-    cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    if (XSTRNCMP(tlsS, allTrigger, XSTRLEN(allTrigger)) == 0) {
+        cfg_build_cmd(srcPath, src, "/src/* ", NULL, NULL);
+        cfg_build_cmd(dstPath, dst, "/wolfssl/src/", NULL, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    } else {
+        cfg_build_cmd(srcPath, src, "/src/", tlsS, " ");
+        cfg_build_cmd(dstPath, dst, "/wolfssl/src/", tlsS, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+    }
+
     system(c_cmd);
     cfg_clear_cmd(c_cmd);
     cfg_clear_cmd(srcPath);

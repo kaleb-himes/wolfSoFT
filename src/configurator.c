@@ -6,6 +6,7 @@
 int main(int argc, char** argv)
 {
     int doClone = 1;
+    int runBuilder = 0;
 
     if (argc >= 2) {
         switch (argv[SECOND_INPUT][FIRST_POSITION]) {
@@ -24,34 +25,52 @@ int main(int argc, char** argv)
                     return INPUT_ERR;
                 }
 
+                if (argv[FOURTH_INPUT] == NULL || argv[FOURTH_INPUT] == 0)
+                    runBuilder = 0;
+                else
+                    runBuilder = 1;
+
                 doClone = cfg_are_we_cloning();
                 if (doClone)
                     cfg_clone_target_repo("wolfssl/wolfssl");
 
                 cfg_pp_extract_from_multi_dirs(argv[THIRD_INPUT],
-                                               NULL, NULL, NULL, 1);
+                                               NULL, NULL, NULL, 1, runBuilder);
                 break;
             case 'm':
                 {
-                    char* tD1 = NULL;
-                    char* tD2 = NULL;
-                    char* tD3 = NULL;
-                    char* tD4 = NULL;
-                    if (argv[THIRD_INPUT])
-                        tD1 = argv[THIRD_INPUT];
-                    if (argv[FOURTH_INPUT])
-                        tD2 = argv[FOURTH_INPUT];
-                    if (argv[FIFTH_INPUT])
-                        tD3 = argv[FIFTH_INPUT];
-                    if (argv[SIXTH_INPUT])
-                        tD4 = argv[SIXTH_INPUT];
+                    char *tD1, *tD2, *tD3, *tD4;
+                    int numDirs;
+
+                    if (argc < 7)
+                        usage_m();
+
+                    tD1 = argv[THIRD_INPUT];
+                    tD2 = argv[FOURTH_INPUT];
+                    tD3 = argv[FIFTH_INPUT];
+                    tD4 = argv[SIXTH_INPUT];
+                    if (XSTRNCMP("1", argv[SEVENTH_INPUT], 1) == 0)
+                        numDirs = 1;
+                    else if (XSTRNCMP("2", argv[SEVENTH_INPUT], 1) == 0)
+                        numDirs = 2;
+                    else if (XSTRNCMP("3", argv[SEVENTH_INPUT], 1) == 0)
+                        numDirs = 3;
+                    else if (XSTRNCMP("4", argv[SEVENTH_INPUT], 1) == 0)
+                        numDirs = 4;
+                    else
+                        usage_m();
+
+                    if (argv[EIGHTH_INPUT] == 0)
+                        runBuilder = 0;
+                    else
+                        runBuilder = 1;
 
                     doClone = cfg_are_we_cloning();
                     if (doClone)
                         cfg_clone_target_repo("wolfssl/wolfssl");
 
                     cfg_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4,
-                                                   (argc - 2));
+                                                   numDirs, runBuilder);
                 }
                 break;
             case 'c':
@@ -92,4 +111,23 @@ int cfg_are_we_cloning(void)
         return 1;
     else
         return 0;
+}
+
+void usage_m()
+{
+    printf("Invalid user input\n");
+    printf("ARG1 -> m\n");
+    printf("ARG2 -> valid directory to scrub for pre-processor macros\n");
+    printf("ARG3 -> valid directory or NULL\n");
+    printf("ARG4 -> valid directory or NULL\n");
+    printf("ARG5 -> valid directory or NULL\n");
+    printf("ARG6 -> number of valid directories from ARGS 2-5\n");
+    printf("ARG7 -> flag, 0 = dump pp macros, 1 = use pp macros to run builds");
+    printf("Example usages:\n\n");
+    printf("\t./run m wolfssl/wolfssl NULL NULL NULL NULL 1 0\n");
+    printf("\t./run m wolfssl/wolfssl wolfssl/wolfcrypt/src NULL NULL NULL"
+           " 2 0\n");
+    printf("\t./run m wolfssl/wolfssl wolfssl/wolfcrypt/src"
+           "wolfssl/src wolfssl/wolfssl/wolfcrypt 4 1\n\n\n");
+    cfg_abort();
 }

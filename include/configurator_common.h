@@ -64,12 +64,14 @@ enum {
 };
 
 enum {
-    FIRST_INPUT  = 0,
-    SECOND_INPUT = 1,
-    THIRD_INPUT  = 2,
-    FOURTH_INPUT = 3,
-    FIFTH_INPUT  = 4,
-    SIXTH_INPUT  = 5,
+    FIRST_INPUT   = 0,
+    SECOND_INPUT  = 1,
+    THIRD_INPUT   = 2,
+    FOURTH_INPUT  = 3,
+    FIFTH_INPUT   = 4,
+    SIXTH_INPUT   = 5,
+    SEVENTH_INPUT = 6,
+    EIGHTH_INPUT  = 7,
 };
 /*----------------------------------------------------------------------------*/
 /* STRUCTS */
@@ -403,10 +405,12 @@ int cfg_pp_list_check_for_dup(PP_OPT*, char*);
  * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, NULL);   // VALID
  * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, valid4); // VALID
  */
-void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*, int);
+void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*, int, int);
 
 
 int cfg_pp_check_ig(char*);
+void cfg_pp_builder(PP_OPT*);
+
 void cfg_do_custom_build(char*, char*);
 void cfg_custom_build_usage(void);
 int cfg_are_we_cloning(void);
@@ -432,5 +436,5 @@ void cfg_build_custom_specific(char*, char*,
                                char(*)[LONGEST_H_NAME], int,
                                char(*)[LONGEST_S_NAME], int,
                                char(*)[LONGEST_PP_OPT], char*);
-
+void usage_m(void);
 #endif /* C_CONF_COMMN */

@@ -403,7 +403,7 @@ int cfg_pp_list_check_for_dup(PP_OPT*, char*);
  * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, NULL);   // VALID
  * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, valid4); // VALID
  */
-void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*);
+void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*, int);
 
 
 int cfg_pp_check_ig(char*);

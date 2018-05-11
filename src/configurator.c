@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 
                 break;
             case 'e':
-                if (XSTRLEN(argv[THIRD_INPUT]) <= 0) {
+                if (argv[THIRD_INPUT] == NULL) {
                     printf("Invalid user input\n");
                     return INPUT_ERR;
                 }
@@ -29,7 +29,7 @@ int main(int argc, char** argv)
                     cfg_clone_target_repo("wolfssl/wolfssl");
 
                 cfg_pp_extract_from_multi_dirs(argv[THIRD_INPUT],
-                                               NULL, NULL, NULL);
+                                               NULL, NULL, NULL, 1);
                 break;
             case 'm':
                 {
@@ -50,7 +50,8 @@ int main(int argc, char** argv)
                     if (doClone)
                         cfg_clone_target_repo("wolfssl/wolfssl");
 
-                    cfg_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4);
+                    cfg_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4,
+                                                   (argc - 2));
                 }
                 break;
             case 'c':

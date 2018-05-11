@@ -1,11 +1,12 @@
 BUILD_DIR = ./Build
 
-all: WolfSSLStaticLib wolfcrypt_test
+#all: WolfSSLStaticLib wolfcrypt_test
+all: wolfcrypt_test
 
 wolfcrypt_test:
 	$(MAKE) -f Makefile.test
-WolfSSLStaticLib:
-	$(MAKE) -f Makefile.static
+#WolfSSLStaticLib:
+#	$(MAKE) -f Makefile.static
 
 clean:
 	rm -f $(BUILD_DIR)/*.elf $(BUILD_DIR)/*.hex $(BUILD_DIR)/*.map

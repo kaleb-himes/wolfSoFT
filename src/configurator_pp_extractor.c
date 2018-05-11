@@ -3,14 +3,14 @@
 
 /* allow up to four dirs for now, switch to more dynamic solution at a later
  * time if necessary or required */
-void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
+void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
+                                    int numDirs)
 {
     #ifdef DEBUG_CFG
       int     lineCount     = 0;
     #endif
 
     int     i, dCounter;
-    int     numDirs       = 0;
     int     optsFound     = 0;
     int     shouldAdd     = 0;
     ssize_t read          = 0;
@@ -24,16 +24,13 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4)
     char    cmdArray[LONGEST_COMMAND] = {0};
     char    multiOpts[OPTS_IN_A_LINE][LONGEST_PP_OPT] = {0};
 
-    if (tD1) numDirs++;
-    if (tD2) numDirs++;
-    if (tD3) numDirs++;
-    if (tD4) numDirs++;
     cfg_check_ret_nlte(numDirs, 0, "no valid directory strings");
 
     cfg_clear_cmd(cmdArray);
 
     curr = cfg_pp_node_init(curr);
 
+    printf("numDirs = %d\n", numDirs);
     for (dCounter = 0; dCounter < numDirs; dCounter++) {
 
         if (dCounter == 0)

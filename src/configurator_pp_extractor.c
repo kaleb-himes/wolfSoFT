@@ -449,14 +449,14 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
 
 PP_OPT* cfg_pp_list_get_next(PP_OPT* in) {
     if (in != NULL)
-        return in->previous;
+        return in->next;
 
     return NULL; /* Default if in is NULL */
 }
 
 PP_OPT* cfg_pp_list_get_prev(PP_OPT* in) {
     if (in != NULL)
-        return in->next;
+        return in->previous;
 
     return NULL; /* Default if in is NULL */
 }
@@ -600,6 +600,7 @@ void cfg_pp_builder(PP_OPT* in)
             break;
         }
         curr = cfg_pp_list_get_next(curr);
+        printf("About to test %s\n", curr->pp_opt);
     }
 
 }

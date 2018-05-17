@@ -554,8 +554,10 @@ void cfg_create_arm_thumb_makefile(char* dst, char* toolChain)
     return;
 }
 
-void cfg_build_solution(char* dst)
+int cfg_build_solution(char* dst)
 {
+    int ret;
+
     char c_cmd[LONGEST_COMMAND];
 
     cfg_clear_cmd(c_cmd);
@@ -565,10 +567,10 @@ void cfg_build_solution(char* dst)
     cfg_build_cd_cmd(c_cmd, dst);
     cfg_build_cmd(c_cmd, " && make clean && make", NULL, NULL, NULL);
     printf("c_cmd reads: %s\n", c_cmd);
-    system(c_cmd);
+    ret = system(c_cmd);
     cfg_clear_cmd(c_cmd);
 
-    return;
+    return ret;
 }
 
 void cfg_create_user_settings(char* dst)

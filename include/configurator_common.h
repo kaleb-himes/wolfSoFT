@@ -82,6 +82,7 @@ typedef struct PP_OPT
     struct PP_OPT* previous;
     struct PP_OPT* next;
     char pp_opt[LONGEST_PP_OPT];
+    int isGood;
 } PP_OPT;
 
 /*----------------------------------------------------------------------------*/
@@ -353,6 +354,8 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT*);
  * RETURN: returns a pointer to the head of the list.
  */
 PP_OPT* cfg_pp_list_get_head(PP_OPT*);
+PP_OPT* cfg_pp_list_get_next(PP_OPT*);
+PP_OPT* cfg_pp_list_get_prev(PP_OPT*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -421,7 +424,7 @@ void cfg_copy_tls_hdr(char*, char*, char*);
 void cfg_copy_tls_src(char*, char*, char*);
 void cfg_create_makefile(char*);
 void cfg_create_arm_thumb_makefile(char*, char*);
-void cfg_build_solution(char*);
+int cfg_build_solution(char*);
 void cfg_copy_test_app(char*, char*);
 void cfg_create_user_settings(char*);
 void cfg_write_user_settings(char*, char*);

@@ -190,9 +190,10 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
             cfg_pp_builder(curr);
         } else {
             cfg_pp_list_iterate(curr);
-            cfg_pp_list_free(curr);
         }
     }
+
+    cfg_pp_list_free(curr);
     return;
 }
 
@@ -365,6 +366,7 @@ PP_OPT* cfg_pp_node_init(PP_OPT* in)
     in->previous = NULL;
     in->next = NULL;
     XMEMSET(in->pp_opt, 0, sizeof(in->pp_opt));
+    in->isGood = 1;
 
     return in;
 }
@@ -445,6 +447,21 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
     return in;
 }
 
+PP_OPT* cfg_pp_list_get_next(PP_OPT* in) {
+    if (in != NULL)
+        return in->previous;
+
+    return NULL; /* Default if in is NULL */
+}
+
+PP_OPT* cfg_pp_list_get_prev(PP_OPT* in) {
+    if (in != NULL)
+        return in->next;
+
+    return NULL; /* Default if in is NULL */
+}
+
+
 void cfg_pp_list_free(PP_OPT* in)
 {
     struct PP_OPT* curr = NULL;
@@ -512,7 +529,7 @@ void cfg_pp_builder(PP_OPT* in)
     struct PP_OPT* curr = NULL;
 
 
-    int i;
+    int i, ret;
     char c_cmd[LONGEST_COMMAND];
     cfg_clear_cmd(c_cmd);
     char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
@@ -547,7 +564,6 @@ void cfg_pp_builder(PP_OPT* in)
     /* Copy in the tls sources */
     cfg_copy_tls_src(src, dst, "copyAll");
 
-    cfg_create_user_settings(dst);
 
     /* case 1, brute force */
     /* iterate through the list, add one build option at a time */
@@ -557,19 +573,33 @@ void cfg_pp_builder(PP_OPT* in)
      * but don't allow conflict
      */
 
-    cfg_write_user_settings(dst, "WC_RSA_BLINDING");
-    cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
-    cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
-    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
-    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
 
-//    for (i = 0; i < MOST_SETTINGS; i++) {
-//        cfg_write_user_settings(dst, buildSettings[i]);
-//    }
+    for (i = 0; i < MOST_SETTINGS; i++) {
 
-    cfg_close_user_settings(dst);
+        cfg_create_user_settings(dst);
+        cfg_write_user_settings(dst, "WC_RSA_BLINDING");
+        cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
+        cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
+        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
+        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
 
-    /* Build the project */
-    cfg_build_solution(dst);
+        if (curr != NULL) {
+            cfg_write_user_settings(dst, curr->pp_opt);
+        }
+
+        cfg_close_user_settings(dst);
+
+        /* Build the project */
+        ret = cfg_build_solution(dst);
+        if (ret == 0) {
+            printf("Build with %s works!!\n", curr->pp_opt);
+            curr->isGood = 1;
+        } else {
+            printf("Build with %s failed\n", curr->pp_opt);
+            curr->isGood = 0;
+            break;
+        }
+        curr = cfg_pp_list_get_next(curr);
+    }
 
 }

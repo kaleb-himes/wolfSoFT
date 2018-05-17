@@ -60,7 +60,7 @@ int main(int argc, char** argv)
                     else
                         usage_m();
 
-                    if (argv[EIGHTH_INPUT] == 0)
+                    if (XSTRNCMP("0", argv[EIGHTH_INPUT], 1) == 0)
                         runBuilder = 0;
                     else
                         runBuilder = 1;
@@ -124,8 +124,8 @@ void usage_m()
     printf("ARG6 -> number of valid directories from ARGS 2-5\n");
     printf("ARG7 -> flag, 0 = dump pp macros, 1 = use pp macros to run builds");
     printf("Example usages:\n\n");
-    printf("\t./run m wolfssl/wolfssl NULL NULL NULL NULL 1 0\n");
-    printf("\t./run m wolfssl/wolfssl wolfssl/wolfcrypt/src NULL NULL NULL"
+    printf("\t./run m wolfssl/wolfssl NULL NULL NULL 1 0\n");
+    printf("\t./run m wolfssl/wolfssl wolfssl/wolfcrypt/src NULL NULL"
            " 2 0\n");
     printf("\t./run m wolfssl/wolfssl wolfssl/wolfcrypt/src"
            "wolfssl/src wolfssl/wolfssl/wolfcrypt 4 1\n\n\n");

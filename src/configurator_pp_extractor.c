@@ -567,14 +567,8 @@ void cfg_pp_builder(PP_OPT* in)
 
     /* case 1, brute force */
     /* iterate through the list, add one build option at a time */
-    /* if option causes failure test it alone to see if it's conflicting */
-    /* if alone test passes start over retaining current option till conflict
-     * is identified. Once found tag the pair as conflict. Start over building
-     * but don't allow conflict
-     */
 
-
-    for (i = 0; i < MOST_SETTINGS; i++) {
+    while (curr->next != NULL) {
 
         cfg_create_user_settings(dst);
         cfg_write_user_settings(dst, "WC_RSA_BLINDING");
@@ -591,16 +585,29 @@ void cfg_pp_builder(PP_OPT* in)
 
         /* Build the project */
         ret = cfg_build_solution(dst);
-        if (ret == 0) {
-            printf("Build with %s works!!\n", curr->pp_opt);
+        if (ret == 0)
             curr->isGood = 1;
-        } else {
-            printf("Build with %s failed\n", curr->pp_opt);
+        else {
+            printf("%s caused a failure\n", curr->pp_opt);
             curr->isGood = 0;
             break;
         }
+
+        if (curr->isGood == 1) {
+            cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
+
+            ret = system(c_cmd);
+            if (ret == 0)
+                curr->isGood = 1;
+            else {
+                printf("%s caused a failure\n", curr->pp_opt);
+                curr->isGood = 0;
+                break;
+            }
+        }
+
         curr = cfg_pp_list_get_next(curr);
-        printf("About to test %s\n", curr->pp_opt);
     }
+
 
 }

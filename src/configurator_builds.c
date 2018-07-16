@@ -7,6 +7,7 @@
 #include "custom_builds/configurator_ecc_only.h"
 #include "custom_builds/configurator_sha256_only.h"
 #include "custom_builds/configurator_sha256_ecc_nm.h"
+#include "custom_builds/configurator_cert_manager_only.h"
 
 void cfg_do_custom_build(char* option, char* toolChain)
 {
@@ -132,6 +133,23 @@ void cfg_do_custom_build(char* option, char* toolChain)
 
     }
 /*----------------------------------------------------------------------------*/
+/* Cert Manager Only */
+/*----------------------------------------------------------------------------*/
+
+    else if (XSTRNCMP(CERT_MNGR_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
+        printf("Alright! Building %s!\n", CERT_MNGR_ONLY_DST);
+
+        cfg_build_custom_specific(CERT_MNGR_ONLY_TEST_FILE,
+                                  CERT_MNGR_ONLY_DST,
+                                  certMngrOnlyCryptHeaders, CERT_MNGR_ONLY_C_HNUM,
+                                  certMngrOnlyCryptSrc, CERT_MNGR_ONLY_C_SNUM,
+                                  certMngrOnlyTlsHeaders, CERT_MNGR_ONLY_T_HNUM,
+                                  certMngrOnlyTlsSrc, CERT_MNGR_ONLY_T_SNUM,
+                                  certMngrOnlySettings, toolChain);
+
+    }
+
+/*----------------------------------------------------------------------------*/
 /* No builds found */
 /*----------------------------------------------------------------------------*/
     else {
@@ -215,7 +233,8 @@ void cfg_custom_build_usage(void)
     printf("\t\trsa_pss_pkcs\n");
     printf("\t\trsa_pss_pkcs_sv_ned\n");
     printf("\t\tsha256_ecc\n");
-    printf("\t\tsha512_only\n\n");
+    printf("\t\tsha512_only\n");
+    printf("\t\tcert_mngr_only\n\n");
     printf("Valid toolChain options are:\n");
     printf("\t\tDEFAULT - This will use the default gcc compiler\n");
     printf("\t\tARM-THUMB - This will use the arm thumb compiler\n");
@@ -587,6 +606,9 @@ void cfg_create_user_settings(char* dst)
     cfg_clear_cmd(fName);
 
     cfg_build_cmd(fName, dst, "/user_settings.h", NULL, NULL);
+    cfg_build_cmd(c_cmd, "rm ", fName, NULL, NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
     cfg_build_cmd(c_cmd, "touch ", fName, NULL, NULL);
     system(c_cmd);
     cfg_clear_cmd(c_cmd);

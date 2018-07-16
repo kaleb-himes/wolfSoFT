@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 //#include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/ssl.h>
 #include <wolfssl/wolfcrypt/types.h>
 

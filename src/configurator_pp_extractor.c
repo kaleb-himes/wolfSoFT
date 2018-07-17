@@ -527,7 +527,7 @@ int cfg_pp_check_ig(char* pp_to_check)
 void cfg_pp_builder(PP_OPT* in)
 {
     struct PP_OPT* curr = NULL;
-
+    struct PP_OPT* temp = NULL;
 
     int i, ret;
     char c_cmd[LONGEST_COMMAND];
@@ -564,23 +564,25 @@ void cfg_pp_builder(PP_OPT* in)
     /* Copy in the tls sources */
     cfg_copy_tls_src(src, dst, "copyAll");
 
-
-    /* case 1, brute force */
-    /* iterate through the list, add one build option at a time */
-
-    while (curr->next != NULL) {
-
+    /* case 0, single options, test each individually with defaults */
+    while (curr->next != NULL && ret != USER_INTERRUPT) {
+/* This is going to repeat, place in a function - Functionize-1 */
         cfg_create_user_settings(dst);
+        /* default settings always on to prevent failure */
         cfg_write_user_settings(dst, "WC_RSA_BLINDING");
         cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
         cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
         cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
         cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
+/* Functionize-1 */
 
+        /* Single setting to test */
         if (curr != NULL) {
             cfg_write_user_settings(dst, curr->pp_opt);
+            fprintf(stderr, "Testing %s\n", curr->pp_opt);
         }
 
+/* This is going to repeat, place in a function - Functionize-2 */
         cfg_close_user_settings(dst);
 
         /* Build the project */
@@ -588,9 +590,8 @@ void cfg_pp_builder(PP_OPT* in)
         if (ret == 0)
             curr->isGood = 1;
         else {
-            printf("%s caused a failure\n", curr->pp_opt);
+            fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
             curr->isGood = 0;
-            break;
         }
 
         if (curr->isGood == 1) {
@@ -600,14 +601,74 @@ void cfg_pp_builder(PP_OPT* in)
             if (ret == 0)
                 curr->isGood = 1;
             else {
-                printf("%s caused a failure\n", curr->pp_opt);
+                fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
                 curr->isGood = 0;
-                break;
             }
         }
 
         curr = cfg_pp_list_get_next(curr);
+/* Functionize-2 */
     }
 
+    /* case 1, brute force */
+    /* iterate through the list, add one build option at a time */
+    /* NEEDS WORK, DISABLED FOR NOW let's just get the singles going at least */
 
+//    while (curr->next != NULL && ret != USER_INTERRUPT) {
+//
+//        cfg_create_user_settings(dst);
+//        cfg_write_user_settings(dst, "WC_RSA_BLINDING");
+//        cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
+//        cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
+//        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
+//        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
+//
+//        if (curr != NULL) {
+//            temp = cfg_pp_list_get_head(in);
+//            while (XSTRNCMP(temp->pp_opt, curr->pp_opt, XSTRLEN(temp->pp_opt))
+//                   != 0) {
+//
+//                if (temp->isGood == 1)
+//                    cfg_write_user_settings(dst, temp->pp_opt);
+//
+//                temp = temp->next;
+//            }
+//
+//            cfg_write_user_settings(dst, curr->pp_opt);
+//            fprintf(stderr, "Adding %s to the build settings\n", curr->pp_opt);
+//        }
+//
+//        cfg_close_user_settings(dst);
+//
+//        /* Build the project */
+//        ret = cfg_build_solution(dst);
+//        if (ret == 0)
+//            curr->isGood = 1;
+//        else {
+//            fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
+//            curr->isGood = 0;
+//        }
+//
+//        if (curr->isGood == 1) {
+//            cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
+//
+//            ret = system(c_cmd);
+//            if (ret == 0)
+//                curr->isGood = 1;
+//            else {
+//                fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
+//                curr->isGood = 0;
+//            }
+//        }
+//
+//        curr = cfg_pp_list_get_next(curr);
+//    } // End of brute force while loop
+
+    temp = cfg_pp_list_get_head(curr);
+    while (temp->next != NULL) {
+        if (temp->isGood == 0) {
+            fprintf(stderr, "%s was not supported by default\n", temp->pp_opt);
+        }
+        temp = temp->next;
+    }
 }

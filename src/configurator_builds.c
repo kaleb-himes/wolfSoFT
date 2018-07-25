@@ -392,6 +392,11 @@ void cfg_copy_tls_hdr(char* src, char* dst, char* tlsH)
         cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", NULL, NULL);
         cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
 
+        system(c_cmd);
+        cfg_clear_cmd(c_cmd);
+        cfg_clear_cmd(srcPath);
+        cfg_clear_cmd(dstPath);
+
         cfg_build_cmd(srcPath, src, "/wolfssl/openssl/* ", NULL, NULL);
         cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/openssl/", NULL, NULL);
         cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);

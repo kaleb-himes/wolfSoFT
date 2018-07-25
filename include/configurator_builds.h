@@ -52,7 +52,7 @@ CPPFLAGS += -Werror\n\
 CPPFLAGS += -Os\n\
 CPPFLAGS += -DWOLFSSL_USER_SETTINGS\n\
 #CPPFLAGS += -Weverything\n\
-CPPFLAGS += -m32\n\
+#CPPFLAGS += -m32\n\
 LDFLAGS += $(foreach librarydir,$(program_LIBRARY_DIRS),-L$(librarydir))\n\
 LDFLAGS += $(foreach library,$(program_LIBRARIES),-l$(library))\n\
 \n\

@@ -314,6 +314,12 @@ void cfg_setup_traditional(char* destination)
     system(c_cmd);
     cfg_clear_cmd(c_cmd);
 
+    cfg_build_cmd(c_cmd, "mkdir ", destination, "/wolfssl/wolfssl/openssl",
+                                                                       NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+
+
     return;
 }
 
@@ -385,6 +391,12 @@ void cfg_copy_tls_hdr(char* src, char* dst, char* tlsH)
         cfg_build_cmd(srcPath, src, "/wolfssl/* ", NULL, NULL);
         cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", NULL, NULL);
         cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+
+        cfg_build_cmd(srcPath, src, "/wolfssl/openssl/* ", NULL, NULL);
+        cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/openssl/", NULL, NULL);
+        cfg_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
+
+
     } else {
         cfg_build_cmd(srcPath, src, "/wolfssl/", tlsH, " ");
         cfg_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", tlsH, NULL);

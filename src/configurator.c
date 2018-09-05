@@ -8,16 +8,19 @@ int main(int argc, char** argv)
     int doClone = 1;
     int runBuilder = 0;
 
+    /* USED: b, e, m, c, s, h */
+
     if (argc >= 2) {
+
+        if (argv[SECOND_INPUT][FIRST_POSITION] != 'h') {
+            doClone = cfg_are_we_cloning();
+            if (doClone)
+                cfg_clone_target_repo("wolfssl/wolfssl");
+        }
+
         switch (argv[SECOND_INPUT][FIRST_POSITION]) {
             case 'b':
-
-                doClone = cfg_are_we_cloning();
-                if (doClone)
-                    cfg_clone_target_repo("wolfssl/wolfssl");
-
                 cfg_bench_all_configs();
-
                 break;
             case 'e':
                 if (argv[THIRD_INPUT] == NULL) {
@@ -29,10 +32,6 @@ int main(int argc, char** argv)
                     runBuilder = 0;
                 else
                     runBuilder = 1;
-
-                doClone = cfg_are_we_cloning();
-                if (doClone)
-                    cfg_clone_target_repo("wolfssl/wolfssl");
 
                 cfg_pp_extract_from_multi_dirs(argv[THIRD_INPUT],
                                                NULL, NULL, NULL, 1, runBuilder);
@@ -65,20 +64,12 @@ int main(int argc, char** argv)
                     else
                         runBuilder = 1;
 
-                    doClone = cfg_are_we_cloning();
-                    if (doClone)
-                        cfg_clone_target_repo("wolfssl/wolfssl");
-
                     cfg_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4,
                                                    numDirs, runBuilder);
                 }
                 break;
             case 'c':
                 printf("OK! Doing a custom build, let's do it!\n");
-                doClone = cfg_are_we_cloning();
-                if (doClone)
-                    cfg_clone_target_repo("wolfssl/wolfssl");
-
                 cfg_do_custom_build(argv[THIRD_INPUT], argv[FOURTH_INPUT]);
                 break;
             case 's':

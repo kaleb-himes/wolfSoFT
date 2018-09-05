@@ -414,6 +414,9 @@ void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*, int, int);
 
 int cfg_pp_check_ig(char*);
 void cfg_pp_builder(PP_OPT*);
+void cfg_pp_build_test_single(char*);
+void cfg_pp_builder_setup_buildDir(PP_OPT*, char*, char*);
+void cfg_pp_builder_setup_reqOpts(char*);
 
 void cfg_do_custom_build(char*, char*);
 void cfg_custom_build_usage(void);

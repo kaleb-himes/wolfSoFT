@@ -197,7 +197,6 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     return;
 }
 
-
 PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
 {
     struct PP_OPT* next;
@@ -531,50 +530,17 @@ void cfg_pp_builder(PP_OPT* in)
 
     int i, ret;
     char c_cmd[LONGEST_COMMAND];
-    cfg_clear_cmd(c_cmd);
     char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
     char dst[] = "pp_build_dir";
 
-    curr = cfg_pp_list_get_head(in);
-
-    /* setup the directories to reflect traditional */
-    cfg_setup_traditional(dst);
-
-    /* set to a common test app */
-    cfg_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c", NULL,
-                  " cfg-custom-test-apps/cfg_custom_test.c", NULL);
-    system(c_cmd);
     cfg_clear_cmd(c_cmd);
 
-    cfg_copy_test_app(src, dst);
-
-    /* create the project makefile (generic solution) */
-
-    cfg_create_makefile(dst);
-
-    /* Copy in the crypto headers */
-    cfg_copy_crypto_hdr(src, dst, "copyAll");
-
-    /* Copy in the tls headers */
-    cfg_copy_tls_hdr(src, dst, "copyAll");
-
-    /* Copy in the crypto sources */
-    cfg_copy_crypto_src(src, dst, "copyAll");
-
-    /* Copy in the tls sources */
-    cfg_copy_tls_src(src, dst, "copyAll");
+    cfg_pp_builder_setup_buildDir(in, dst, src);
 
     /* case 0, single options, test each individually with defaults */
     while (curr->next != NULL && ret != USER_INTERRUPT) {
-/* This is going to repeat, place in a function - Functionize-1 */
-        cfg_create_user_settings(dst);
-        /* default settings always on to prevent failure */
-        cfg_write_user_settings(dst, "WC_RSA_BLINDING");
-        cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
-        cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
-        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
-        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
-/* Functionize-1 */
+
+        cfg_pp_builder_setup_reqOpts(dst);
 
         /* Single setting to test */
         if (curr != NULL) {
@@ -665,10 +631,120 @@ void cfg_pp_builder(PP_OPT* in)
 //    } // End of brute force while loop
 
     temp = cfg_pp_list_get_head(curr);
+    fprintf(stderr, "-----------------------------------\n");
+    fprintf(stderr, "The following Build options failed\n");
     while (temp->next != NULL) {
         if (temp->isGood == 0) {
-            fprintf(stderr, "%s was not supported by default\n", temp->pp_opt);
+            fprintf(stderr, "%s\n", temp->pp_opt);
         }
         temp = temp->next;
     }
+
+    temp = cfg_pp_list_get_head(curr);
+    fprintf(stderr, "-----------------------------------\n");
+    fprintf(stderr, "The following Build options succeeded\n");
+    while (temp->next != NULL) {
+        if (temp->isGood == 1) {
+            fprintf(stderr, "%s\n", temp->pp_opt);
+        }
+        temp = temp->next;
+    }
+}
+
+void cfg_pp_build_test_single(char* testOption)
+{
+    PP_OPT* testOp;
+    int ret;
+    char src[] = "./wolfssl";
+    char dst[] = "pp_build_dir";
+    char c_cmd[LONGEST_COMMAND];
+
+    testOp = cfg_pp_node_init(testOp);
+    cfg_assrt_ne_null(testOp, "testOp is NULL");
+
+    strncpy(testOp->pp_opt, testOption, strlen(testOption));
+    printf("Copied: \"%s\" into testOp->pp_opt\n", testOp->pp_opt);
+
+
+    cfg_pp_builder_setup_buildDir(NULL, dst, src);
+    cfg_pp_builder_setup_reqOpts(dst);
+    cfg_write_user_settings(dst, testOp->pp_opt);
+    cfg_close_user_settings(dst);
+
+    /* Build the project */
+    ret = cfg_build_solution(dst);
+    if (ret == 0)
+        testOp->isGood = 1;
+    else {
+        fprintf(stderr, "%s caused a failure\n", testOp->pp_opt);
+        testOp->isGood = 0;
+    }
+
+    if (testOp->isGood == 1) {
+        cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
+
+        ret = system(c_cmd);
+        if (ret == 0)
+            testOp->isGood = 1;
+        else {
+            fprintf(stderr, "%s caused a failure\n", testOp->pp_opt);
+            testOp->isGood = 0;
+        }
+    }
+
+    return;
+}
+
+void cfg_pp_builder_setup_buildDir(PP_OPT* in, char* dst, char* src)
+{
+    PP_OPT* curr;
+    char c_cmd[LONGEST_COMMAND];
+    cfg_clear_cmd(c_cmd);
+
+    if (in != NULL)
+        curr = cfg_pp_list_get_head(in);
+    else
+        curr = in;
+
+    /* setup the directories to reflect traditional */
+    cfg_setup_traditional(dst);
+
+    /* set to a common test app */
+    cfg_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c", NULL,
+                  " cfg-custom-test-apps/cfg_custom_test.c", NULL);
+    system(c_cmd);
+    cfg_clear_cmd(c_cmd);
+
+    cfg_copy_test_app(src, dst);
+
+    /* create the project makefile (generic solution) */
+
+    cfg_create_makefile(dst);
+
+    /* Copy in the crypto headers */
+    cfg_copy_crypto_hdr(src, dst, "copyAll");
+
+    /* Copy in the tls headers */
+    cfg_copy_tls_hdr(src, dst, "copyAll");
+
+    /* Copy in the crypto sources */
+    cfg_copy_crypto_src(src, dst, "copyAll");
+
+    /* Copy in the tls sources */
+    cfg_copy_tls_src(src, dst, "copyAll");
+
+    return;
+}
+
+void cfg_pp_builder_setup_reqOpts(char* dst)
+{
+    cfg_create_user_settings(dst);
+    /* default settings always on to prevent failure */
+    cfg_write_user_settings(dst, "WC_RSA_BLINDING");
+    cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
+    cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
+    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
+    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
+
+    return;
 }

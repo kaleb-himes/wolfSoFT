@@ -81,6 +81,10 @@ int main(int argc, char** argv)
 
                 cfg_do_custom_build(argv[THIRD_INPUT], argv[FOURTH_INPUT]);
                 break;
+            case 's':
+                printf("Testing single option: %s\n", argv[THIRD_INPUT]);
+                cfg_pp_build_test_single(argv[THIRD_INPUT]);
+                break;
             default:
                 printf("TODO: Add Usage\n");
                 printf("Invalid option\n");

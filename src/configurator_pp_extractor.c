@@ -504,8 +504,7 @@ int cfg_pp_check_ig(char* pp_to_check)
 
     lenIn = (int) XSTRLEN(pp_to_check);
 
-    while (XSTRNCMP(endAlert, ignore_pp_opts[i], sizeof(*endAlert)) != 0)
-    {
+    while (XSTRNCMP(endAlert, ignore_pp_opts[i], sizeof(*endAlert)) != 0) {
         lenChk = (int) XSTRLEN(ignore_pp_opts[i]);
 
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
@@ -517,6 +516,22 @@ int cfg_pp_check_ig(char* pp_to_check)
             return 1;
         }
 
+        i++;
+    }
+
+    i = 0;
+
+    while (XSTRNCMP(endAlert, ignore_pp_opts_partial[i],
+                    sizeof(*endAlert)) != 0) {
+        lenChk = (int) XSTRLEN(ignore_pp_opts_partial[i]);
+        lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
+
+        if (XSTRNCMP(pp_to_check, ignore_pp_opts_partial[i],
+                     (size_t) lenCmp) == 0) {
+            printf("DEBUG: Return 1, %s and %s match\n", pp_to_check,
+                    ignore_pp_opts_partial[i]);
+            return 1;
+        }
         i++;
     }
 
@@ -535,7 +550,9 @@ void cfg_pp_builder(PP_OPT* in)
 
     cfg_clear_cmd(c_cmd);
 
-    cfg_pp_builder_setup_buildDir(in, dst, src);
+    cfg_pp_builder_setup_buildDir(dst, src);
+
+    curr = cfg_pp_list_get_head(in);
 
     /* case 0, single options, test each individually with defaults */
     while (curr->next != NULL && ret != USER_INTERRUPT) {
@@ -666,7 +683,7 @@ void cfg_pp_build_test_single(char* testOption)
     printf("Copied: \"%s\" into testOp->pp_opt\n", testOp->pp_opt);
 
 
-    cfg_pp_builder_setup_buildDir(NULL, dst, src);
+    cfg_pp_builder_setup_buildDir(dst, src);
     cfg_pp_builder_setup_reqOpts(dst);
     cfg_write_user_settings(dst, testOp->pp_opt);
     cfg_close_user_settings(dst);
@@ -695,16 +712,11 @@ void cfg_pp_build_test_single(char* testOption)
     return;
 }
 
-void cfg_pp_builder_setup_buildDir(PP_OPT* in, char* dst, char* src)
+void cfg_pp_builder_setup_buildDir(char* dst, char* src)
 {
-    PP_OPT* curr;
     char c_cmd[LONGEST_COMMAND];
     cfg_clear_cmd(c_cmd);
 
-    if (in != NULL)
-        curr = cfg_pp_list_get_head(in);
-    else
-        curr = in;
 
     /* setup the directories to reflect traditional */
     cfg_setup_traditional(dst);

@@ -153,10 +153,10 @@ static char ignore_pp_opts[MOST_PP_IG][LONGEST_CONFIG] = {
 {"WOLF_CRYPT_RANDOM_H"},
 {"WOLF_CRYPT_HC128_H"},
 {"WOLF_CRYPT_IDEA_H"},
-/* 128 */
 /* other ignores not header guards */
 {"__SUNPRO_C"},
 {"__SUNPRO_C0x550"},
+/* 130 */
 {"__BORLANDC__"},
 {"_WIN64"},
 {"__PPC__"},

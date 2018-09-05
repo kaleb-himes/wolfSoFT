@@ -417,6 +417,7 @@ void cfg_pp_builder(PP_OPT*);
 void cfg_pp_build_test_single(char*);
 void cfg_pp_builder_setup_buildDir(char*, char*);
 void cfg_pp_builder_setup_reqOpts(char*);
+void cfg_pp_print_results(PP_OPT*, char*, int);
 
 void cfg_do_custom_build(char*, char*);
 void cfg_custom_build_usage(void);

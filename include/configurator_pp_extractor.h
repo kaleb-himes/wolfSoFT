@@ -5,8 +5,15 @@
  * files for pre-processor macros
  */
 
+#define FAIL_CHK 0
+#define SUCC_CHK 1
+#define SKIP_CHK 2
+
+#define END_ALERT "END_OF_IGNORE_PP_OPTS"
+
 #define MOST_PP_IG 150          /* increase as needed */
 #define MOST_PP_IG_PARTIALS 50  /* increase as needed */
+#define MOST_PP_IG_SINGLE 50    /* increase as needed */
 
 #define MOST_IGNORES 22
 static char ignore_pp_opts[MOST_PP_IG][LONGEST_CONFIG] = {
@@ -166,6 +173,18 @@ static char ignore_pp_opts[MOST_PP_IG][LONGEST_CONFIG] = {
 static char ignore_pp_opts_partial[MOST_PP_IG_PARTIALS][LONGEST_PP_OPT] = {
 {"BUILD_TLS_"},
 {"BUILD_WDM_"},
+{"END_OF_IGNORE_PP_OPTS"} /* ALWAYS LAST */
+};
+
+static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
+{"NO_DH"}, /* Requires HAVE_ECC else no cipher suites */
+{"NO_ASN"}, /* Requires WOLFCRYPT_ONLY or no certs (PSK) */
+{"NO_SHA"}, /* Requires NO_OLD_TLS */
+{"NO_MD5"}, /* Requires NO_OLD_TLS */
+{"NO_HMAC"}, /* Requires no hash drbg and custom RNG options */
+{"NO_SHA256"}, /* Requires no hash drbg and custom RNG options */
+{"HAVE_ED25519"}, /* Requires HAVE_SHA512 */
+{"HAVE_CURVE25519"}, /* Requires HAVE_ECC */
 {"END_OF_IGNORE_PP_OPTS"} /* ALWAYS LAST */
 };
 

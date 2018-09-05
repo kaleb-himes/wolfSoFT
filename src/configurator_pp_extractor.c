@@ -499,12 +499,11 @@ int cfg_pp_list_check_for_dup(PP_OPT* in, char* target)
 int cfg_pp_check_ig(char* pp_to_check)
 {
     int i = 0;
-    char* endAlert = "END_OF_IGNORE_PP_OPTS";
     int lenIn, lenChk, lenCmp;
 
     lenIn = (int) XSTRLEN(pp_to_check);
 
-    while (XSTRNCMP(endAlert, ignore_pp_opts[i], sizeof(*endAlert)) != 0) {
+    while (XSTRNCMP(END_ALERT, ignore_pp_opts[i], XSTRLEN(END_ALERT)) != 0) {
         lenChk = (int) XSTRLEN(ignore_pp_opts[i]);
 
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
@@ -521,8 +520,8 @@ int cfg_pp_check_ig(char* pp_to_check)
 
     i = 0;
 
-    while (XSTRNCMP(endAlert, ignore_pp_opts_partial[i],
-                    sizeof(*endAlert)) != 0) {
+    while (XSTRNCMP(END_ALERT, ignore_pp_opts_partial[i],
+                    XSTRLEN(END_ALERT)) != 0) {
         lenChk = (int) XSTRLEN(ignore_pp_opts_partial[i]);
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
@@ -543,10 +542,13 @@ void cfg_pp_builder(PP_OPT* in)
     struct PP_OPT* curr = NULL;
     struct PP_OPT* temp = NULL;
 
-    int i, ret;
+    int i = 0, ret = 0;
+    int lenIn, lenChk, lenCmp;
+    int skipCheck = 0;
     char c_cmd[LONGEST_COMMAND];
     char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
     char dst[] = "pp_build_dir";
+    char* pp_to_check;
 
     cfg_clear_cmd(c_cmd);
 
@@ -557,40 +559,59 @@ void cfg_pp_builder(PP_OPT* in)
     /* case 0, single options, test each individually with defaults */
     while (curr->next != NULL && ret != USER_INTERRUPT) {
 
-        cfg_pp_builder_setup_reqOpts(dst);
-
         /* Single setting to test */
-        if (curr != NULL) {
+        pp_to_check = curr->pp_opt;
+        lenIn = (int) XSTRLEN(pp_to_check);
+
+        while (XSTRNCMP(END_ALERT, ignore_pp_opts_single_testing[i],
+                        XSTRLEN(END_ALERT)) != 0) {
+            lenChk = (int) XSTRLEN(ignore_pp_opts_single_testing[i]);
+            lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
+
+            if (XSTRNCMP(pp_to_check, ignore_pp_opts_single_testing[i],
+                         (size_t) lenCmp) == 0) {
+                printf("DEBUG: %s not supported without other options\n"
+                       "SKIP!!!\n", pp_to_check);
+                skipCheck = 1;
+                curr->isGood = 2;
+            }
+            i++;
+        }
+
+        /* reset counter for next check */
+        i = 0;
+
+        if (!skipCheck) {
+            cfg_pp_builder_setup_reqOpts(dst);
             cfg_write_user_settings(dst, curr->pp_opt);
             fprintf(stderr, "Testing %s\n", curr->pp_opt);
-        }
 
 /* This is going to repeat, place in a function - Functionize-2 */
-        cfg_close_user_settings(dst);
+            cfg_close_user_settings(dst);
 
-        /* Build the project */
-        ret = cfg_build_solution(dst);
-        if (ret == 0)
-            curr->isGood = 1;
-        else {
-            fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
-            curr->isGood = 0;
-        }
-
-        if (curr->isGood == 1) {
-            cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
-
-            ret = system(c_cmd);
+            /* Build the project */
+            ret = cfg_build_solution(dst);
             if (ret == 0)
                 curr->isGood = 1;
             else {
                 fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
                 curr->isGood = 0;
             }
-        }
 
+            if (curr->isGood == 1) {
+                cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
+
+                ret = system(c_cmd);
+                if (ret == 0)
+                    curr->isGood = 1;
+                else {
+                    fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
+                    curr->isGood = 0;
+                }
+            }
+        }
+        skipCheck = 0;
         curr = cfg_pp_list_get_next(curr);
-/* Functionize-2 */
     }
 
     /* case 1, brute force */
@@ -647,25 +668,11 @@ void cfg_pp_builder(PP_OPT* in)
 //        curr = cfg_pp_list_get_next(curr);
 //    } // End of brute force while loop
 
-    temp = cfg_pp_list_get_head(curr);
-    fprintf(stderr, "-----------------------------------\n");
-    fprintf(stderr, "The following Build options failed\n");
-    while (temp->next != NULL) {
-        if (temp->isGood == 0) {
-            fprintf(stderr, "%s\n", temp->pp_opt);
-        }
-        temp = temp->next;
-    }
-
-    temp = cfg_pp_list_get_head(curr);
-    fprintf(stderr, "-----------------------------------\n");
-    fprintf(stderr, "The following Build options succeeded\n");
-    while (temp->next != NULL) {
-        if (temp->isGood == 1) {
-            fprintf(stderr, "%s\n", temp->pp_opt);
-        }
-        temp = temp->next;
-    }
+    cfg_pp_print_results(curr, "The following build options were skipped",
+                         SKIP_CHK);
+    cfg_pp_print_results(curr, "The following build options failed", FAIL_CHK);
+    cfg_pp_print_results(curr, "The following build options succeeded",
+                         SUCC_CHK);
 }
 
 void cfg_pp_build_test_single(char* testOption)
@@ -758,5 +765,25 @@ void cfg_pp_builder_setup_reqOpts(char* dst)
     cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
     cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
 
+    return;
+}
+
+void cfg_pp_print_results(PP_OPT* curr, char* msg, int value)
+{
+    PP_OPT* temp;
+    int foundOne = 0;
+
+    temp = cfg_pp_list_get_head(curr);
+    fprintf(stderr, "-----------------------------------\n");
+    fprintf(stderr, "%s\n", msg);
+    while (temp->next != NULL) {
+        if (temp->isGood == value) {
+            fprintf(stderr, "%s\n", temp->pp_opt);
+            foundOne++;
+        }
+        temp = temp->next;
+    }
+    if (foundOne == 0)
+        fprintf(stderr, "** NONE **\n");
     return;
 }

@@ -185,6 +185,30 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"NO_SHA256"}, /* Requires no hash drbg and custom RNG options */
 {"HAVE_ED25519"}, /* Requires HAVE_SHA512 */
 {"HAVE_CURVE25519"}, /* Requires HAVE_ECC */
+{"WOLFSSL_MAX_STRENGTH"}, /* Requires other features */
+/* This section contains pp macros for specific ports that are not yet
+ * being tested with the wolfCFG tool
+ */
+{"USE_WINDOWS_API"},
+{"THREADX"},
+{"MICRIUM"},
+{"FREERTOS"},
+{"FREERTOS_TCP"},
+{"WOLFSSL_SAFERTOS"},
+{"EBSNET"},
+{"FREESCALE_MQX"},
+{"FREESCALE_KSDK_MQX"},
+{"FREESCALE_FREE_RTOS"},
+{"WOLFSSL_uITRON4"},
+{"WOLFSSL_uTKERNEL2"},
+{"WOLFSSL_CMSIS_RTOS"},
+{"WOLFSSL_MDK_ARM"},
+{"MBED"},
+{"WOLFSSL_TIRTOS"},
+{"INTIME_RTOS"},
+{"WOLFSSL_NUCLEUS_1_2"},
+{"WOLFSSL_APACHE_MYNEWT"},
+{"WOLFSSL_LWIP"},
 {"END_OF_IGNORE_PP_OPTS"} /* ALWAYS LAST */
 };
 

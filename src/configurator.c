@@ -19,6 +19,13 @@ int main(int argc, char** argv)
         }
 
         switch (argv[SECOND_INPUT][FIRST_POSITION]) {
+            case 'a':
+                if (argv[THIRD_INPUT] == NULL) {
+                    printf("Invalid input, no file name provided\n");
+                    return INPUT_ERR;
+                }
+                cfg_auto_build_from_file(argv[THIRD_INPUT]);
+                break;
             case 'b':
                 cfg_bench_all_configs();
                 break;
@@ -27,7 +34,6 @@ int main(int argc, char** argv)
                     printf("Invalid user input\n");
                     return INPUT_ERR;
                 }
-
                 if (argv[FOURTH_INPUT] == NULL || argv[FOURTH_INPUT] == 0)
                     runBuilder = 0;
                 else

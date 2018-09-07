@@ -365,7 +365,7 @@ PP_OPT* cfg_pp_node_init(PP_OPT* in)
     in->previous = NULL;
     in->next = NULL;
     XMEMSET(in->pp_opt, 0, sizeof(in->pp_opt));
-    in->isGood = 1;
+    in->isGood = 0;
 
     return in;
 }

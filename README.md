@@ -1,13 +1,26 @@
-Alpha version 0.2
+Alpha version 0.3
 
 Use provided makefile to build sources.
 Execute program with ./run <args>
 
+EVERY option will offer to clone the wolfSSL repository, input Y to clone or N
+to avoid clone if a local clone is available for testing. Expected path if local
+clone is available is: ```wolfCFG/wolfssl```
+
 USAGE:
 
 ```
-./run m <path-to>/<dir1> <path-to>/<dir2> <path-to>/<dir3> <path-to>/<dir4>
+./run m ARG2 ARG3 ARG4 ARG5 ARG6 ARG7
 ```
+
+ARG1 -> m
+ARG2 -> valid directory to scrub for pre-processor macros
+ARG3 -> valid directory or NULL
+ARG4 -> valid directory or NULL
+ARG5 -> valid directory or NULL
+ARG6 -> number of valid directories from ARGS 2-5
+ARG7 -> flag, 0 = dump pp macros, 1 = use pp macros to run buildsExample usages:
+
 
 NOTE: No trailing slash ```wolfssl/src``` instead of ```wolfssl/src/```
 
@@ -18,14 +31,17 @@ DISCLAIMER: There are still some edge cases to smooth out and the regex needs
 some work but will get the job done with little manual scrubbing required
 afterwards.
 
-EXAMPLE:
+EXAMPLE(S):
 
 ```
-./run m wolfssl/src wolfssl/wolfcrypt/src wolfssl/wolfssl \
-wolfssl/wolfssl/wolfcrypt > pp-out.txt
+./run m wolfssl/wolfssl NULL NULL NULL 1 0
+./run m wolfssl/wolfssl wolfssl/wolfcrypt/src NULL NULL 2 0
+./run m wolfssl/wolfssl wolfssl/wolfcrypt/srcwolfssl/src wolfssl/wolfssl/wolfcrypt 4 1
+./run m wolfssl/src wolfssl/wolfcrypt/src wolfssl/wolfssl wolfssl/wolfssl/wolfcrypt 4 0 > pp-out.txt
 ```
 
-The above would give you all the pre-processor macros found in the directories:
+The last example above would give you all the pre-processor macros found in the
+directories:
 
 wolfCFG/wolfssl/src
 
@@ -35,8 +51,8 @@ wolfCFG/wolfssl/wolfssl/
 
 wolfCFG/wolfssl/wolfssl/wolfcrypt
 
-In addition to just listing the pre-processors found the above also accounts for
-duplicates across directories unlike the ```e``` option covered below.
+In addition to just listing the pre-processors found the ```m``` option also
+accounts for duplicates across directories unlike the ```e``` option below.
 
 --------------------------------------------------------------------------------
 
@@ -66,9 +82,24 @@ wolfssl/wolfcrypt/src directories.
 --------------------------------------------------------------------------------
 
 ```
+./run s <PP_MACRO>
+```
+
+If the ```m``` option reports a failing list of pre-processor (pp)  macros you
+can re-test just a single pp macro with the ```s``` option.
+
+EXAMPLE:
+
+```
+./run s HAVE_POLY1305
+```
+
+--------------------------------------------------------------------------------
+
+```
 ./run b
 ```
-Running with the ```b``` option will will clone, autogen, and configure the
+Running with the ```b``` option will autogen and configure the
 wolfSSL library, use the default configuration as a baseline and compare the
 results of various other configurations to try and determine if enabling or
 disabling a feature increases or decreases the overall size of the library.
@@ -99,28 +130,33 @@ this nature.
 ./run c <custom build name>
 ```
 
-Running with the ```c``` option will offer to clone the wolfSSL repository.
-You can select "Y" or "N" (not case sensitive) where yes sais do the clone and
-no means do not clone.
-
-Then the c option will invoke the custom build api with the <custom build name>
+The ```c``` option will invoke the custom build api with the <custom build name>
 specified. For example if you wish to ONLY build the necessary source files to
 get an application that just provides access to the wolfCrypt aes API's and
 nothing else you can do: ```./run c aes_only```.
 
-Currently only four custom builds are supported but more will be added over time
+Currently supported custom builds are:
 
 ```
-aes_only
-rsa_pss_pkcs
-rsa_pss_pkcs_sv_ned
-sha256_ecc
+aes_only - aes only functionality 128, 192, 256
+rsa_pss_pkcs - rsa only with dependencies and pss padding
+rsa_pss_pkcs_sv_ned - same as above with sign/verify but no encrypt/decrypt
+sha256_ecc - sha256 and ecc functionality w/ fastmath
+sha256_ecc_nm - as above with normal math
+sha512_only - sha512 only functionality
+ecc_only - ecc only with dependencies
+sha256_only - sha256 only
+cert_mngr_only - cert manager functionality and dependencies
 ```
 
-aes_only = self descriptive
-rsa_pss_pkcs = PKCS v1.5 and RSA_PSS support
-rsa_pss_pkcs_sv_ned = same as above but the test app only tests sign/verify ops
-                      and even though configured does not test Encrypt/Decrypt
-                      ops.
-sha256_ecc = sha256 and ecc support
+More builds will be added over time, check back often!
 
+--------------------------------------------------------------------------------
+
+```
+./run a <file name>
+```
+
+The ```a``` option is to utilize wolfSSL's auto-tools functionality for testing
+purposes. The file provided should contain a list of configurations to be tested
+Example provided in wolfCFG/test-config-input.txt

@@ -62,8 +62,10 @@ int main(int argc, char** argv)
                         numDirs = 3;
                     else if (XSTRNCMP("4", argv[SEVENTH_INPUT], 1) == 0)
                         numDirs = 4;
-                    else
+                    else {
                         usage_m();
+                        break;
+                    }
 
                     if (XSTRNCMP("0", argv[EIGHTH_INPUT], 1) == 0)
                         runBuilder = 0;

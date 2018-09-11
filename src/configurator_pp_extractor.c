@@ -89,8 +89,6 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     if (shouldAdd == 0) {
                         curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
-                    } else {
-                        shouldAdd = 0;
                     }
 
                     #ifdef DEBUG_CFG_CHECK_ITERATE
@@ -113,8 +111,6 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     if (shouldAdd == 0) {
                         curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
-                    } else {
-                        shouldAdd = 0;
                     }
 
                     #ifdef DEBUG_CFG_CHECK_ITERATE
@@ -147,8 +143,6 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                         if (shouldAdd == 0) {
                             curr = cfg_pp_node_fill_single(curr, multiOpts[i],
                                                    (int) XSTRLEN(multiOpts[i]));
-                        } else {
-                            shouldAdd = 0;
                         }
                     }
                     /* clear out the arrays */
@@ -677,7 +671,7 @@ void cfg_pp_builder(PP_OPT* in)
 
 void cfg_pp_build_test_single(char* testOption)
 {
-    PP_OPT* testOp;
+    PP_OPT* testOp = NULL;
     int ret;
     char src[] = "./wolfssl";
     char dst[] = "pp_build_dir";

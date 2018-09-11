@@ -15,6 +15,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
     if (option == NULL || toolChain == NULL) {
         printf("Invalid input\n");
         cfg_custom_build_usage();
+        return;
     }
 
 /*----------------------------------------------------------------------------*/

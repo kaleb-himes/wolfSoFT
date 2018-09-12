@@ -360,7 +360,7 @@ PP_OPT* cfg_pp_node_init(PP_OPT* in)
     in->next = NULL;
     XMEMSET(in->pp_opt, 0, sizeof(in->pp_opt));
     in->pp_opt[0] = '\n';
-    in->isGood = 0;
+    in->isGood = -1;
 
     return in;
 }
@@ -565,10 +565,11 @@ void cfg_pp_builder(PP_OPT* in)
 
             if (XSTRNCMP(pp_to_check, ignore_pp_opts_single_testing[i],
                          (size_t) lenCmp) == 0) {
-                printf("DEBUG: %s not supported without other options\n"
-                       "SKIP!!!\n", pp_to_check);
+                printf("SKIPPING PP MACRO:\"%s\" Logging it for later review\n",
+                       pp_to_check);
                 skipCheck = 1;
                 curr->isGood = 2;
+                break;
             }
             i++;
         }
@@ -586,21 +587,24 @@ void cfg_pp_builder(PP_OPT* in)
 
             /* Build the project */
             ret = cfg_build_solution(dst);
-            if (ret == 0)
+            if (ret == 0) {
                 curr->isGood = 1;
-            else {
-                fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
+                printf("%s BUILD PASSED! ... ", curr->pp_opt);
+            } else {
+                fprintf(stderr, "%s BUILD FAILED!\n", curr->pp_opt);
                 curr->isGood = 0;
             }
 
             if (curr->isGood == 1) {
-                cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
+                cfg_clear_cmd(c_cmd);
+                cfg_build_cmd(c_cmd, "./", dst, "/run > /dev/null", NULL);
 
                 ret = system(c_cmd);
-                if (ret == 0)
+                if (ret == 0) {
+                    printf("TEST PASSED!\n");
                     curr->isGood = 1;
-                else {
-                    fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
+                } else {
+                    fprintf(stderr, "TEST FAILED!\n");
                     curr->isGood = 0;
                 }
             }
@@ -609,65 +613,13 @@ void cfg_pp_builder(PP_OPT* in)
         curr = cfg_pp_list_get_next(curr);
     }
 
-    /* case 1, brute force */
-    /* iterate through the list, add one build option at a time */
-    /* NEEDS WORK, DISABLED FOR NOW let's just get the singles going at least */
-
-//    while (curr->next != NULL && ret != USER_INTERRUPT) {
-//
-//        cfg_create_user_settings(dst);
-//        cfg_write_user_settings(dst, "WC_RSA_BLINDING");
-//        cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
-//        cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
-//        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
-//        cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
-//
-//        if (curr != NULL) {
-//            temp = cfg_pp_list_get_head(in);
-//            while (XSTRNCMP(temp->pp_opt, curr->pp_opt, XSTRLEN(temp->pp_opt))
-//                   != 0) {
-//
-//                if (temp->isGood == 1)
-//                    cfg_write_user_settings(dst, temp->pp_opt);
-//
-//                temp = temp->next;
-//            }
-//
-//            cfg_write_user_settings(dst, curr->pp_opt);
-//            fprintf(stderr, "Adding %s to the build settings\n", curr->pp_opt);
-//        }
-//
-//        cfg_close_user_settings(dst);
-//
-//        /* Build the project */
-//        ret = cfg_build_solution(dst);
-//        if (ret == 0)
-//            curr->isGood = 1;
-//        else {
-//            fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
-//            curr->isGood = 0;
-//        }
-//
-//        if (curr->isGood == 1) {
-//            cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
-//
-//            ret = system(c_cmd);
-//            if (ret == 0)
-//                curr->isGood = 1;
-//            else {
-//                fprintf(stderr, "%s caused a failure\n", curr->pp_opt);
-//                curr->isGood = 0;
-//            }
-//        }
-//
-//        curr = cfg_pp_list_get_next(curr);
-//    } // End of brute force while loop
-
     cfg_pp_print_results(curr, "The following build options were skipped",
                          SKIP_CHK);
     cfg_pp_print_results(curr, "The following build options failed", FAIL_CHK);
     cfg_pp_print_results(curr, "The following build options succeeded",
                          SUCC_CHK);
+
+    return;
 }
 
 void cfg_pp_build_test_single(char* testOption)

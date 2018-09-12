@@ -602,8 +602,9 @@ int cfg_build_solution(char* dst)
     /* copy over the test application */
 
     cfg_build_cd_cmd(c_cmd, dst);
-    cfg_build_cmd(c_cmd, " && make clean && make", NULL, NULL, NULL);
-    printf("c_cmd reads: %s\n", c_cmd);
+    cfg_build_cmd(c_cmd, " && make clean > /dev/null && make > /dev/null ",
+                  NULL, NULL, NULL);
+//    printf("c_cmd reads: %s\n", c_cmd);
     ret = system(c_cmd);
     cfg_clear_cmd(c_cmd);
 
@@ -618,7 +619,7 @@ void cfg_create_user_settings(char* dst)
     char c_cmd[LONGEST_COMMAND];
     char fName[LONGEST_COMMAND];
 
-    printf("Creating custom user_settings.h in %s directory.\n", dst);
+//    printf("Creating custom user_settings.h in %s directory.\n", dst);
 
     cfg_clear_cmd(c_cmd);
     cfg_clear_cmd(fName);
@@ -636,13 +637,13 @@ void cfg_create_user_settings(char* dst)
     cfg_build_cmd(c_cmd, "#ifndef USER_SETTINGS_H\n", NULL, NULL, NULL);
     writeLen = XSTRLEN(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
-    cfg_check_fwrite_success(ret, writeLen);
+//    cfg_check_fwrite_success(ret, writeLen);
     cfg_clear_cmd(c_cmd);
 
     cfg_build_cmd(c_cmd, "#define USER_SETTINGS_H\n\n", NULL, NULL, NULL);
     writeLen = XSTRLEN(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
-    cfg_check_fwrite_success(ret, writeLen);
+    //cfg_check_fwrite_success(ret, writeLen);
     cfg_clear_cmd(c_cmd);
 
     fclose(fStream);
@@ -674,14 +675,14 @@ void cfg_write_user_settings(char* dst, char* setting)
     finSetLen = XSTRLEN(finSet);
 
     ret = fwrite(finSet, 1, finSetLen, fStream);
-    cfg_check_fwrite_success(ret, finSetLen);
+    //cfg_check_fwrite_success(ret, finSetLen);
     cfg_clear_cmd(finSet);
 
     cfg_build_cmd(finSet, "#define ", setting, "\n\n", NULL);
     finSetLen = XSTRLEN(finSet);
 
     ret = fwrite(finSet, 1, finSetLen, fStream);
-    cfg_check_fwrite_success(ret, finSetLen);
+    //cfg_check_fwrite_success(ret, finSetLen);
     cfg_clear_cmd(finSet);
 
     fclose(fStream);
@@ -707,7 +708,7 @@ void cfg_close_user_settings(char* dst)
     cfg_build_cmd(c_cmd, "#endif /* USER_SETTINGS_H */\n", NULL, NULL, NULL);
     writeLen = XSTRLEN(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
-    cfg_check_fwrite_success(ret, writeLen);
+    //cfg_check_fwrite_success(ret, writeLen);
     cfg_clear_cmd(c_cmd);
 
     fclose(fStream);

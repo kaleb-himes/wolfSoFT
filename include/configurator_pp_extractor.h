@@ -218,6 +218,16 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"HAVE_FIPS"},
 {"HAVE_FIPS_VERSION"},
 {"HAVE_SELFTEST"},
+{"HAVE_INTEL_AVX2"},
+{"WOLFSSL_STSAFEA100"},
+{"WOLFSSL_NO_MALLOC"},
+{"NO_CODING"},
+{"WC_CACHE_LINE_SZ"},
+{"HAVE_MD5_CUST_API"},
+{"USER_MATH_LIB}"},
+{"WOLFSSL_SP_RSA"},
+{"WOLFSSL_BEFORE_DATE_CLOCK_SKEW"},
+{"WOLFSSL_AFTER_DATE_CLOCK_SKEW"},
 
 /* The below options may or may not be expected to work but need evaluation */
 {"OPENSSL_EXTRA"},

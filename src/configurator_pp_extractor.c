@@ -505,7 +505,8 @@ int cfg_pp_check_ig(char* pp_to_check)
 
         if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], (size_t) lenCmp) == 0) {
 #ifdef DEBUG_CFG
-            printf("DEBUG: Return 1, %s and %s match\n", pp_to_check, ignore_pp_opts[i]);
+            fprintf(stderr, "DEBUG: Return 1, %s and %s match\n",
+                    pp_to_check, ignore_pp_opts[i]);
 #endif
             return 1;
         }
@@ -522,7 +523,7 @@ int cfg_pp_check_ig(char* pp_to_check)
 
         if (XSTRNCMP(pp_to_check, ignore_pp_opts_partial[i],
                      (size_t) lenCmp) == 0) {
-            printf("DEBUG: Return 1, %s and %s match\n", pp_to_check,
+            fprintf(stderr, "DEBUG: Return 1, %s and %s match\n", pp_to_check,
                     ignore_pp_opts_partial[i]);
             return 1;
         }
@@ -565,8 +566,8 @@ void cfg_pp_builder(PP_OPT* in)
 
             if (XSTRNCMP(pp_to_check, ignore_pp_opts_single_testing[i],
                          (size_t) lenCmp) == 0) {
-                printf("SKIPPING PP MACRO:\"%s\" Logging it for later review\n",
-                       pp_to_check);
+                fprintf(stderr, "SKIPPING PP MACRO:\"%s\" Logging it for later"
+                        " review\n", pp_to_check);
                 skipCheck = 1;
                 curr->isGood = 2;
                 break;

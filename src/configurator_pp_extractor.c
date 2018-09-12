@@ -30,7 +30,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
     curr = cfg_pp_node_init(curr);
 
-    printf("numDirs = %d\n", numDirs);
+    fprintf(stderr, "numDirs = %d\n", numDirs);
     for (dCounter = 0; dCounter < numDirs; dCounter++) {
 
         if (dCounter == 0)
@@ -44,7 +44,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
         dStream = opendir(targetDir);
         if (dStream == NULL) {
-            printf("Failed to open %s directory\n", targetDir);
+            fprintf(stderr, "Failed to open %s directory\n", targetDir);
             cfg_abort();
         }
 
@@ -60,14 +60,14 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
             cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
             currFStream = fopen(cmdArray, "rb");
     #ifdef DEBUG_CFG
-            printf("fileName + path = %s\n", cmdArray);
+            fprintf(stderr, "fileName + path = %s\n", cmdArray);
     #endif
             cfg_clear_cmd(cmdArray);
             cfg_build_cmd(cmdArray, "Opening ", currF->d_name, " file", NULL);
             cfg_assrt_ne_null(currFStream, cmdArray);
             cfg_clear_cmd(cmdArray);
     #ifdef DEBUG_CFG
-            printf("Successfully opened %s\n", currF->d_name);
+            fprintf(stderr, "Successfully opened %s\n", currF->d_name);
     #endif
             while ((read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
 
@@ -77,8 +77,8 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
                 if (strstr(line, "#ifdef")) {
                     #ifdef DEBUG_CFG
-                      printf("lineCount = %d\n", lineCount);
-                      printf("DEBUG: Found \"#ifdef\" in %s\n", line);
+                      fprintf(stderr, "lineCount = %d\n", lineCount);
+                      fprintf(stderr, "DEBUG: Found \"#ifdef\" in %s\n", line);
                     #endif
 
                     cfg_pp_string_extract_single(multiOpts, line,
@@ -99,8 +99,9 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                 if (strstr(line, "#ifndef")) {
 
                     #ifdef DEBUG_CFG
-                      printf("lineCount = %d\n", lineCount);
-                      printf("DEBUG: Found \"ifndef\" in \"%s\"\n", line);
+                      fprintf(stderr, "lineCount = %d\n", lineCount);
+                      fprintf(stderr, "DEBUG: Found \"ifndef\" in \"%s\"\n",
+                              line);
                     #endif
 
                     cfg_pp_string_extract_single(multiOpts, line,
@@ -128,7 +129,8 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                 if (strstr(line, "defined")) {
 
                     #ifdef DEBUG_CFG
-                      printf("DEBUG: Found \"defined\" in \"%s\"\n", line);
+                      fprintf(stderr, "DEBUG: Found \"defined\" in \"%s\"\n",
+                              line);
                     #endif
 
                     /* call fill single with each string in array */
@@ -174,7 +176,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
         free(line);
 
     #ifdef DEBUG_CFG
-      printf("DEBUG: Checking the list\n");
+      fprintf(stderr, "DEBUG: Checking the list\n");
     #endif
 
 
@@ -205,7 +207,8 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
     next = curr->next;
 
     if (next != NULL) {
-        printf("Called get_pp_macro_single with a node that has a next\n");
+        fprintf(stderr, "Called get_pp_macro_single with a node that has a next"
+                "\n");
         cfg_abort();
     }
 
@@ -272,8 +275,8 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
     }
 
     #ifdef DEBUG_CFG
-      printf("DEBUG: extract single got %s\n", out[0]);
-      printf("We were processing line: \"%s\"\n", line);
+      fprintf(stderr, "DEBUG: extract single got %s\n", out[0]);
+      fprintf(stderr, "We were processing line: \"%s\"\n", line);
     #endif
 }
 
@@ -332,14 +335,15 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
             out[j][k] = '\0';
 
             #ifdef DEBUG_CFG
-              printf("DEBUG: ----> In Multi, found this PP MACRO: %s\n", out[j]);
-              printf("DEBUG: ----> ");
+              fprintf(stderr, "DEBUG: ----> In Multi, found this PP MACRO: %s"
+                      "\n", out[j]);
+              fprintf(stderr, "DEBUG: ----> ");
             #endif
 
             #ifdef DEBUG_CFG_LVL2
               for (k = 0; k < (int) sizeof(out[j]); k++)
-                  printf("%c", out[j][k]);
-              printf("\n");
+                  fprintf(stderr, "%c", out[j][k]);
+              fprintf(stderr, "\n");
             #endif
 
             k = 0;
@@ -377,31 +381,31 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
 
     curr = cfg_pp_list_get_head(in);
 
-    printf("-------------------- LIST -------------------------------------\n");
+    fprintf(stderr, "-------------------- LIST ----------------------------\n");
 
     while(curr->next != NULL) {
 
         #ifdef DEBUG_CFG_CHECK_ITERATE
             {
                 int i;
-                printf("--> %p\n", curr);
+                fprintf(stderr, "--> %p\n", curr);
                 if (curr->previous != NULL)
-                    printf("\t\t|-->%p\n", curr->previous);
+                    fprintf(stderr, "\t\t|-->%p\n", curr->previous);
                 else
-                    printf("\t\t|-->(null)\n");
+                    fprintf(stderr, "\t\t|-->(null)\n");
                 if (curr->next != NULL)
-                    printf("\t\t|-->%p\n", curr->next);
+                    fprintf(stderr, "\t\t|-->%p\n", curr->next);
                 else
-                    printf("\t\t|-->(null)\n");
+                    fprintf(stderr, "\t\t|-->(null)\n");
 
-                printf("\t\t|-->");
+                fprintf(stderr, "\t\t|-->");
                 for (i = 0; i < sizeof(curr->pp_opt); i++)
-                    printf("%c", curr->pp_opt[i]);
-                printf("\n");
+                    fprintf(stderr, "%c", curr->pp_opt[i]);
+                fprintf(stderr, "\n");
             }
         #endif
 
-        printf("%s\n", curr->pp_opt);
+        fprintf(stderr, "%s\n", curr->pp_opt);
 
         curr = curr->next;
 
@@ -411,8 +415,8 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
         nodeC++;
     }
 
-    printf("Total C Pre Processor Macros Identified was: %d\n", nodeC);
-    printf("---------------------------------------------------------------\n");
+    fprintf(stderr, "Total C Pre Processor Macros Identified was: %d\n", nodeC);
+    fprintf(stderr, "------------------------------------------------------\n");
 
     return storeRet;
 }
@@ -431,7 +435,7 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
         in = in->previous;
         counter++;
         #ifdef DEBUG_CFG_LVL2
-          printf("DEBUG: Backed up %d\n", counter);
+          fprintf(stderr, "DEBUG: Backed up %d\n", counter);
         #endif
 
         if (in == NULL)
@@ -635,7 +639,7 @@ void cfg_pp_build_test_single(char* testOption)
     cfg_assrt_ne_null(testOp, "testOp is NULL");
 
     strncpy(testOp->pp_opt, testOption, strlen(testOption));
-    printf("Copied: \"%s\" into testOp->pp_opt\n", testOp->pp_opt);
+    fprintf(stderr, "Copied: \"%s\" into testOp->pp_opt\n", testOp->pp_opt);
 
 
     cfg_pp_builder_setup_buildDir(dst, src);

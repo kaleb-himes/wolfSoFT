@@ -589,7 +589,7 @@ void cfg_pp_builder(PP_OPT* in)
             ret = cfg_build_solution(dst);
             if (ret == 0) {
                 curr->isGood = 1;
-                printf("%s BUILD PASSED! ... ", curr->pp_opt);
+                fprintf(stderr, "%s BUILD PASSED! ... ", curr->pp_opt);
             } else {
                 fprintf(stderr, "%s BUILD FAILED!\n", curr->pp_opt);
                 curr->isGood = 0;
@@ -601,7 +601,7 @@ void cfg_pp_builder(PP_OPT* in)
 
                 ret = system(c_cmd);
                 if (ret == 0) {
-                    printf("TEST PASSED!\n");
+                    fprintf(stderr, "TEST PASSED!\n");
                     curr->isGood = 1;
                 } else {
                     fprintf(stderr, "TEST FAILED!\n");

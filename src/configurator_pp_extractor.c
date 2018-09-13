@@ -6,7 +6,7 @@
 void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                                     int numDirs, int runBuilder)
 {
-    #ifdef DEBUG_CFG
+    #ifdef DEBUG_CFG_LINE_COUNT
       int     lineCount     = 0;
     #endif
 
@@ -59,7 +59,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
             cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
             currFStream = fopen(cmdArray, "rb");
-    #ifdef DEBUG_CFG
+    #ifdef DEBUG_CFG_LINE_COUNT
             fprintf(stderr, "fileName + path = %s\n", cmdArray);
     #endif
             cfg_clear_cmd(cmdArray);
@@ -71,14 +71,13 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     #endif
             while ((read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
 
-                #ifdef DEBUG_CFG
+                #ifdef DEBUG_CFG_LINE_COUNT
                   lineCount++;
                 #endif
 
                 if (strstr(line, "#ifdef")) {
-                    #ifdef DEBUG_CFG
+                    #ifdef DEBUG_CFG_LINE_COUNT
                       fprintf(stderr, "lineCount = %d\n", lineCount);
-                      fprintf(stderr, "DEBUG: Found \"#ifdef\" in %s\n", line);
                     #endif
 
                     cfg_pp_string_extract_single(multiOpts, line,
@@ -87,6 +86,12 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     shouldAdd = cfg_pp_check_ig(multiOpts[0]);
 
                     if (shouldAdd == 0) {
+                #ifdef DEBUG_CFG_LINE_COUNT
+                        fprintf(stderr, "DEBUG: Found \"ifdef\" in \"%s\"\n",
+                                line);
+                        fprintf(stderr, "Adding %s\n", multiOpts[0]);
+                #endif
+
                         curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
                     }
@@ -98,10 +103,8 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
                 if (strstr(line, "#ifndef")) {
 
-                    #ifdef DEBUG_CFG
+                    #ifdef DEBUG_CFG_LINE_COUNT
                       fprintf(stderr, "lineCount = %d\n", lineCount);
-                      fprintf(stderr, "DEBUG: Found \"ifndef\" in \"%s\"\n",
-                              line);
                     #endif
 
                     cfg_pp_string_extract_single(multiOpts, line,
@@ -110,6 +113,11 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     shouldAdd = cfg_pp_check_ig(multiOpts[0]);
 
                     if (shouldAdd == 0) {
+                #ifdef DEBUG_CFG_LINE_COUNT
+                        fprintf(stderr, "DEBUG: Found \"ifndef\" in \"%s\"\n",
+                                line);
+                        fprintf(stderr, "Adding %s\n", multiOpts[0]);
+                #endif
                         curr = cfg_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
                     }
@@ -128,9 +136,8 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                  */
                 if (strstr(line, "defined")) {
 
-                    #ifdef DEBUG_CFG
-                      fprintf(stderr, "DEBUG: Found \"defined\" in \"%s\"\n",
-                              line);
+                    #ifdef DEBUG_CFG_LINE_COUNT
+                      fprintf(stderr, "lineCount = %d\n", lineCount);
                     #endif
 
                     /* call fill single with each string in array */
@@ -143,6 +150,11 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     for (i = 0; i < optsFound; i++) {
                         shouldAdd = cfg_pp_check_ig(multiOpts[i]);
                         if (shouldAdd == 0) {
+                    #ifdef DEBUG_CFG_LINE_COUNT
+                            fprintf(stderr, "DEBUG: Found \"defined\" in"
+                                    " \"%s\"\n", line);
+                            fprintf(stderr, "Adding %s\n", multiOpts[i]);
+                    #endif
                             curr = cfg_pp_node_fill_single(curr, multiOpts[i],
                                                    (int) XSTRLEN(multiOpts[i]));
                         }
@@ -161,7 +173,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                 }
             } /* end file read while loop */
 
-            #ifdef DEBUG_CFG
+            #ifdef DEBUG_CFG_LINE_COUNT
               lineCount = 0;
             #endif
 
@@ -274,10 +286,10 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
         j++;
     }
 
-    #ifdef DEBUG_CFG
+//    #ifdef DEBUG_CFG
       fprintf(stderr, "DEBUG: extract single got %s\n", out[0]);
       fprintf(stderr, "We were processing line: \"%s\"\n", line);
-    #endif
+//    #endif
 }
 
 void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
@@ -287,6 +299,7 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
     int j = 0;
     int k = 0;
     int breakCheck = KEEP_GOING;
+    int inside_comment = 0;
 
     for (i = 0; i < lSz; i++) {
 
@@ -294,14 +307,31 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
             break;
         }
 
+        if (line[i] == '/' && line[i+1] == '*' && inside_comment == 0)
+            inside_comment = 1;
+        if (line[i] == '*' && line[i+1] == '/' && inside_comment == 1)
+            inside_comment = 0;
+
         if (line[i] == LPARAN) {
             /* special case for "#if (defined(THIS) && !defined(THAT))
              * due to the leading LPARAN */
             if (line[i+1] == 'd' && line[i+2] == 'e' && line[i+3] == 'f' &&
                 line[i+4] == 'i')
                 breakCheck = KEEP_GOING;
+            /* special case for "( defined(THIS)" where space between leading
+             * LPARAN and word defined */
+            else if (line[i+2] == 'd' && line[i+3] == 'e' && line[i+4] == 'f' &&
+                     line[i+5] == 'i')
+                breakCheck = KEEP_GOING;
             else if (line[i+1] == '!' && line[i+2] == 'd' && line[i+3] == 'e'
                      && line[i+4] == 'f' && line[i+5] == 'i')
+                breakCheck = KEEP_GOING;
+            /* special case to ignore void casts in lines with word defined */
+            else if (line[i+1] == 'v' && line[i+2] == 'o' && line[i+3] == 'i' &&
+                     line[i+4] == 'd')
+                breakCheck = KEEP_GOING;
+            /* special case for keyword defined inside of comment brackets */
+            else if (inside_comment == 1)
                 breakCheck = KEEP_GOING;
             else
                 breakCheck = STOP_GOING;

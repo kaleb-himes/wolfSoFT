@@ -228,6 +228,7 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"WOLFSSL_SP_RSA"},
 {"WOLFSSL_BEFORE_DATE_CLOCK_SKEW"},
 {"WOLFSSL_AFTER_DATE_CLOCK_SKEW"},
+{"byte"}, // There is a valid #ifndef byte check in wolfSSL, don't test it
 
 /* The below options may or may not be expected to work but need evaluation */
 {"OPENSSL_EXTRA"},
@@ -339,7 +340,6 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"MAX_UNICODE_SZ"},
 {"FREESCALE_LTC_ECC"},
 {"WOLFSSL_ATECC508A"},
-{"p"},
 {"WOLFSSL_IMX6_CAAM"},
 {"WOLFSSL_AESNI"},
 {"MICROCHIP_PIC32"},
@@ -419,7 +419,6 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"PRINT_SESSION_STATS"},
 {"WOLFSSL_EXTRA"},
 {"XSNPRINTF"},
-{"void"},
 {"FREESCALE_KSDK_2_0_TRNG"},
 {"FREESCALE_KSDK_2_0_RNGA"},
 {"NO_DEV_RANDOM"},

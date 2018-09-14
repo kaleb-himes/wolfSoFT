@@ -178,6 +178,37 @@ static char ignore_pp_opts_partial[MOST_PP_IG_PARTIALS][LONGEST_PP_OPT] = {
 };
 
 static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
+
+{"NO_AES_DECRYPT"}, /* NEEDS FIXED! There are multiple assumptions made in
+                     * the file <wolf-root>/wolfcrypt/src/wc_encrypt.c that make
+                     * no effort to check if features are on or not. One major
+                     * problem is the function wc_CryptKey which doesn't bother
+                     * checking for Des, Aes Decrypt or Encrypt and many other
+                     * defines before compiling calls to API's dependent on
+                     * those features */
+
+/* The following defined would need to be set to an actual value, we would
+ * need to add rule(s) when testing these defines such as:
+ * "#define WOLFSSL_SESSION_TIMEOUT 20" etc...
+ */
+{"WOLFSSL_SESSION_TIMEOUT"}, /* any value should work, default is 500 */
+{"WOLFSSL_MAX_MTU"}, /* any value should work, default is 1500 */
+{"WOLFSSL_MIN_DHKEY_BITS"}, /* Should be 1024 modable, default is 2048 */
+{"WOLFSSL_MAX_DHKEY_BITS"}, /* Same as min */
+{"WOLFSSL_MIN_DOWNGRADE"}, /* Valid options: TLSv1_MINOR, TLSv1_1_MINOR,
+                            * TLSv1_2_MINOR, TLSv1_3_MINOR */
+{"WOLFSSL_MAX_SUITE_SZ"}, /* Need to test limits, default is 300 */
+{"WOLFSSL_MAX_SIGALGO"}, /* Need to test limits, default is 32 */
+{"WOLFSSL_MIN_ECC_BITS"}, /* Need to test ECC valid sizes, default is 256 */
+{"WOLFSSL_MIN_RSA_BITS"}, /* Need to test RSA valid sizes, default is 2048 */
+{"MAX_CHAIN_DEPTH"}, /* Need to test limits, default is 9 */
+{"MAX_CERTIFICATE_SZ"}, /* Valid based on MAX_X509_SIZE + CERT_HEADER_SZ and
+                         * multiplied by MAX_CHAIN_DEPTH */
+{"MAX_HANDSHAKE_SZ"}, /* Valid based on MAX_CERTIFICATE_SZ above */
+{"MAX_DATE_SIZE"}, /* Need to test limits, default is 32 */
+{"CA_TABLE_SIZE"}, /* Need to test limits, default is 11 */
+
+/* The following are not expected to work without other options being set */
 {"NO_DH"}, /* Requires HAVE_ECC else no cipher suites */
 {"NO_ASN"}, /* Requires WOLFCRYPT_ONLY or no certs (PSK) */
 {"NO_SHA"}, /* Requires NO_OLD_TLS */
@@ -188,89 +219,29 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"HAVE_CURVE25519"}, /* Requires HAVE_ECC */
 {"WOLFSSL_MAX_STRENGTH"}, /* Requires other features */
 {"HAVE_LIBZ"}, /* Requires zlib, cannot always be assumed */
-/* This section contains pp macros for specific ports that are not yet
- * being tested with the wolfCFG tool
- */
-{"USE_WINDOWS_API"},
-{"THREADX"},
-{"MICRIUM"},
-{"FREERTOS"},
-{"FREERTOS_TCP"},
-{"WOLFSSL_SAFERTOS"},
-{"EBSNET"},
-{"FREESCALE_MQX"},
-{"FREESCALE_KSDK_MQX"},
-{"FREESCALE_FREE_RTOS"},
-{"WOLFSSL_uITRON4"},
-{"WOLFSSL_uTKERNEL2"},
-{"WOLFSSL_CMSIS_RTOS"},
-{"WOLFSSL_MDK_ARM"},
-{"MBED"},
-{"WOLFSSL_TIRTOS"},
-{"INTIME_RTOS"},
-{"WOLFSSL_NUCLEUS_1_2"},
-{"WOLFSSL_APACHE_MYNEWT"},
-{"WOLFSSL_LWIP"},
-{"WOLFSSL_ASYNC_CRYPT"},
-{"HAVE_NTRU"},
-{"WOLFSSL_DTLS_WINDOW_WORDS"},
-{"WOLFSSL_MYSQL_COMPATIBLE"},
-{"HAVE_FIPS"},
-{"HAVE_FIPS_VERSION"},
-{"HAVE_SELFTEST"},
-{"HAVE_INTEL_AVX2"},
-{"WOLFSSL_STSAFEA100"},
-{"WOLFSSL_NO_MALLOC"},
-{"NO_CODING"},
-{"WC_CACHE_LINE_SZ"},
-{"HAVE_MD5_CUST_API"},
-{"USER_MATH_LIB}"},
-{"WOLFSSL_SP_RSA"},
-{"WOLFSSL_BEFORE_DATE_CLOCK_SKEW"},
-{"WOLFSSL_AFTER_DATE_CLOCK_SKEW"},
-{"byte"}, // There is a valid #ifndef byte check in wolfSSL, don't test it
+{"byte"}, /* There is a valid #ifndef byte check in wolfSSL, don't test it */
+{"HAVE_QSH"}, /* depends on HAVE_TLS_EXTENSIONS also being set */
+{"WOLFSSL_AEAD_ONLY"}, /* requires having an AEAD cipher enabled */
+{"NO_TLS"}, /* Requires disabling other features such as tls master secret */
+{"WOLFSSL_TLS13"}, /* depends on: HAVE_TLS_EXTENSIONS, HAVE_SUPPORTED_CURVES */
+{"WOLFSSL_MULTICAST"}, /* depends on DTLS also being enabled */
+{"WOLFSSL_SESSION_EXPORT"}, /* depends on DTLS */
+{"WOLFSSL_SCTP"}, /* depends on DTLS */
+{"NO_CERTS"}, /* Would need to disable TLS as well */
+{"OPENSSL_ALL"}, /* depends on HAVE_SESSION_TICKET and possibly others */
+{"HAVE_CERTIFICATE_STATUS_REQUEST"}, /* depends on HAVE_OCSP */
+{"HAVE_CERTIFICATE_STATUS_REQUEST_V2"}, /* depends on HAVE_OCSP */
+{"HAVE_SESSION_TICKET"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_SNI"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_MAX_FRAGMENT"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_TRUNCATED_HMAC"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_SUPPORTED_CURVES"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_ALPN"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_SECURE_RENEGOTIATION"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"HAVE_SERVER_RENEGOTIATION_INFO"}, /* depends on HAVE_TLS_EXTENSIONS */
+{"BUILD_AESGCM"}, /* depends on HAVE_AESGCM */
 
 /* The below options may or may not be expected to work but need evaluation */
-{"OPENSSL_EXTRA"},
-{"HAVE_QSH"},
-{"WOLFSSL_AEAD_ONLY"},
-{"NO_TLS"},
-{"WOLFSSL_TLS13"},
-{"WOLFSSL_MULTICAST"},
-{"NO_AES_DECRYPT"},
-{"WOLFSSL_SESSION_TIMEOUT"},
-{"WOLFSSL_MAX_MTU"},
-{"WOLFSSL_MIN_DHKEY_BITS"},
-{"WOLFSSL_MAX_DHKEY_BITS"},
-{"WOLFSSL_MIN_DOWNGRADE"},
-{"WOLFSSL_MAX_SUITE_SZ"},
-{"WOLFSSL_MAX_SIGALGO"},
-{"WOLFSSL_MIN_ECC_BITS"},
-{"WOLFSSL_MIN_RSA_BITS"},
-{"MAX_CHAIN_DEPTH"},
-{"MAX_CERTIFICATE_SZ"},
-{"MAX_HANDSHAKE_SZ"},
-{"WOLFSSL_SESSION_EXPORT"},
-{"NO_CERTS"},
-{"OPENSSL_ALL"},
-{"HAVE_STUNNEL"},
-{"WOLFSSL_NGINX"},
-{"WOLFSSL_HAPROXY"},
-{"MAX_DATE_SIZE"},
-{"CA_TABLE_SIZE"},
-{"HAVE_CERTIFICATE_STATUS_REQUEST"},
-{"HAVE_CERTIFICATE_STATUS_REQUEST_V2"},
-{"HAVE_SESSION_TICKET"},
-{"HAVE_SNI"},
-{"HAVE_MAX_FRAGMENT"},
-{"HAVE_TRUNCATED_HMAC"},
-{"HAVE_SUPPORTED_CURVES"},
-{"HAVE_ALPN"},
-{"HAVE_SECURE_RENEGOTIATION"},
-{"HAVE_SERVER_RENEGOTIATION_INFO"},
-{"WOLFSSL_SCTP"},
-{"HAVE_LIGHTY"},
-{"BUILD_AESGCM"},
 {"WOLFSSL_NO_CLIENT_AUTH"},
 {"ASN_NAME_MAX"},
 {"MAX_DATE_SZ"},
@@ -447,6 +418,50 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"XTRANSFORM"},
 {"MP_SET_CHUNK_BITS"},
 {"WC_MP_TO_RADIX"},
+/* This section contains pp macros for specific ports that are not yet
+ * being tested with the wolfCFG tool
+ */
+{"USE_WINDOWS_API"},
+{"THREADX"},
+{"MICRIUM"},
+{"FREERTOS"},
+{"FREERTOS_TCP"},
+{"WOLFSSL_SAFERTOS"},
+{"EBSNET"},
+{"FREESCALE_MQX"},
+{"FREESCALE_KSDK_MQX"},
+{"FREESCALE_FREE_RTOS"},
+{"WOLFSSL_uITRON4"},
+{"WOLFSSL_uTKERNEL2"},
+{"WOLFSSL_CMSIS_RTOS"},
+{"WOLFSSL_MDK_ARM"},
+{"MBED"},
+{"WOLFSSL_TIRTOS"},
+{"INTIME_RTOS"},
+{"WOLFSSL_NUCLEUS_1_2"},
+{"WOLFSSL_APACHE_MYNEWT"},
+{"WOLFSSL_LWIP"},
+{"WOLFSSL_ASYNC_CRYPT"},
+{"HAVE_NTRU"},
+{"WOLFSSL_DTLS_WINDOW_WORDS"},
+{"WOLFSSL_MYSQL_COMPATIBLE"},
+{"HAVE_FIPS"},
+{"HAVE_FIPS_VERSION"},
+{"HAVE_SELFTEST"},
+{"HAVE_INTEL_AVX2"},
+{"WOLFSSL_STSAFEA100"},
+{"WOLFSSL_NO_MALLOC"},
+{"NO_CODING"},
+{"WC_CACHE_LINE_SZ"},
+{"HAVE_MD5_CUST_API"},
+{"USER_MATH_LIB}"},
+{"WOLFSSL_SP_RSA"},
+{"WOLFSSL_BEFORE_DATE_CLOCK_SKEW"},
+{"WOLFSSL_AFTER_DATE_CLOCK_SKEW"},
+{"HAVE_STUNNEL"},
+{"WOLFSSL_NGINX"},
+{"WOLFSSL_HAPROXY"},
+{"HAVE_LIGHTY"},
 
 {"END_OF_IGNORE_PP_OPTS"} /* ALWAYS LAST */
 };

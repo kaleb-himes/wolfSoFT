@@ -64,6 +64,7 @@ enum {
     INPUT_ERR
 };
 
+/* For use in command line args processing */
 enum {
     FIRST_INPUT   = 0,
     SECOND_INPUT  = 1,
@@ -74,6 +75,14 @@ enum {
     SEVENTH_INPUT = 6,
     EIGHTH_INPUT  = 7,
 };
+
+/* test cases */
+enum {
+    CFG_BUILD_MULTI = 2,
+    CFG_BUILD_SINGLE = 3,
+    CFG_BUILD_CUSTOM = 4
+};
+
 /*----------------------------------------------------------------------------*/
 /* STRUCTS */
 /*----------------------------------------------------------------------------*/
@@ -429,7 +438,7 @@ void cfg_copy_tls_hdr(char*, char*, char*);
 void cfg_copy_tls_src(char*, char*, char*);
 void cfg_create_makefile(char*);
 void cfg_create_arm_thumb_makefile(char*, char*);
-int cfg_build_solution(char*);
+int cfg_build_solution(char*, int);
 void cfg_copy_test_app(char*, char*);
 void cfg_create_user_settings(char*);
 void cfg_write_user_settings(char*, char*);

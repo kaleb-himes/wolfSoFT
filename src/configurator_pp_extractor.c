@@ -621,7 +621,7 @@ void cfg_pp_builder(PP_OPT* in)
             cfg_close_user_settings(dst);
 
             /* Build the project */
-            ret = cfg_build_solution(dst);
+            ret = cfg_build_solution(dst, CFG_BUILD_MULTI);
             if (ret == 0) {
                 curr->isGood = 1;
                 fprintf(stderr, "%s BUILD PASSED! ... ", curr->pp_opt);
@@ -678,14 +678,16 @@ void cfg_pp_build_test_single(char* testOption)
     cfg_close_user_settings(dst);
 
     /* Build the project */
-    ret = cfg_build_solution(dst);
+    ret = cfg_build_solution(dst, CFG_BUILD_SINGLE);
     if (ret == 0)
         testOp->isGood = 1;
     else {
         fprintf(stderr, "%s caused a failure\n", testOp->pp_opt);
+        fprintf(stderr, "Ret val: %d\n", ret);
         testOp->isGood = 0;
     }
 
+    cfg_clear_cmd(c_cmd);
     if (testOp->isGood == 1) {
         cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
 

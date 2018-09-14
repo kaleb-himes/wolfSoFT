@@ -105,5 +105,4 @@ void cfg_clone_target_repo(char* repo)
     cfg_build_cmd(c_cmd, gitCmd, repo, ".git", NULL);
     system(c_cmd);
     cfg_clear_cmd(c_cmd);
-
 }

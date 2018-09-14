@@ -221,7 +221,7 @@ void cfg_build_custom_specific(char* testFile, char* dst,
     cfg_close_user_settings(dst);
 
     /* Build the project */
-    cfg_build_solution(dst);
+    cfg_build_solution(dst, CFG_BUILD_CUSTOM);
 
 }
 
@@ -591,7 +591,7 @@ void cfg_create_arm_thumb_makefile(char* dst, char* toolChain)
     return;
 }
 
-int cfg_build_solution(char* dst)
+int cfg_build_solution(char* dst, int testCase)
 {
     int ret;
 
@@ -602,9 +602,15 @@ int cfg_build_solution(char* dst)
     /* copy over the test application */
 
     cfg_build_cd_cmd(c_cmd, dst);
-    cfg_build_cmd(c_cmd, " && make clean > /dev/null && make > /dev/null ",
+    if (testCase == CFG_BUILD_MULTI) {
+        cfg_build_cmd(c_cmd, " && make clean > /dev/null && make > /dev/null ",
+                      NULL, NULL, NULL);
+    } else {
+        cfg_build_cmd(c_cmd, " && make clean && make",
                   NULL, NULL, NULL);
-//    printf("c_cmd reads: %s\n", c_cmd);
+    }
+
+    printf("c_cmd reads: %s\n", c_cmd);
     ret = system(c_cmd);
     cfg_clear_cmd(c_cmd);
 

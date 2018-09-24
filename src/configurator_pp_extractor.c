@@ -700,7 +700,7 @@ void cfg_pp_build_test_single(char* testOption)
         }
     }
 
-    cfg_pp_list_free(curr);
+    cfg_pp_list_free(testOp);
     return;
 }
 

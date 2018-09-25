@@ -207,6 +207,10 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"MAX_HANDSHAKE_SZ"}, /* Valid based on MAX_CERTIFICATE_SZ above */
 {"MAX_DATE_SIZE"}, /* Need to test limits, default is 32 */
 {"CA_TABLE_SIZE"}, /* Need to test limits, default is 11 */
+{"RNG_SECURITY_STRENGTH"},
+{"ENTROPY_SCALE_FACTOR"},
+{"SEED_BLOCK_SZ"},
+
 
 /* The following are not expected to work without other options being set */
 {"NO_DH"}, /* Requires HAVE_ECC else no cipher suites */
@@ -240,6 +244,11 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"HAVE_SECURE_RENEGOTIATION"}, /* depends on HAVE_TLS_EXTENSIONS */
 {"HAVE_SERVER_RENEGOTIATION_INFO"}, /* depends on HAVE_TLS_EXTENSIONS */
 {"BUILD_AESGCM"}, /* depends on HAVE_AESGCM */
+{"WC_NO_HASHDRBG"}, /* requires alternate option for RNG if used */
+{"WOLFSSL_DEVCRYPTO_HASH"}, /* requires a device ID */
+{"WOLFSSL_DEVCRYPTO_CBC"}, /* requires a device ID */
+{"WOLFSSL_DEVCRYPTO_AES"}, /* requires a device ID */
+{"HAVE_PKCS11"}, /* not supported without device ID */
 
 /* The below options may or may not be expected to work but need evaluation */
 {"WOLFSSL_NO_CLIENT_AUTH"},

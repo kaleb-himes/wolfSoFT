@@ -249,6 +249,7 @@ static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
 {"WOLFSSL_DEVCRYPTO_CBC"}, /* requires a device ID */
 {"WOLFSSL_DEVCRYPTO_AES"}, /* requires a device ID */
 {"HAVE_PKCS11"}, /* not supported without device ID */
+{"WOLFSSL_USER_FILESYSTEM"},
 
 /* The below options may or may not be expected to work but need evaluation */
 {"WOLFSSL_NO_CLIENT_AUTH"},

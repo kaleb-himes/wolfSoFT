@@ -14,3 +14,4 @@ sha512_only/
 ecc_only/
 sha256_only/
 cfg-custom-test-apps/test.c
+aes_pwdbased/

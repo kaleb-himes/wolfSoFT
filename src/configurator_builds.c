@@ -8,6 +8,7 @@
 #include "custom_builds/configurator_sha256_only.h"
 #include "custom_builds/configurator_sha256_ecc_nm.h"
 #include "custom_builds/configurator_cert_manager_only.h"
+#include "custom_builds/configurator_aes_pwdbased.h"
 
 void cfg_do_custom_build(char* option, char* toolChain)
 {
@@ -151,6 +152,24 @@ void cfg_do_custom_build(char* option, char* toolChain)
     }
 
 /*----------------------------------------------------------------------------*/
+/* Aes + PWDBASED */
+/*----------------------------------------------------------------------------*/
+
+    if (XSTRNCMP(AES_PWDBASED_DST, option, (int)XSTRLEN(option)) == 0) {
+        printf("Alright! Building %s!\n", AES_PWDBASED_DST);
+
+        cfg_build_custom_specific(AES_PWDBASED_TEST_FILE,
+                                  AES_PWDBASED_DST,
+                                  aesPwdBasedCryptHeaders, AES_PWDBASED_C_HNUM,
+                                  aesPwdBasedCryptSrc, AES_PWDBASED_C_SNUM,
+                                  aesPwdBasedTlsHeaders, AES_PWDBASED_T_HNUM,
+                                  aesPwdBasedTlsSrc, AES_PWDBASED_T_SNUM,
+                                  aesPwdBasedSettings, toolChain);
+
+    }
+
+
+/*----------------------------------------------------------------------------*/
 /* No builds found */
 /*----------------------------------------------------------------------------*/
     else {
@@ -235,7 +254,8 @@ void cfg_custom_build_usage(void)
     printf("\t\trsa_pss_pkcs_sv_ned\n");
     printf("\t\tsha256_ecc\n");
     printf("\t\tsha512_only\n");
-    printf("\t\tcert_mngr_only\n\n");
+    printf("\t\tcert_mngr_only\n");
+    printf("\t\taes_pwdbased\n\n");
     printf("Valid toolChain options are:\n");
     printf("\t\tDEFAULT - This will use the default gcc compiler\n");
     printf("\t\tARM-THUMB - This will use the arm thumb compiler\n");

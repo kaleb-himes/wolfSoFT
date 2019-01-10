@@ -155,7 +155,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
 /* Aes + PWDBASED */
 /*----------------------------------------------------------------------------*/
 
-    if (XSTRNCMP(AES_PWDBASED_DST, option, (int)XSTRLEN(option)) == 0) {
+    else if (XSTRNCMP(AES_PWDBASED_DST, option, (int)XSTRLEN(option)) == 0) {
         printf("Alright! Building %s!\n", AES_PWDBASED_DST);
 
         cfg_build_custom_specific(AES_PWDBASED_TEST_FILE,

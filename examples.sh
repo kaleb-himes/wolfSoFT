@@ -4,7 +4,8 @@
 # header dirs while accounting for duplicates across all four
 #---- Uncomment to run #
 
-#./run m wolfssl/src wolfssl/wolfcrypt/src wolfssl/wolfssl wolfssl/wolfssl/wolfcrypt > wolfssl-pp-all.txt
+echo "./run m wolfssl/src wolfssl/wolfcrypt/src wolfssl/wolfssl wolfssl/wolfssl/wolfcrypt 4 0 > wolfssl-pp-all.txt"
+echo "n" | ./run m wolfssl/src wolfssl/wolfcrypt/src wolfssl/wolfssl wolfssl/wolfssl/wolfcrypt 4 0 > wolfssl-pp-all.txt
 
 #----#
 
@@ -26,7 +27,8 @@
 # "<wolfCFG-root>/include/configurator_common.h"
 #---- Uncomment to run #
 
-#./run b
+#echo "./run b"
+#echo "n" | ./run b
 
 #----#
 

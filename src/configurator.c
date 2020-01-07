@@ -47,7 +47,7 @@ int main(int argc, char** argv)
                     char *tD1, *tD2, *tD3, *tD4;
                     int numDirs;
 
-                    if (argc < 7)
+                    if (argc < 8)
                         usage_m();
 
                     tD1 = argv[THIRD_INPUT];

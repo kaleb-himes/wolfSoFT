@@ -4,7 +4,7 @@
 #include "configurator_common.h"
 
 /* Crypto */
-#define RSA_PSS_PKCS_C_HNUM 29 /* number of crypto header files */
+#define RSA_PSS_PKCS_C_HNUM 45 /* number of crypto header files */
 #define RSA_PSS_PKCS_C_SNUM 13 /* number of crypto source files */
 
 /* TLS */
@@ -35,6 +35,7 @@ static char rsaPssPkcsCryptHeaders[RSA_PSS_PKCS_C_HNUM][LONGEST_H_NAME] = {
     {"random.h"},
     {"wolfmath.h"},
     {"sha256.h"},
+    {"sha512.h"},
     {"signature.h"},
     {"coding.h"},
     {"md2.h"},
@@ -47,6 +48,20 @@ static char rsaPssPkcsCryptHeaders[RSA_PSS_PKCS_C_HNUM][LONGEST_H_NAME] = {
     {"chacha.h"},
     {"cpuid.h"},
     {"mem_track.h"},
+    {"md5.h"},
+    {"md4.h"},
+    {"sha.h"},
+    {"cmac.h"},
+    {"poly1305.h"},
+    {"camellia.h"},
+    {"dh.h"},
+    {"dsa.h"},
+    {"srp.h"},
+    {"idea.h"},
+    {"hc128.h"},
+    {"rabbit.h"},
+    {"chacha20_poly1305.h"},
+    {"ripemd.h"},
 };
 
 static char rsaPssPkcsCryptSrc[RSA_PSS_PKCS_C_SNUM][LONGEST_S_NAME] = {

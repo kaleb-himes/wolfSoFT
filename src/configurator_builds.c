@@ -9,6 +9,7 @@
 #include "custom_builds/configurator_sha256_ecc_nm.h"
 #include "custom_builds/configurator_cert_manager_only.h"
 #include "custom_builds/configurator_aes_pwdbased.h"
+#include "custom_builds/configurator_dsa_only.h"
 
 void cfg_do_custom_build(char* option, char* toolChain)
 {
@@ -31,6 +32,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   aesOnlyTlsHeaders, AES_ONLY_T_HNUM,
                                   aesOnlyTlsSrc, AES_ONLY_T_SNUM,
                                   aesOnlySettings, toolChain);
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* RSA PSS PKCS */
@@ -44,6 +46,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   rsaPssPkcsTlsHeaders, RSA_PSS_PKCS_T_HNUM,
                                   rsaPssPkcsTlsSrc, RSA_PSS_PKCS_T_SNUM,
                                   rsaPssPkcsSettings, toolChain);
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* RSA PSS PKCS "Sign/Verify" (sv) but "No Encrypt/Decrypt" (ned) */
@@ -60,6 +63,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   rsaPssPkcsTlsSrc, RSA_PSS_PKCS_T_SNUM,
                                   rsaPssPkcsSettings, toolChain);
 
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* SHA256 ECC */
@@ -74,6 +78,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   sha256EccTlsHeaders, SHA256_ECC_T_HNUM,
                                   sha256EccTlsSrc, SHA256_ECC_T_SNUM,
                                   sha256EccSettings, toolChain);
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* SHA256 ECC w/ Normal Math (nm) */
@@ -88,6 +93,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   sha256EccNmTlsHeaders, SHA256_ECC_NM_T_HNUM,
                                   sha256EccNmTlsSrc, SHA256_ECC_NM_T_SNUM,
                                   sha256EccNmSettings, toolChain);
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* SHA512 Only */
@@ -103,6 +109,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   sha512OnlyTlsSrc, SHA512_ONLY_T_SNUM,
                                   sha512OnlySettings, toolChain);
 
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* ECC Only */
@@ -118,6 +125,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   eccOnlyTlsSrc, ECC_ONLY_T_SNUM,
                                   eccOnlySettings, toolChain);
 
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* SHA256 Only */
@@ -133,6 +141,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   sha256OnlyTlsSrc, SHA256_ONLY_T_SNUM,
                                   sha256OnlySettings, toolChain);
 
+        return;
     }
 /*----------------------------------------------------------------------------*/
 /* Cert Manager Only */
@@ -149,6 +158,7 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   certMngrOnlyTlsSrc, CERT_MNGR_ONLY_T_SNUM,
                                   certMngrOnlySettings, toolChain);
 
+        return;
     }
 
 /*----------------------------------------------------------------------------*/
@@ -166,9 +176,25 @@ void cfg_do_custom_build(char* option, char* toolChain)
                                   aesPwdBasedTlsSrc, AES_PWDBASED_T_SNUM,
                                   aesPwdBasedSettings, toolChain);
 
+        return;
     }
 
+/*----------------------------------------------------------------------------*/
+/* DSA Only */
+/*----------------------------------------------------------------------------*/
+    if (XSTRNCMP(DSA_ONLY_DST, option, (int)XSTRLEN(option)) == 0) {
+        printf("Alright! Building %s!\n", DSA_ONLY_DST);
 
+        cfg_build_custom_specific(DSA_ONLY_TEST_FILE,
+                                  DSA_ONLY_DST,
+                                  dsaOnlyCryptHeaders, DSA_ONLY_C_HNUM,
+                                  dsaOnlyCryptSrc, DSA_ONLY_C_SNUM,
+                                  dsaOnlyTlsHeaders, DSA_ONLY_T_HNUM,
+                                  dsaOnlyTlsSrc, DSA_ONLY_T_SNUM,
+                                  dsaOnlySettings, toolChain);
+
+        return;
+    }
 /*----------------------------------------------------------------------------*/
 /* No builds found */
 /*----------------------------------------------------------------------------*/
@@ -250,12 +276,15 @@ void cfg_custom_build_usage(void)
     printf("No valid options found.\n\n");
     printf("Valid builds are:\n");
     printf("\t\taes_only\n");
+    printf("\t\taes_pwdbased\n");
+    printf("\t\tcert_manager_only\n");
+    printf("\t\tdsa_only\n");
+    printf("\t\tecc_only\n");
     printf("\t\trsa_pss_pkcs\n");
-    printf("\t\trsa_pss_pkcs_sv_ned\n");
     printf("\t\tsha256_ecc\n");
-    printf("\t\tsha512_only\n");
-    printf("\t\tcert_mngr_only\n");
-    printf("\t\taes_pwdbased\n\n");
+    printf("\t\tsha256_ecc_nm\n");
+    printf("\t\tsha256_only\n");
+    printf("\t\tsha512_only\n\n");
     printf("Valid toolChain options are:\n");
     printf("\t\tDEFAULT - This will use the default gcc compiler\n");
     printf("\t\tARM-THUMB - This will use the arm thumb compiler\n");
@@ -263,7 +292,8 @@ void cfg_custom_build_usage(void)
                             "arm-none-eabi-\n\n");
     printf("Examples:\n");
     printf("\t\t\"./run c aes_only DEFAULT\"\n");
-    printf("\t\t\"./run c rsa_pss_pkcs ARM-THUMB=/usr/local/gcc_arm/gcc-arm-none-eabi-7-2017-q4/bin/arm-none-eabi-\"\n");
+    printf("\t\t\"./run c rsa_pss_pkcs ARM-THUMB=/usr/local/gcc_arm/gcc-arm-"
+           "none-eabi-7-2017-q4/bin/arm-none-eabi-\"\n");
     printf("\n");
     cfg_abort();
 }
@@ -651,8 +681,8 @@ void cfg_create_user_settings(char* dst)
     cfg_clear_cmd(fName);
 
     cfg_build_cmd(fName, dst, "/user_settings.h", NULL, NULL);
-    cfg_build_cmd(c_cmd, "rm ", fName, NULL, NULL);
-    system(c_cmd);
+//    cfg_build_cmd(c_cmd, "rm ", fName, NULL, NULL);
+//    system(c_cmd);
     cfg_clear_cmd(c_cmd);
     cfg_build_cmd(c_cmd, "touch ", fName, NULL, NULL);
     system(c_cmd);

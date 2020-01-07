@@ -4,11 +4,11 @@
 #include "configurator_common.h"
 
 /* Crypto */
-#define AES_ONLY_C_HNUM 21 /* number of crypto header files */
+#define AES_ONLY_C_HNUM 45 /* number of crypto header files */
 #define AES_ONLY_C_SNUM 4 /* number of crypto source files */
 
 /* TLS */
-#define AES_ONLY_T_HNUM 4  /* number of tls header files */
+#define AES_ONLY_T_HNUM 5  /* number of tls header files */
 #define AES_ONLY_T_SNUM 0  /* number of TLS source files */
 
 #define AES_ONLY_TEST_FILE "cfg_aes_only.c"
@@ -36,6 +36,26 @@ static char aesOnlyCryptHeaders[AES_ONLY_C_HNUM][LONGEST_H_NAME] = {
     {"mem_track.h"},
     {"asn_public.h"},
     {"random.h"},
+    {"sha.h"},
+    {"sha256.h"},
+    {"sha512.h"},
+    {"md2.h"},
+    {"md4.h"},
+    {"md5.h"},
+    {"rsa.h"},
+    {"signature.h"},
+    {"cmac.h"},
+    {"poly1305.h"},
+    {"camellia.h"},
+    {"hmac.h"},
+    {"dh.h"},
+    {"dsa.h"},
+    {"srp.h"},
+    {"idea.h"},
+    {"hc128.h"},
+    {"rabbit.h"},
+    {"chacha20_poly1305.h"},
+    {"ripemd.h"},
 };
 
 static char aesOnlyCryptSrc[AES_ONLY_C_SNUM][LONGEST_S_NAME] = {
@@ -50,6 +70,7 @@ static char aesOnlyTlsHeaders[AES_ONLY_T_HNUM][LONGEST_H_NAME] = {
     {"version.h"},
     {"wolfio.h"},
     {"test.h"},
+    {"certs_test.h"},
 };
 static char aesOnlyTlsSrc[AES_ONLY_T_SNUM][LONGEST_S_NAME];
 
@@ -57,6 +78,7 @@ static char aesOnlySettings[MOST_SETTINGS][LONGEST_PP_OPT] = {
     {"NO_RSA"},
     {"NO_SHA"},
     {"WOLFCRYPT_ONLY"},
+    {"SINGLE_THREADED"},
     {"NO_DSA"},
     {"NO_CODING"},
     {"NO_RABBIT"},
@@ -76,8 +98,8 @@ static char aesOnlySettings[MOST_SETTINGS][LONGEST_PP_OPT] = {
     {"NO_ASN"},
     {"NO_DH"},
     {"NO_HC128"},
-    {"HAVE_STACK_SIZE"},
-    {"WOLFSSL_TRACK_MEMORY"},
+//    {"HAVE_STACK_SIZE"},
+//    {"WOLFSSL_TRACK_MEMORY"},
 };
 
 #endif /* AESO_H */

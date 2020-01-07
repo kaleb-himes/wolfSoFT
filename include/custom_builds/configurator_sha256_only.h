@@ -36,7 +36,7 @@
 #include "configurator_common.h"
 
 /* Crypto */
-#define SHA256_ONLY_C_HNUM 11 /* number of crypto header files */
+#define SHA256_ONLY_C_HNUM 20 /* number of crypto header files */
 #define SHA256_ONLY_C_SNUM 3 /* number of crypto source files */
 
 /* TLS */
@@ -58,6 +58,7 @@ static char sha256OnlyCryptHeaders[SHA256_ONLY_C_HNUM][LONGEST_H_NAME] = {
     {"hash.h"},
     {"cpuid.h"},
     {"misc.h"},
+    {"hmac.h"},
 };
 
 static char sha256OnlyCryptSrc[SHA256_ONLY_C_SNUM][LONGEST_S_NAME] = {

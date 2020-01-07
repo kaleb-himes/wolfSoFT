@@ -44,7 +44,7 @@ cfg_build_custom_specific(SHA256_ECC_TEST_FILE,
 #define SHA256_ECC_C_SNUM 13 /* number of crypto source files */
 
 /* TLS */
-#define SHA256_ECC_T_HNUM 5  /* number of tls header files */
+#define SHA256_ECC_T_HNUM 10  /* number of tls header files */
 #define SHA256_ECC_T_SNUM 0  /* number of TLS source files */
 
 #define SHA256_ECC_TEST_FILE "cfg_sha256_ecc.c" //example myCustom.c
@@ -104,6 +104,7 @@ static char sha256EccTlsHeaders[SHA256_ECC_T_HNUM][LONGEST_H_NAME] = {
     {"version.h"},
     {"wolfio.h"},
     {"test.h"},
+    {"callbacks.h"},
 };
 
 static char sha256EccTlsSrc[SHA256_ECC_T_SNUM][LONGEST_S_NAME] = {

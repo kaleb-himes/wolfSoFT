@@ -56,11 +56,13 @@ runArmTest(){
 }
 
 runArmTest "rsa_pss_pkcs" "ARM-THUMB=/usr/local/gcc_arm/gcc-arm-none-eabi-7-2017-q4/bin/arm-none-eabi-"
-runDefaultTest aes_only DEFAULT
-runDefaultTest rsa_pss_pkcs DEFAULT
-runDefaultTest rsa_pss_pkcs_sv_ned DEFAULT
-runDefaultTest sha256_ecc DEFAULT
-runDefaultTest sha512_only DEFAULT
-runDefaultTest ecc_only DEFAULT
+#runDefaultTest aes_only DEFAULT
+#runDefaultTest rsa_pss_pkcs DEFAULT
+#runDefaultTest rsa_pss_pkcs_sv_ned DEFAULT
+#runDefaultTest sha256_ecc DEFAULT
+#runDefaultTest sha512_only DEFAULT
+#runDefaultTest ecc_only DEFAULT
+
+#./run m pp_testing_dir NULL NULL NULL 1 1
 
 #----#

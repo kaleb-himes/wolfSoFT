@@ -21,7 +21,9 @@
 
 
 #include <wolfssl/wolfcrypt/settings.h>
-#include <wolfssl/ssl.h>
+#ifndef WOLFCRYPT_ONLY
+    #include <wolfssl/ssl.h>
+#endif
 #include <wolfssl/wolfcrypt/random.h> /* for CUSTOM_RAND_TYPE */
 
 #include <stdint.h>
@@ -34,6 +36,11 @@
     #define CORTEX_M_SERIES
 #endif
 
+typedef struct func_args {
+    int argc;
+    char** argv;
+    int return_code;
+} func_args;
 
 #ifdef CORTEX_M_SERIES
 /* Memory initialization */
@@ -68,6 +75,7 @@ void meminit32(uint32_t* start, uint32_t* end)
 /* Entry Point */
 void reset_handler(void)
 {
+    struct func_args args;
 #ifdef CORTEX_M_SERIES
     /* Init sections */
     memcpy32(__data_load_start__, __data_start__, __data_end__);
@@ -79,8 +87,10 @@ void reset_handler(void)
 #endif /* CORTEX_M_SERIES */
 
     /* Start main */
-    extern int main(void);
-    main();
+    args.argc = 0;
+    args.argv = NULL;
+    extern int main(int argc, char** argv);
+    main(args.argc, args.argv);
 
     /* Application has ended, so busy wait */
     while(1);

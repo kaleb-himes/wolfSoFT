@@ -49,7 +49,7 @@
 #define SHA512_ONLY_C_SNUM 4 /* number of crypto source files */
 
 /* TLS */
-#define SHA512_ONLY_T_HNUM 4  /* number of tls header files */
+#define SHA512_ONLY_T_HNUM 10  /* number of tls header files */
 #define SHA512_ONLY_T_SNUM 0  /* number of TLS source files */
 
 #define SHA512_ONLY_TEST_FILE "cfg_sha512_only.c" //example myCustom.c
@@ -92,6 +92,7 @@ static char sha512OnlyTlsHeaders[SHA512_ONLY_T_HNUM][LONGEST_H_NAME] = {
     {"version.h"},
     {"wolfio.h"},
     {"test.h"},
+    {"callbacks.h"},
 };
 
 static char sha512OnlyTlsSrc[SHA512_ONLY_T_SNUM][LONGEST_S_NAME];

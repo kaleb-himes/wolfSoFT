@@ -44,7 +44,7 @@
 #define CERT_MNGR_ONLY_T_SNUM 20  /* number of TLS source files */
 
 #define CERT_MNGR_ONLY_TEST_FILE "cfg_cert_mngr_only.c" //example myCustom.c
-#define CERT_MNGR_ONLY_DST "cert_mngr_only" // example myCustomDir
+#define CERT_MNGR_ONLY_DST "cert_manager_only" // example myCustomDir
 
 static char certMngrOnlyCryptHeaders[CERT_MNGR_ONLY_C_HNUM][LONGEST_H_NAME] = {
     {"misc.h"},
@@ -109,6 +109,7 @@ static char certMngrOnlyTlsHeaders[CERT_MNGR_ONLY_T_HNUM][LONGEST_H_NAME] = {
     {"version.h"},
     {"wolfio.h"},
     {"error-ssl.h"},
+    {"callbacks.h"},
 };
 
 static char certMngrOnlyTlsSrc[CERT_MNGR_ONLY_T_SNUM][LONGEST_S_NAME] = {

@@ -36,7 +36,7 @@
 #include "configurator_common.h"
 
 /* Crypto */
-#define AES_PWDBASED_C_HNUM 24 /* number of crypto header files */
+#define AES_PWDBASED_C_HNUM 46 /* number of crypto header files */
 #define AES_PWDBASED_C_SNUM 14 /* number of crypto source files */
 
 /* TLS */
@@ -68,7 +68,27 @@ static char aesPwdBasedCryptHeaders[AES_PWDBASED_C_HNUM][LONGEST_H_NAME] = {
     {"mem_track.h"},
     {"asn_public.h"},
     {"random.h"},
+    {"sha.h"},
+    {"sha256.h"},
+    {"sha512.h"},
+    {"md2.h"},
+    {"md4.h"},
+    {"md5.h"},
+    {"rsa.h"},
+    {"signature.h"},
+    {"cmac.h"},
+    {"poly1305.h"},
+    {"camellia.h"},
     {"hmac.h"},
+    {"dh.h"},
+    {"dsa.h"},
+    {"srp.h"},
+    {"idea.h"},
+    {"hc128.h"},
+    {"rabbit.h"},
+    {"chacha20_poly1305.h"},
+    {"ripemd.h"},
+    {"integer.h"},
     {"tfm.h"},
     {"wolfmath.h"},
 };

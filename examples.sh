@@ -38,11 +38,11 @@
 #
 #---- Uncomment to run #
 
-#./run c aes_only
-#./run c rsa_pss_pkcs
-#./run c rsa_pss_pkcs_sv_ned
-#./run c sha256_ecc
-#./run c sha512_only
-#./run c ecc_only
+#./run c aes_only DEFAULT
+#./run c rsa_pss_pkcs DEFAULT
+#./run c rsa_pss_pkcs_sv_ned DEFAULT
+#./run c sha256_ecc DEFAULT
+#./run c sha512_only DEFAULT
+#./run c ecc_only DEFAULT
 
 #----#

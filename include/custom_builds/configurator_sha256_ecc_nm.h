@@ -40,11 +40,11 @@ cfg_build_custom_specific(SHA256_ECC_NM_TEST_FILE,
 #include "configurator_common.h"
 
 /* Crypto */
-#define SHA256_ECC_NM_C_HNUM 29 /* number of crypto header files */
+#define SHA256_ECC_NM_C_HNUM 35 /* number of crypto header files */
 #define SHA256_ECC_NM_C_SNUM 13 /* number of crypto source files */
 
 /* TLS */
-#define SHA256_ECC_NM_T_HNUM 5  /* number of tls header files */
+#define SHA256_ECC_NM_T_HNUM 10  /* number of tls header files */
 #define SHA256_ECC_NM_T_SNUM 0  /* number of TLS source files */
 
 #define SHA256_ECC_NM_TEST_FILE "cfg_sha256_ecc.c" //example myCustom.c
@@ -80,6 +80,8 @@ static char sha256EccNmCryptHeaders[SHA256_ECC_NM_C_HNUM][LONGEST_H_NAME] = {
     {"chacha.h"},
     {"arc4.h"},
     {"mem_track.h"},
+    {"mpi_class.h"},
+    {"mpi_superclass.h"},
 };
 
 static char sha256EccNmCryptSrc[SHA256_ECC_NM_C_SNUM][LONGEST_S_NAME] = {
@@ -105,6 +107,7 @@ static char sha256EccNmTlsHeaders[SHA256_ECC_NM_T_HNUM][LONGEST_H_NAME] = {
     {"version.h"},
     {"wolfio.h"},
     {"test.h"},
+    {"callbacks.h"},
 };
 
 static char sha256EccNmTlsSrc[SHA256_ECC_NM_T_SNUM][LONGEST_S_NAME] = {

@@ -15,46 +15,47 @@
 /* DEFINES */
 /*----------------------------------------------------------------------------*/
 /* known ascii char hex values for comparison purposes */
-#define SPACE 0x20      /* self explanitory = ' '  */
-#define DASH 0x2D       /* self explanitory = '-'  */
-#define L_BRACKET 0x5B  /* self explanitory = '['  */
-#define CRET 0xD        /* Carriage Return  = '\r' */
-#define NLRET 0xA       /* New Line Return  = '\n' */
-#define UPPER_A 0x41    /* uppercase A      = 'A'  */
-#define UPPER_Z 0x5A    /* uppercase Z      = 'Z'  */
-#define LPARAN 0X28     /* Left Parna       = '('  */
-#define RPARAN 0x29     /* Right Paran      = ')'  */
-#define UNDERSCORE 0x5F /* Underscore       = '_'  */
-#define NUM_ZERO   0x30 /* number zero      = '0'  */
-#define NUM_NINE   0x39 /* number nine      = '9'  */
-#define LOWER_A    0x61 /* lowercase a      = 'a'  */
-#define LOWER_Z    0x7A /* lowercase z      = 'z'  */
-#define HASHTAG    0x23 /* the hashtag      = '#'  */
-#define BACKSLASH  0x5C /* the escape char  = '\'  */
-#define UPPER_Y    0x59 /* uppercase Y      = 'Y'  */
-#define UPPER_N    0x4E /* uppercase N      = 'N'  */
-#define LOWER_Y    0x79 /* lowercase y      = 'y'  */
-#define LOWER_N    0x6E /* lowercase n      = 'n'  */
+#define CFG_SPACE 0x20      /* self explanitory = ' '  */
+#define CFG_DASH 0x2D       /* self explanitory = '-'  */
+#define CFG_L_BRACKET 0x5B  /* self explanitory = '['  */
+#define CFG_CRET 0xD        /* Carriage Return  = '\r' */
+#define CFG_NLRET 0xA       /* New Line Return  = '\n' */
+#define CFG_UPPER_A 0x41    /* uppercase A      = 'A'  */
+#define CFG_UPPER_Z 0x5A    /* uppercase Z      = 'Z'  */
+#define CFG_LPARAN 0X28     /* Left Parna       = '('  */
+#define CFG_RPARAN 0x29     /* Right Paran      = ')'  */
+#define CFG_UNDERSCORE 0x5F /* Underscore       = '_'  */
+#define CFG_NUM_ZERO   0x30 /* number zero      = '0'  */
+#define CFG_NUM_NINE   0x39 /* number nine      = '9'  */
+#define CFG_LOWER_A    0x61 /* lowercase a      = 'a'  */
+#define CFG_LOWER_Z    0x7A /* lowercase z      = 'z'  */
+#define CFG_HASHTAG    0x23 /* the hashtag      = '#'  */
+#define CFG_BACKSLASH  0x5C /* the escape char  = '\'  */
+#define CFG_UPPER_Y    0x59 /* uppercase Y      = 'Y'  */
+#define CFG_UPPER_N    0x4E /* uppercase N      = 'N'  */
+#define CFG_LOWER_Y    0x79 /* lowercase y      = 'y'  */
+#define CFG_LOWER_N    0x6E /* lowercase n      = 'n'  */
 
-#define NO_DUP                  0
-#define FOUND_DUP               1
-#define STOP_GOING              1
-#define KEEP_GOING              0
-#define SINGLE_CHAR             1
-#define LONGEST_PATH            4096
-#define MOST_CONFIGS            200
-#define NUM_BINARIES            3
-#define OPTS_IN_A_LINE          5
-#define LONGEST_CONFIG          80
-#define FIRST_POSITION          0
-#define LONGEST_PP_OPT          100*sizeof(char)
-#define LONGEST_COMMAND         4096
-#define CONFIG_NOT_SUPPORTED    256
-#define LONGEST_LINE            80
-#define MOST_SETTINGS           80
-#define LONGEST_H_NAME          25
-#define LONGEST_S_NAME          25
-#define USER_INTERRUPT          2
+#define CFG_NO_DUP                  0
+#define CFG_FOUND_DUP               1
+#define CFG_STOP_GOING              1
+#define CFG_KEEP_GOING              0
+#define CFG_SINGLE_CHAR             1
+#define CFG_LONGEST_PATH            4096
+#define CFG_MOST_CONFIGS            200
+#define CFG_MOST_IGNORES            22
+#define CFG_NUM_BINARIES            3
+#define CFG_OPTS_IN_A_LINE          5
+#define CFG_LONGEST_CONFIG          80
+#define CFG_FIRST_POSITION          0
+#define CFG_LONGEST_PP_OPT          100*sizeof(char)
+#define CFG_LONGEST_COMMAND         4096
+#define CFG_CONFIG_NOT_SUPPORTED    256
+#define CFG_LONGEST_LINE            80
+#define CFG_MOST_SETTINGS           80
+#define CFG_LARGEST_FILE_LIST       70
+#define CFG_LONGEST_FILE_NAME       150
+#define CFG_USER_INTERRUPT          2
 /*----------------------------------------------------------------------------*/
 /* ENUMS */
 /*----------------------------------------------------------------------------*/
@@ -66,14 +67,14 @@ enum {
 
 /* For use in command line args processing */
 enum {
-    FIRST_INPUT   = 0,
-    SECOND_INPUT  = 1,
-    THIRD_INPUT   = 2,
-    FOURTH_INPUT  = 3,
-    FIFTH_INPUT   = 4,
-    SIXTH_INPUT   = 5,
-    SEVENTH_INPUT = 6,
-    EIGHTH_INPUT  = 7,
+    CFG_FIRST_INPUT   = 0,
+    CFG_SECOND_INPUT  = 1,
+    CFG_THIRD_INPUT   = 2,
+    CFG_FOURTH_INPUT  = 3,
+    CFG_FIFTH_INPUT   = 4,
+    CFG_SIXTH_INPUT   = 5,
+    CFG_SEVENTH_INPUT = 6,
+    CFG_EIGHTH_INPUT  = 7,
 };
 
 /* test cases */
@@ -91,7 +92,7 @@ typedef struct PP_OPT
 {
     struct PP_OPT* previous;
     struct PP_OPT* next;
-    char pp_opt[LONGEST_PP_OPT];
+    char pp_opt[CFG_LONGEST_PP_OPT];
     int isGood;
 } PP_OPT;
 
@@ -103,8 +104,7 @@ typedef struct PP_OPT
 /* a fixed array of options to ignore if found when scrubbing the output
  * of configure help menu
  */
-#define MOST_IGNORES 22
-static char ignore_opts[MOST_CONFIGS][LONGEST_CONFIG] = {
+static char ignore_opts[CFG_MOST_CONFIGS][CFG_LONGEST_CONFIG] = {
 {"jobserver"},              /* 1 */
 {"options-checking"},       /* 2 */
 {"option-checking"},        /* 3 */
@@ -163,7 +163,7 @@ void cfg_abort(void);
  * A function to zero out a buffer.
  *
  * @p1 - a buffer to zero-out
- * uses XMEMSET to zero a command of LONGEST_COMMAND length
+ * uses XMEMSET to zero a command of CFG_LONGEST_COMMAND length
  * TODO: needs some sanity checks, could behave badly if called with shorter
  *       buffers.
  */
@@ -248,8 +248,8 @@ void cfg_check_decrease(int, char*);
  * Scrubs the output of "./configure -h" help menu for configure options
  * to test, will pick up new configure options added to wolfSSL
  */
-void cfg_scrub_config_out(char*, char(*)[LONGEST_CONFIG],
-                          char(*)[LONGEST_CONFIG]);
+void cfg_scrub_config_out(char*, char(*)[CFG_LONGEST_CONFIG],
+                          char(*)[CFG_LONGEST_CONFIG]);
 
 /*
  * Runs the configure options returned by cfg_scrub_config_out
@@ -306,7 +306,7 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT*, char*, int);
  * #if defined(THIS) && defined (THAT) \
  *     && !defined(OTHER)
  */
-void cfg_pp_string_extract_multi(char(*)[LONGEST_PP_OPT], char*, int, int*);
+void cfg_pp_string_extract_multi(char(*)[CFG_LONGEST_PP_OPT], char*, int, int*);
 
 /*
  * @p1 - A 2D array for holding the C Pre-Processor extracted from (p2)
@@ -317,7 +317,7 @@ void cfg_pp_string_extract_multi(char(*)[LONGEST_PP_OPT], char*, int, int*);
  * "#ifdef" or "#ifndef". It can handle a line with only a single pre-processor
  * macro.
   */
-void cfg_pp_string_extract_single(char(*)[LONGEST_PP_OPT], char*, int);
+void cfg_pp_string_extract_single(char(*)[CFG_LONGEST_PP_OPT], char*, int);
 
 /*
  * @p1 - a node from the doubly linked list to be initialized. Will set the
@@ -447,11 +447,23 @@ FILE* cfg_open_file_append_mode(char*);
 void cfg_check_fwrite_success(size_t, size_t);
 void cfg_build_aes_only(void);
 void cfg_build_rsa_pss_pkcs(char*, char*);
+void cfg_check_recipe_supported(char* option);
+void cfg_get_recipe_ingredients(char*,
+                                char*,
+                                char(*)[CFG_LONGEST_FILE_NAME],
+                                char(*)[CFG_LONGEST_FILE_NAME],
+                                char(*)[CFG_LONGEST_FILE_NAME],
+                                char(*)[CFG_LONGEST_FILE_NAME],
+                                char(*)[CFG_LONGEST_FILE_NAME]);
+
+void cfg_parse_conf(const char* abortLine, size_t abortLen,
+                    char(*)[CFG_LONGEST_FILE_NAME], FILE* fStream);
+
 void cfg_build_custom_specific(char*, char*,
-                               char(*)[LONGEST_H_NAME], int,
-                               char(*)[LONGEST_S_NAME], int,
-                               char(*)[LONGEST_H_NAME], int,
-                               char(*)[LONGEST_S_NAME], int,
-                               char(*)[LONGEST_PP_OPT], char*);
+                               char(*)[CFG_LONGEST_FILE_NAME],
+                               char(*)[CFG_LONGEST_FILE_NAME],
+                               char(*)[CFG_LONGEST_FILE_NAME],
+                               char(*)[CFG_LONGEST_FILE_NAME],
+                               char(*)[CFG_LONGEST_FILE_NAME], char*);
 void usage_m(void);
 #endif /* C_CONF_COMMN */

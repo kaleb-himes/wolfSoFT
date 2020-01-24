@@ -1,6 +1,6 @@
 #ifndef C_CONFIGS_H
 #define C_CONFIGS_H
 
-#define DEFAULT_OPTS ""
+#define CFG_DEFAULT_OPTS ""
 
 #endif /* C_CONFIGS_H */

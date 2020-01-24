@@ -12,34 +12,35 @@ int main(int argc, char** argv)
 
     if (argc >= 2) {
 
-        if (argv[SECOND_INPUT][FIRST_POSITION] != 'h') {
+        if (argv[CFG_SECOND_INPUT][CFG_FIRST_POSITION] != 'h') {
             doClone = cfg_are_we_cloning();
             if (doClone)
                 cfg_clone_target_repo("wolfssl/wolfssl");
         }
 
-        switch (argv[SECOND_INPUT][FIRST_POSITION]) {
+        switch (argv[CFG_SECOND_INPUT][CFG_FIRST_POSITION]) {
             case 'a':
-                if (argv[THIRD_INPUT] == NULL) {
+                if (argv[CFG_THIRD_INPUT] == NULL) {
                     printf("Invalid input, no file name provided\n");
                     return INPUT_ERR;
                 }
-                cfg_auto_build_from_file(argv[THIRD_INPUT]);
+                cfg_auto_build_from_file(argv[CFG_THIRD_INPUT]);
                 break;
             case 'b':
                 cfg_bench_all_configs();
                 break;
             case 'e':
-                if (argv[THIRD_INPUT] == NULL) {
+                if (argv[CFG_THIRD_INPUT] == NULL) {
                     printf("Invalid user input\n");
                     return INPUT_ERR;
                 }
-                if (argv[FOURTH_INPUT] == NULL || argv[FOURTH_INPUT] == 0)
+                if (argv[CFG_FOURTH_INPUT] == NULL ||
+                    argv[CFG_FOURTH_INPUT] == 0)
                     runBuilder = 0;
                 else
                     runBuilder = 1;
 
-                cfg_pp_extract_from_multi_dirs(argv[THIRD_INPUT],
+                cfg_pp_extract_from_multi_dirs(argv[CFG_THIRD_INPUT],
                                                NULL, NULL, NULL, 1, runBuilder);
                 break;
             case 'm':
@@ -50,24 +51,24 @@ int main(int argc, char** argv)
                     if (argc < 8)
                         usage_m();
 
-                    tD1 = argv[THIRD_INPUT];
-                    tD2 = argv[FOURTH_INPUT];
-                    tD3 = argv[FIFTH_INPUT];
-                    tD4 = argv[SIXTH_INPUT];
-                    if (XSTRNCMP("1", argv[SEVENTH_INPUT], 1) == 0)
+                    tD1 = argv[CFG_THIRD_INPUT];
+                    tD2 = argv[CFG_FOURTH_INPUT];
+                    tD3 = argv[CFG_FIFTH_INPUT];
+                    tD4 = argv[CFG_SIXTH_INPUT];
+                    if (XSTRNCMP("1", argv[CFG_SEVENTH_INPUT], 1) == 0)
                         numDirs = 1;
-                    else if (XSTRNCMP("2", argv[SEVENTH_INPUT], 1) == 0)
+                    else if (XSTRNCMP("2", argv[CFG_SEVENTH_INPUT], 1) == 0)
                         numDirs = 2;
-                    else if (XSTRNCMP("3", argv[SEVENTH_INPUT], 1) == 0)
+                    else if (XSTRNCMP("3", argv[CFG_SEVENTH_INPUT], 1) == 0)
                         numDirs = 3;
-                    else if (XSTRNCMP("4", argv[SEVENTH_INPUT], 1) == 0)
+                    else if (XSTRNCMP("4", argv[CFG_SEVENTH_INPUT], 1) == 0)
                         numDirs = 4;
                     else {
                         usage_m();
                         break;
                     }
 
-                    if (XSTRNCMP("0", argv[EIGHTH_INPUT], 1) == 0)
+                    if (XSTRNCMP("0", argv[CFG_EIGHTH_INPUT], 1) == 0)
                         runBuilder = 0;
                     else
                         runBuilder = 1;
@@ -78,11 +79,12 @@ int main(int argc, char** argv)
                 break;
             case 'c':
                 printf("OK! Doing a custom build, let's do it!\n");
-                cfg_do_custom_build(argv[THIRD_INPUT], argv[FOURTH_INPUT]);
+                cfg_do_custom_build(argv[CFG_THIRD_INPUT],
+                                    argv[CFG_FOURTH_INPUT]);
                 break;
             case 's':
-                printf("Testing single option: %s\n", argv[THIRD_INPUT]);
-                cfg_pp_build_test_single(argv[THIRD_INPUT]);
+                printf("Testing single option: %s\n", argv[CFG_THIRD_INPUT]);
+                cfg_pp_build_test_single(argv[CFG_THIRD_INPUT]);
                 break;
             default:
                 printf("TODO: Add Usage\n");
@@ -103,14 +105,14 @@ int cfg_are_we_cloning(void)
            "\nhave a working copy?\nDefault is: [Y]\n"
            "Please input either [Y/N] >");
     cloneWolf = getchar();
-    if (cloneWolf == UPPER_Y || cloneWolf == UPPER_N)
+    if (cloneWolf == CFG_UPPER_Y || cloneWolf == CFG_UPPER_N)
         cloneWolf += 32;
-    if (cloneWolf != LOWER_Y && cloneWolf != LOWER_N) {
+    if (cloneWolf != CFG_LOWER_Y && cloneWolf != CFG_LOWER_N) {
         printf("Invalid option: %c\n", cloneWolf);
         cfg_abort();
     }
 
-    if (cloneWolf == LOWER_Y)
+    if (cloneWolf == CFG_LOWER_Y)
         return 1;
     else
         return 0;

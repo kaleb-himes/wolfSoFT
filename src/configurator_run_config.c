@@ -4,7 +4,7 @@
 int cfg_run_config_opts(char* c_pwd, char* config_opts)
 {
     int ret;
-    char c_cmd[LONGEST_COMMAND];
+    char c_cmd[CFG_LONGEST_COMMAND];
 
     /* On a mac */
     char* c_fNm1 = "/wolfssl/src/.libs/libwolfssl.dylib";
@@ -16,26 +16,26 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
     int mallocFlag = 0;
 
     if (c_pwd == NULL) {
-        c_pwd = (char*) malloc(sizeof(char) * LONGEST_PATH);
+        c_pwd = (char*) malloc(sizeof(char) * CFG_LONGEST_PATH);
         if (c_pwd == NULL)
             cfg_abort();
         else
             mallocFlag = 1;
         /* get path to working directory */
-        if (getcwd(c_pwd, LONGEST_PATH) == NULL)
+        if (getcwd(c_pwd, CFG_LONGEST_PATH) == NULL)
             cfg_abort();
     }
 
-    XMEMSET(c_cmd, 0, LONGEST_COMMAND);
+    XMEMSET(c_cmd, 0, CFG_LONGEST_COMMAND);
 
     /* build the change to directory, configure and make command */
     cfg_build_cd_cmd(c_cmd, c_pwd);
     cfg_build_cmd(c_cmd, "/wolfssl && ./configure ", config_opts,
               " > /dev/null", NULL);
     ret = system(c_cmd);
-    if (ret != CONFIG_NOT_SUPPORTED) /* skip the ones that aren't supported */
+    if (ret != CFG_CONFIG_NOT_SUPPORTED) /* skip the ones that aren't supported */
         cfg_check_ret(ret, 0, "configure library");
-    if (ret == CONFIG_NOT_SUPPORTED) {
+    if (ret == CFG_CONFIG_NOT_SUPPORTED) {
         if (mallocFlag == 1)
             free(c_pwd);
         return ret;
@@ -82,16 +82,16 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
 void cfg_check_increase(int baseLine, char* configPart)
 {
     int ret;
-    char c_config[LONGEST_COMMAND];
+    char c_config[CFG_LONGEST_COMMAND];
     float original = (float) baseLine;
     float newNum;
 
     cfg_clear_cmd(c_config);
-    cfg_build_cmd(c_config, DEFAULT_OPTS, " --enable-", configPart, NULL);
+    cfg_build_cmd(c_config, CFG_DEFAULT_OPTS, " --enable-", configPart, NULL);
 
     ret = cfg_run_config_opts(NULL, c_config);
 
-    if (ret == CONFIG_NOT_SUPPORTED) {
+    if (ret == CFG_CONFIG_NOT_SUPPORTED) {
         printf("--enable-%s !~ NS ~!\n", configPart);
         return;
     }
@@ -115,16 +115,16 @@ void cfg_check_increase(int baseLine, char* configPart)
 void cfg_check_decrease(int baseLine, char* configPart)
 {
     int ret;
-    char c_config[LONGEST_COMMAND];
+    char c_config[CFG_LONGEST_COMMAND];
     float original = (float) baseLine;
     float newNum;
 
     cfg_clear_cmd(c_config);
-    cfg_build_cmd(c_config, DEFAULT_OPTS, " --disable-", configPart, NULL);
+    cfg_build_cmd(c_config, CFG_DEFAULT_OPTS, " --disable-", configPart, NULL);
 
     ret = cfg_run_config_opts(NULL, c_config);
 
-    if (ret == CONFIG_NOT_SUPPORTED) {
+    if (ret == CFG_CONFIG_NOT_SUPPORTED) {
         printf("--disable-%s !~ NS ~!\n", configPart);
         return;
     }

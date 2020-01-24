@@ -146,7 +146,7 @@ sha256_ecc_nm - as above with normal math
 sha512_only - sha512 only functionality
 ecc_only - ecc only with dependencies
 sha256_only - sha256 only
-cert_mngr_only - cert manager functionality and dependencies
+cert_manager_only - cert manager functionality and dependencies
 ```
 
 More builds will be added over time, check back often!

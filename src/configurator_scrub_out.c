@@ -2,12 +2,12 @@
 #include <configurator_scrub_out.h>
 
 void cfg_scrub_config_out(char* configOutFname,
-                          char(*allConfigEnables)[LONGEST_CONFIG],
-                          char(*allConfigDisables)[LONGEST_CONFIG])
+                          char(*allConfigEnables)[CFG_LONGEST_CONFIG],
+                          char(*allConfigDisables)[CFG_LONGEST_CONFIG])
 {
     FILE* fStream;
     char* line = NULL;
-    char truncLine[LONGEST_CONFIG];
+    char truncLine[CFG_LONGEST_CONFIG];
     int i = 0, j, k = 0;
     int addOpE = 0;
     int addOpD = 0;
@@ -21,7 +21,7 @@ void cfg_scrub_config_out(char* configOutFname,
     size_t len = 0;
     ssize_t read;
 
-    XMEMSET(truncLine, 0, LONGEST_CONFIG);
+    XMEMSET(truncLine, 0, CFG_LONGEST_CONFIG);
 
 
     fStream = fopen(configOutFname, "rb");
@@ -48,7 +48,7 @@ void cfg_scrub_config_out(char* configOutFname,
 
             cfg_truncate_trim_line(line, truncLine);
 
-            for (j = 0; j < MOST_IGNORES; j++) {
+            for (j = 0; j < CFG_MOST_IGNORES; j++) {
                 if (XSTRNCMP(truncLine, ignore_opts[j],
                     XSTRLEN(truncLine)) == 0) {
                     if (addOpE)
@@ -69,7 +69,7 @@ void cfg_scrub_config_out(char* configOutFname,
                 addOpD = 0;
             }
 
-            XMEMSET(truncLine, 0, LONGEST_CONFIG);
+            XMEMSET(truncLine, 0, CFG_LONGEST_CONFIG);
         }
     }
     XSTRNCAT(allConfigEnables[i], lastLine, XSTRLEN(lastLine));
@@ -97,10 +97,10 @@ void cfg_truncate_trim_line(char* line, char* truncatedLine)
      * that describe that feature */
     while(*b != 0) {
         /* account for white space prior to -- sequence */
-        if (*a == DASH && *b == DASH) {
+        if (*a == CFG_DASH && *b == CFG_DASH) {
             foundIt = 1;
             b++; /* advance past second dash */
-            while (*b != DASH) /* skip the <keep this part> */
+            while (*b != CFG_DASH) /* skip the <keep this part> */
                 b++;
             b++; /* advance past first single dash */
             break; /* exit top level loop */
@@ -110,8 +110,10 @@ void cfg_truncate_trim_line(char* line, char* truncatedLine)
     }
 
     if (foundIt) {
-        /* SPACE = ' ', NLRET = '\n', CRET = '\r', L_BRACKET = '[' */
-        while (*b != SPACE && *b != NLRET && *b != CRET && *b != L_BRACKET) {
+        /* SPACE = ' ', CFG_NLRET = '\n', CFG_CRET = '\r', CFG_L_BRACKET = '['
+         */
+        while (*b != CFG_SPACE && *b != CFG_NLRET && *b != CFG_CRET &&
+               *b != CFG_L_BRACKET) {
             *c = *b;
             c++;
             b++;
@@ -119,7 +121,7 @@ void cfg_truncate_trim_line(char* line, char* truncatedLine)
         return;
     }
     /* failure */
-    XMEMSET(truncatedLine, 0, LONGEST_CONFIG);
+    XMEMSET(truncatedLine, 0, CFG_LONGEST_CONFIG);
     return;
 }
 

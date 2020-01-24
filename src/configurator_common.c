@@ -36,7 +36,7 @@ void __attribute__((noreturn)) cfg_abort(void)
 
 void cfg_clear_cmd(char* cmd)
 {
-    XMEMSET(cmd, 0, LONGEST_COMMAND);
+    XMEMSET(cmd, 0, CFG_LONGEST_COMMAND);
     return;
 }
 
@@ -97,7 +97,7 @@ int cfg_get_file_size(char* fname)
 
 void cfg_clone_target_repo(char* repo)
 {
-    char c_cmd[LONGEST_COMMAND];
+    char c_cmd[CFG_LONGEST_COMMAND];
     char* gitCmd = "git clone https://github.com/";
 
     cfg_clear_cmd(c_cmd);

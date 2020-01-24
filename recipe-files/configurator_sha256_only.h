@@ -44,7 +44,6 @@
 #define SHA256_ONLY_T_SNUM 0  /* number of TLS source files */
 
 #define SHA256_ONLY_TEST_FILE "cfg_sha256_only.c" //example myCustom.c
-#define SHA256_ONLY_DST "sha256_only" // example myCustomDir
 
 static char sha256OnlyCryptHeaders[SHA256_ONLY_C_HNUM][LONGEST_H_NAME] = {
     {"settings.h"},

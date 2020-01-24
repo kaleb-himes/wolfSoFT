@@ -3,7 +3,7 @@
 int cfg_auto_build_from_file(char* configOpsFile)
 {
     FILE* fStream;
-    char c_cmd[LONGEST_COMMAND] = {0};
+    char c_cmd[CFG_LONGEST_COMMAND] = {0};
     char* line = NULL;
     size_t lengthOfLine = 0;
     ssize_t read        = 0;

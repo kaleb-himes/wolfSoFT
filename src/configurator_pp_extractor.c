@@ -21,8 +21,8 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     FILE*   currFStream   = NULL;
     struct  PP_OPT* curr  = NULL;
     struct  dirent* currF = NULL;
-    char    cmdArray[LONGEST_COMMAND] = {0};
-    char    multiOpts[OPTS_IN_A_LINE][LONGEST_PP_OPT] = {0};
+    char    cmdArray[CFG_LONGEST_COMMAND] = {0};
+    char    multiOpts[CFG_OPTS_IN_A_LINE][CFG_LONGEST_PP_OPT] = {0};
 
     cfg_check_ret_nlte(numDirs, 0, "no valid directory strings");
 
@@ -54,7 +54,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
             if (XSTRNCMP(currF->d_name, "..", 2) == 0)
                 continue;
 
-            if (getcwd(cmdArray, LONGEST_PATH) == NULL)
+            if (getcwd(cmdArray, CFG_LONGEST_PATH) == NULL)
                 cfg_abort();
 
             cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
@@ -141,7 +141,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     #endif
 
                     /* call fill single with each string in array */
-                    for (i = 0; i < OPTS_IN_A_LINE; i++) {
+                    for (i = 0; i < CFG_OPTS_IN_A_LINE; i++) {
                         XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                     }
 
@@ -160,7 +160,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                         }
                     }
                     /* clear out the arrays */
-                    for (i = 0; i < OPTS_IN_A_LINE; i++) {
+                    for (i = 0; i < CFG_OPTS_IN_A_LINE; i++) {
                         XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                     }
                     /* reset optsFound */
@@ -210,7 +210,7 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
     struct PP_OPT* next;
     int i;
     int duplicateCheck = -1;
-    char c_tmp[LONGEST_PP_OPT];
+    char c_tmp[CFG_LONGEST_PP_OPT];
 
     XMEMSET(c_tmp, 0, sizeof(c_tmp));
 
@@ -229,12 +229,12 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
 
     #ifdef IGNORE_DUPLICATES
       /* get all pre_processor macros regardless of duplicates */
-      duplicateCheck = NO_DUP;
+      duplicateCheck = CFG_NO_DUP;
     #else
       duplicateCheck = cfg_pp_list_check_for_dup(curr, line);
     #endif
 
-    if (duplicateCheck == NO_DUP) {
+    if (duplicateCheck == CFG_NO_DUP) {
         for (i = 0; i < lSz; i++) {
             curr->pp_opt[i] = line[i];
         }
@@ -248,7 +248,7 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
     return next;
 }
 
-void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
+void cfg_pp_string_extract_single(char(*out)[CFG_LONGEST_PP_OPT], char* line,
                                   int lSz)
 {
     int i;
@@ -258,12 +258,12 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
 
     for (i = 0; i < lSz; i++) {
 
-        if (line[i] == NLRET || line[i] == CRET) {
+        if (line[i] == CFG_NLRET || line[i] == CFG_CRET) {
             out[0][j] = '\0';
             break;
         }
 
-        if (line[i] == SPACE) {
+        if (line[i] == CFG_SPACE) {
             if (checkForSpaceAfter == 1) {
                 out[0][j] = '\0';
                 break;
@@ -272,7 +272,7 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
             }
         }
 
-        if (line[i] == HASHTAG && line[i+1] == 'i' && line[i+2] == 'f') {
+        if (line[i] == CFG_HASHTAG && line[i+1] == 'i' && line[i+2] == 'f') {
             XMEMSET(out[0], 0, sizeof(out[0]));
             checkForSpaceAfter = 1;
             if (strstr(line, "#ifdef"))
@@ -292,18 +292,19 @@ void cfg_pp_string_extract_single(char(*out)[LONGEST_PP_OPT], char* line,
 //    #endif
 }
 
-void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
+void cfg_pp_string_extract_multi(char(*out)[CFG_LONGEST_PP_OPT],
                                  char* line, int lSz, int* optsFound)
 {
     int i;
     int j = 0;
     int k = 0;
-    int breakCheck = KEEP_GOING;
+    int breakCheck = CFG_KEEP_GOING;
     int inside_comment = 0;
 
     for (i = 0; i < lSz; i++) {
 
-        if (line[i] == BACKSLASH || line[i] == NLRET || line[i] == CRET) {
+        if (line[i] == CFG_BACKSLASH || line[i] == CFG_NLRET ||
+            line[i] == CFG_CRET) {
             break;
         }
 
@@ -312,55 +313,56 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
         if (line[i] == '*' && line[i+1] == '/' && inside_comment == 1)
             inside_comment = 0;
 
-        if (line[i] == LPARAN) {
+        if (line[i] == CFG_LPARAN) {
             /* special case for "#if (defined(THIS) && !defined(THAT))
-             * due to the leading LPARAN */
+             * due to the leading CFG_LPARAN */
             if (line[i+1] == 'd' && line[i+2] == 'e' && line[i+3] == 'f' &&
                 line[i+4] == 'i')
-                breakCheck = KEEP_GOING;
+                breakCheck = CFG_KEEP_GOING;
             /* special case for "( defined(THIS)" where space between leading
-             * LPARAN and word defined */
+             * CFG_LPARAN and word defined */
             else if (line[i+2] == 'd' && line[i+3] == 'e' && line[i+4] == 'f' &&
                      line[i+5] == 'i')
-                breakCheck = KEEP_GOING;
+                breakCheck = CFG_KEEP_GOING;
             else if (line[i+1] == '!' && line[i+2] == 'd' && line[i+3] == 'e'
                      && line[i+4] == 'f' && line[i+5] == 'i')
-                breakCheck = KEEP_GOING;
+                breakCheck = CFG_KEEP_GOING;
             /* special case to ignore void casts in lines with word defined */
             else if (line[i+1] == 'v' && line[i+2] == 'o' && line[i+3] == 'i' &&
                      line[i+4] == 'd')
-                breakCheck = KEEP_GOING;
+                breakCheck = CFG_KEEP_GOING;
             /* special case for keyword defined inside of comment brackets */
             else if (inside_comment == 1)
-                breakCheck = KEEP_GOING;
+                breakCheck = CFG_KEEP_GOING;
             else
-                breakCheck = STOP_GOING;
+                breakCheck = CFG_STOP_GOING;
         }
 
         /* special case for "WOLFSSL_MSG(" blah ... not defined .... blah"); */
         if (line[i] == 'd' && line[i+1] == 'e' && line[i+2] == 'f' &&
             line[i+3] == 'i' && ( line[i+7] != '(' && line[i+8] != '(' ) ) {
-            breakCheck = KEEP_GOING;
+            breakCheck = CFG_KEEP_GOING;
         }
 
-        if (breakCheck == KEEP_GOING)
+        if (breakCheck == CFG_KEEP_GOING)
             continue;
 
         if (
-             (line[i] >= UPPER_A && line[i] <= UPPER_Z)   /* regex= [A-Z]+ */
+             (line[i] >= CFG_UPPER_A && line[i] <= CFG_UPPER_Z)   /* regex= [A-Z]+ */
             ||
-             (line[i] == UNDERSCORE)                      /* regex= TODO:  */
+             (line[i] == CFG_UNDERSCORE)                      /* regex= TODO:  */
             ||
-             (line[i] >= NUM_ZERO && line[i] <= NUM_NINE) /* regex= [0-9]+ */
+             (line[i] >= CFG_NUM_ZERO &&
+              line[i] <= CFG_NUM_NINE) /* regex= [0-9]+ */
             ||
-             (line[i] >= LOWER_A && line[i] <= LOWER_Z)   /* regex= [a-z]+ */
+             (line[i] >= CFG_LOWER_A && line[i] <= CFG_LOWER_Z)   /* regex= [a-z]+ */
            ) {
 
             out[j][k] = line[i];
             k++;
         }
 
-        if (line[i] == RPARAN) {
+        if (line[i] == CFG_RPARAN) {
             *optsFound += 1;
             out[j][k] = '\0';
 
@@ -377,7 +379,7 @@ void cfg_pp_string_extract_multi(char(*out)[LONGEST_PP_OPT],
             #endif
 
             k = 0;
-            breakCheck = KEEP_GOING;
+            breakCheck = CFG_KEEP_GOING;
             j++;
         }
     }
@@ -516,13 +518,13 @@ int cfg_pp_list_check_for_dup(PP_OPT* in, char* target)
     while (curr != NULL) {
 
         if (XSTRNCMP(curr->pp_opt, target, XSTRLEN(target)) == 0) {
-            return FOUND_DUP;
+            return CFG_FOUND_DUP;
         }
 
         curr = curr->next;
     }
 
-    return NO_DUP;
+    return CFG_NO_DUP;
 }
 
 int cfg_pp_check_ig(char* pp_to_check)
@@ -575,7 +577,7 @@ void cfg_pp_builder(PP_OPT* in)
     int i = 0, ret = 0;
     int lenIn, lenChk, lenCmp;
     int skipCheck = 0;
-    char c_cmd[LONGEST_COMMAND];
+    char c_cmd[CFG_LONGEST_COMMAND];
     char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
     char dst[] = "pp_build_dir";
     char* pp_to_check;
@@ -587,7 +589,7 @@ void cfg_pp_builder(PP_OPT* in)
     curr = cfg_pp_list_get_head(in);
 
     /* case 0, single options, test each individually with defaults */
-    while (curr->next != NULL && ret != USER_INTERRUPT) {
+    while (curr->next != NULL && ret != CFG_USER_INTERRUPT) {
 
         /* Single setting to test */
         pp_to_check = curr->pp_opt;
@@ -663,7 +665,7 @@ void cfg_pp_build_test_single(char* testOption)
     int ret;
     char src[] = "./wolfssl";
     char dst[] = "pp_build_dir";
-    char c_cmd[LONGEST_COMMAND];
+    char c_cmd[CFG_LONGEST_COMMAND];
 
     testOp = cfg_pp_node_init(testOp);
     cfg_assrt_ne_null(testOp, "testOp is NULL");
@@ -706,7 +708,7 @@ void cfg_pp_build_test_single(char* testOption)
 
 void cfg_pp_builder_setup_buildDir(char* dst, char* src)
 {
-    char c_cmd[LONGEST_COMMAND];
+    char c_cmd[CFG_LONGEST_COMMAND];
     cfg_clear_cmd(c_cmd);
 
 

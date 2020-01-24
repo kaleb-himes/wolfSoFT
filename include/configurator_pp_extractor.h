@@ -11,12 +11,12 @@
 
 #define END_ALERT "END_OF_IGNORE_PP_OPTS"
 
-#define MOST_PP_IG 150          /* increase as needed */
-#define MOST_PP_IG_PARTIALS 50  /* increase as needed */
-#define MOST_PP_IG_SINGLE 600    /* increase as needed */
+#define CFG_MOST_PP_IG 150          /* increase as needed */
+#define CFG_MOST_PP_IG_PARTIALS 50  /* increase as needed */
+#define CFG_MOST_PP_IG_SINGLE 600    /* increase as needed */
 
 #define MOST_IGNORES 22
-static char ignore_pp_opts[MOST_PP_IG][LONGEST_CONFIG] = {
+static char ignore_pp_opts[CFG_MOST_PP_IG][CFG_LONGEST_CONFIG] = {
 /* 0 */
 {"HAVE_CONFIG_H"},
 {"__MACH__"},
@@ -170,14 +170,14 @@ static char ignore_pp_opts[MOST_PP_IG][LONGEST_CONFIG] = {
 {"END_OF_IGNORE_PP_OPTS"} /* ALWAYS LAST */
 };
 
-static char ignore_pp_opts_partial[MOST_PP_IG_PARTIALS][LONGEST_PP_OPT] = {
+static char ignore_pp_opts_partial[CFG_MOST_PP_IG_PARTIALS][CFG_LONGEST_PP_OPT] = {
 {"BUILD_TLS_"},
 {"BUILD_WDM_"},
 {"BUILD_SSL_"},
 {"END_OF_IGNORE_PP_OPTS"} /* ALWAYS LAST */
 };
 
-static char ignore_pp_opts_single_testing[MOST_PP_IG_SINGLE][LONGEST_PP_OPT] = {
+static char ignore_pp_opts_single_testing[CFG_MOST_PP_IG_SINGLE][CFG_LONGEST_PP_OPT] = {
 
 {"NO_AES_DECRYPT"}, /* NEEDS FIXED! There are multiple assumptions made in
                      * the file <wolf-root>/wolfcrypt/src/wc_encrypt.c that make

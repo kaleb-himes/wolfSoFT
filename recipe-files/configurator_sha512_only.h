@@ -53,7 +53,6 @@
 #define SHA512_ONLY_T_SNUM 0  /* number of TLS source files */
 
 #define SHA512_ONLY_TEST_FILE "cfg_sha512_only.c" //example myCustom.c
-#define SHA512_ONLY_DST "sha512_only" // example myCustomDir
 
 static char sha512OnlyCryptHeaders[SHA512_ONLY_C_HNUM][LONGEST_H_NAME] = {
     {"sha512.h"},

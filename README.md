@@ -12,7 +12,7 @@ clone is available is: ```wolfSoFT/wolfssl```
 FRAMEWORKS:
 
 \--------------------------------------------------------------------------</br>
-FRAMEWORK 1: Pre Processor Extraction and Testing Tool
+FRAMEWORK 1: Pre Processor Extraction and Testing Tool</br>
 \--------------------------------------------------------------------------</br>
 
 
@@ -103,7 +103,7 @@ EXAMPLE:
 ```
 
 \--------------------------------------------------------------------------</br>
-FRAMEWORK 2: Footprint Benchmarking
+FRAMEWORK 2: Footprint Benchmarking</br>
 \--------------------------------------------------------------------------</br>
 
 ```
@@ -135,7 +135,7 @@ and a support engineer can check the output log to answer customer questions of
 this nature.
 
 \--------------------------------------------------------------------------</br>
-FRAMEWORK 3: Building Custom SubModules (of the wolfSSL and wolfCrypt libraries)
+FRAMEWORK 3: Building Custom SubModules (of the wolfSSL and wolfCrypt libraries)</br>
 \--------------------------------------------------------------------------</br>
 
 ```
@@ -164,7 +164,7 @@ cert_manager_only - cert manager functionality and dependencies
 More builds will be added over time, check back often!
 
 \--------------------------------------------------------------------------</br>
-FRAMEWORK 4: Automated testing using Jenkins .txt input files
+FRAMEWORK 4: Automated testing using Jenkins .txt input files</br>
 \--------------------------------------------------------------------------</br>
 
 ```

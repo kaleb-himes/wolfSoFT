@@ -1,8 +1,8 @@
 run
 *.o
 *.swp
-*cfg-custom-test.c
-*cfg_custom_test.c
+*SoFT-custom-test.c
+*SoFT_custom_test.c
 config-out.txt
 wolfssl/
 tags
@@ -13,5 +13,5 @@ sha256_ecc/
 sha512_only/
 ecc_only/
 sha256_only/
-cfg-custom-test-apps/test.c
+SoFT-custom-test-apps/test.c
 aes_pwdbased/

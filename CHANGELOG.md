@@ -1,3 +1,14 @@
+v 0.5 - REBRANDED
+- Company execs had previously envisioned something called the "configurator"
+  and seemed disinterested in anything that did not fit that vision with the
+  same name. Changed to "Suite of Frameworks and Tools" or "SoFT" to better
+  fit the description of what this project involves and avoid conflicting
+  ideologies.
+
+v 0.4
+- Changed functionality from using headers to build submodules to using .conf
+  files that can be manipulated and tested without re-building the tool.
+
 v 0.3
 - Added functionality to test wolfSSL using auto-conf build system. See
   README.md for USAGE of ```a``` option

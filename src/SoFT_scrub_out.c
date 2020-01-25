@@ -1,13 +1,13 @@
-#include <configurator_common.h>
-#include <configurator_scrub_out.h>
+#include <SoFT_common.h>
+#include <SoFT_scrub_out.h>
 
-void cfg_scrub_config_out(char* configOutFname,
-                          char(*allConfigEnables)[CFG_LONGEST_CONFIG],
-                          char(*allConfigDisables)[CFG_LONGEST_CONFIG])
+void SoFT_scrub_config_out(char* configOutFname,
+                          char(*allConfigEnables)[SOFT_LONGEST_CONFIG],
+                          char(*allConfigDisables)[SOFT_LONGEST_CONFIG])
 {
     FILE* fStream;
     char* line = NULL;
-    char truncLine[CFG_LONGEST_CONFIG];
+    char truncLine[SOFT_LONGEST_CONFIG];
     int i = 0, j, k = 0;
     int addOpE = 0;
     int addOpD = 0;
@@ -21,12 +21,12 @@ void cfg_scrub_config_out(char* configOutFname,
     size_t len = 0;
     ssize_t read;
 
-    XMEMSET(truncLine, 0, CFG_LONGEST_CONFIG);
+    XMEMSET(truncLine, 0, SOFT_LONGEST_CONFIG);
 
 
     fStream = fopen(configOutFname, "rb");
     if (fStream == NULL)
-        cfg_abort();
+        SoFT_abort();
 
     while ((read = getline(&line, &len, fStream)) != -1) {
 
@@ -46,9 +46,9 @@ void cfg_scrub_config_out(char* configOutFname,
 
         if (addOpE || addOpD) {
 
-            cfg_truncate_trim_line(line, truncLine);
+            SoFT_truncate_trim_line(line, truncLine);
 
-            for (j = 0; j < CFG_MOST_IGNORES; j++) {
+            for (j = 0; j < SOFT_MOST_IGNORES; j++) {
                 if (XSTRNCMP(truncLine, ignore_opts[j],
                     XSTRLEN(truncLine)) == 0) {
                     if (addOpE)
@@ -69,7 +69,7 @@ void cfg_scrub_config_out(char* configOutFname,
                 addOpD = 0;
             }
 
-            XMEMSET(truncLine, 0, CFG_LONGEST_CONFIG);
+            XMEMSET(truncLine, 0, SOFT_LONGEST_CONFIG);
         }
     }
     XSTRNCAT(allConfigEnables[i], lastLine, XSTRLEN(lastLine));
@@ -83,7 +83,7 @@ void cfg_scrub_config_out(char* configOutFname,
     return;
 }
 
-void cfg_truncate_trim_line(char* line, char* truncatedLine)
+void SoFT_truncate_trim_line(char* line, char* truncatedLine)
 {
     char* a = line;
     char* b = line + 1;
@@ -97,10 +97,10 @@ void cfg_truncate_trim_line(char* line, char* truncatedLine)
      * that describe that feature */
     while(*b != 0) {
         /* account for white space prior to -- sequence */
-        if (*a == CFG_DASH && *b == CFG_DASH) {
+        if (*a == SOFT_DASH && *b == SOFT_DASH) {
             foundIt = 1;
             b++; /* advance past second dash */
-            while (*b != CFG_DASH) /* skip the <keep this part> */
+            while (*b != SOFT_DASH) /* skip the <keep this part> */
                 b++;
             b++; /* advance past first single dash */
             break; /* exit top level loop */
@@ -110,10 +110,10 @@ void cfg_truncate_trim_line(char* line, char* truncatedLine)
     }
 
     if (foundIt) {
-        /* SPACE = ' ', CFG_NLRET = '\n', CFG_CRET = '\r', CFG_L_BRACKET = '['
+        /* SPACE = ' ', SOFT_NLRET = '\n', SOFT_CRET = '\r', SOFT_L_BRACKET = '['
          */
-        while (*b != CFG_SPACE && *b != CFG_NLRET && *b != CFG_CRET &&
-               *b != CFG_L_BRACKET) {
+        while (*b != SOFT_SPACE && *b != SOFT_NLRET && *b != SOFT_CRET &&
+               *b != SOFT_L_BRACKET) {
             *c = *b;
             c++;
             b++;
@@ -121,7 +121,7 @@ void cfg_truncate_trim_line(char* line, char* truncatedLine)
         return;
     }
     /* failure */
-    XMEMSET(truncatedLine, 0, CFG_LONGEST_CONFIG);
+    XMEMSET(truncatedLine, 0, SOFT_LONGEST_CONFIG);
     return;
 }
 

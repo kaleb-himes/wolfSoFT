@@ -1,13 +1,20 @@
-Alpha version 0.3
+wolfSoFT - wolf Suite of Frameworks and Tools
+
+Alpha version 0.5
 
 Use provided makefile to build sources.
 Execute program with ./run <args>
 
 EVERY option will offer to clone the wolfSSL repository, input Y to clone or N
 to avoid clone if a local clone is available for testing. Expected path if local
-clone is available is: ```wolfCFG/wolfssl```
+clone is available is: ```wolfSoFT/wolfssl```
 
-USAGE:
+FRAMEWORKS:
+
+\-------------------------------------------------------------------------------
+FRAMEWORK 1: Pre Processor Extraction and Testing Tool
+\-------------------------------------------------------------------------------
+
 
 ```
 ./run m ARG2 ARG3 ARG4 ARG5 ARG6 ARG7
@@ -43,18 +50,18 @@ EXAMPLE(S):
 The last example above would give you all the pre-processor macros found in the
 directories:
 
-wolfCFG/wolfssl/src
+wolfSoFT/wolfssl/src
 
-wolfCFG/wolfssl/wolfcrypt/src
+wolfSoFT/wolfssl/wolfcrypt/src
 
-wolfCFG/wolfssl/wolfssl/
+wolfSoFT/wolfssl/wolfssl/
 
-wolfCFG/wolfssl/wolfssl/wolfcrypt
+wolfSoFT/wolfssl/wolfssl/wolfcrypt
 
 In addition to just listing the pre-processors found the ```m``` option also
 accounts for duplicates across directories unlike the ```e``` option below.
 
---------------------------------------------------------------------------------
+\-------------------------------------------------------------------------------
 
 ```
 ./run e <path>/<to>/<dir>
@@ -79,7 +86,7 @@ EXAMPLE:
 The above would give you all the pre-processor macros found in wolfssl/src and
 wolfssl/wolfcrypt/src directories.
 
---------------------------------------------------------------------------------
+\-------------------------------------------------------------------------------
 
 ```
 ./run s <PP_MACRO>
@@ -94,7 +101,9 @@ EXAMPLE:
 ./run s HAVE_POLY1305
 ```
 
---------------------------------------------------------------------------------
+\-------------------------------------------------------------------------------
+FRAMEWORK 2: Footprint Benchmarking
+\-------------------------------------------------------------------------------
 
 ```
 ./run b
@@ -105,14 +114,14 @@ results of various other configurations to try and determine if enabling or
 disabling a feature increases or decreases the overall size of the library.
 Last it will print the stats found.
 
-More Granular on the configuration benchmark feature:
+More Granular on the SoFT benchmark feature:
 
 The benchmark feature  will use the output of the wolfSSL ```./configure -h```
 help menu to determine the available configure options. This design is to allow
 for future configure options that are added to wolfSSL to be detected
-automatically without developer interaction with the wolfCFG code source. There
+automatically without developer interaction with the wolfSoFT code source. There
 are some basic rules written for options that are to be ignored, see the static
-array ```ignore_opts``` found in wolfCFG/include/configurator_common.h for the
+array ```ignore_opts``` found in wolfSoFT/include/SoFT_common.h for the
 current list of options being ignored, this list unfortunately will require
 developer interaction to update.
 
@@ -124,7 +133,9 @@ footprint. This program will allow Jenkins to crank out some numbers each night
 and a support engineer can check the output log to answer customer questions of
 this nature.
 
---------------------------------------------------------------------------------
+\-------------------------------------------------------------------------------
+FRAMEWORK 3: Building Custom SubModules (of the wolfSSL and wolfCrypt libraries)
+\-------------------------------------------------------------------------------
 
 ```
 ./run c <custom build name>
@@ -152,6 +163,8 @@ cert_manager_only - cert manager functionality and dependencies
 More builds will be added over time, check back often!
 
 --------------------------------------------------------------------------------
+FRAMEWORK 4: Automated testing using Jenkins .txt input files
+--------------------------------------------------------------------------------
 
 ```
 ./run a <file name>
@@ -159,4 +172,4 @@ More builds will be added over time, check back often!
 
 The ```a``` option is to utilize wolfSSL's auto-tools functionality for testing
 purposes. The file provided should contain a list of configurations to be tested
-Example provided in wolfCFG/test-config-input.txt
+Example provided in wolfSoFT/test-config-input.txt

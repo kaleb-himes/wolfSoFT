@@ -1,12 +1,12 @@
-#include <configurator_common.h>
-#include <configurator_pp_extractor.h>
+#include <SoFT_common.h>
+#include <SoFT_pp_extractor.h>
 
 /* allow up to four dirs for now, switch to more dynamic solution at a later
  * time if necessary or required */
-void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
+void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                                     int numDirs, int runBuilder)
 {
-    #ifdef DEBUG_CFG_LINE_COUNT
+    #ifdef DEBUG_SOFT_LINE_COUNT
       int     lineCount     = 0;
     #endif
 
@@ -21,14 +21,14 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     FILE*   currFStream   = NULL;
     struct  PP_OPT* curr  = NULL;
     struct  dirent* currF = NULL;
-    char    cmdArray[CFG_LONGEST_COMMAND] = {0};
-    char    multiOpts[CFG_OPTS_IN_A_LINE][CFG_LONGEST_PP_OPT] = {0};
+    char    cmdArray[SOFT_LONGEST_COMMAND] = {0};
+    char    multiOpts[SOFT_OPTS_IN_A_LINE][SOFT_LONGEST_PP_OPT] = {0};
 
-    cfg_check_ret_nlte(numDirs, 0, "no valid directory strings");
+    SoFT_check_ret_nlte(numDirs, 0, "no valid directory strings");
 
-    cfg_clear_cmd(cmdArray);
+    SoFT_clear_cmd(cmdArray);
 
-    curr = cfg_pp_node_init(curr);
+    curr = SoFT_pp_node_init(curr);
 
     fprintf(stderr, "numDirs = %d\n", numDirs);
     for (dCounter = 0; dCounter < numDirs; dCounter++) {
@@ -45,7 +45,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
         dStream = opendir(targetDir);
         if (dStream == NULL) {
             fprintf(stderr, "Failed to open %s directory\n", targetDir);
-            cfg_abort();
+            SoFT_abort();
         }
 
         while ( (currF = readdir(dStream)) ) {
@@ -54,76 +54,76 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
             if (XSTRNCMP(currF->d_name, "..", 2) == 0)
                 continue;
 
-            if (getcwd(cmdArray, CFG_LONGEST_PATH) == NULL)
-                cfg_abort();
+            if (getcwd(cmdArray, SOFT_LONGEST_PATH) == NULL)
+                SoFT_abort();
 
-            cfg_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
+            SoFT_build_cmd(cmdArray, "/", targetDir, "/", currF->d_name);
             currFStream = fopen(cmdArray, "rb");
-    #ifdef DEBUG_CFG_LINE_COUNT
+    #ifdef DEBUG_SOFT_LINE_COUNT
             fprintf(stderr, "fileName + path = %s\n", cmdArray);
     #endif
-            cfg_clear_cmd(cmdArray);
-            cfg_build_cmd(cmdArray, "Opening ", currF->d_name, " file", NULL);
-            cfg_assrt_ne_null(currFStream, cmdArray);
-            cfg_clear_cmd(cmdArray);
-    #ifdef DEBUG_CFG
+            SoFT_clear_cmd(cmdArray);
+            SoFT_build_cmd(cmdArray, "Opening ", currF->d_name, " file", NULL);
+            SoFT_assrt_ne_null(currFStream, cmdArray);
+            SoFT_clear_cmd(cmdArray);
+    #ifdef DEBUG_SOFT
             fprintf(stderr, "Successfully opened %s\n", currF->d_name);
     #endif
             while ((read = getline(&line, &lengthOfLine, currFStream)) != -1 ) {
 
-                #ifdef DEBUG_CFG_LINE_COUNT
+                #ifdef DEBUG_SOFT_LINE_COUNT
                   lineCount++;
                 #endif
 
                 if (strstr(line, "#ifdef")) {
-                    #ifdef DEBUG_CFG_LINE_COUNT
+                    #ifdef DEBUG_SOFT_LINE_COUNT
                       fprintf(stderr, "lineCount = %d\n", lineCount);
                     #endif
 
-                    cfg_pp_string_extract_single(multiOpts, line,
+                    SoFT_pp_string_extract_single(multiOpts, line,
                                                  (int) lengthOfLine);
 
-                    shouldAdd = cfg_pp_check_ig(multiOpts[0]);
+                    shouldAdd = SoFT_pp_check_ig(multiOpts[0]);
 
                     if (shouldAdd == 0) {
-                #ifdef DEBUG_CFG_LINE_COUNT
+                #ifdef DEBUG_SOFT_LINE_COUNT
                         fprintf(stderr, "DEBUG: Found \"ifdef\" in \"%s\"\n",
                                 line);
                         fprintf(stderr, "Adding %s\n", multiOpts[0]);
                 #endif
 
-                        curr = cfg_pp_node_fill_single(curr, multiOpts[0],
+                        curr = SoFT_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
                     }
 
-                    #ifdef DEBUG_CFG_CHECK_ITERATE
-                      cfg_pp_list_iterate(curr);
+                    #ifdef DEBUG_SOFT_CHECK_ITERATE
+                      SoFT_pp_list_iterate(curr);
                     #endif
                 }
 
                 if (strstr(line, "#ifndef")) {
 
-                    #ifdef DEBUG_CFG_LINE_COUNT
+                    #ifdef DEBUG_SOFT_LINE_COUNT
                       fprintf(stderr, "lineCount = %d\n", lineCount);
                     #endif
 
-                    cfg_pp_string_extract_single(multiOpts, line,
+                    SoFT_pp_string_extract_single(multiOpts, line,
                                                  (int) lengthOfLine);
 
-                    shouldAdd = cfg_pp_check_ig(multiOpts[0]);
+                    shouldAdd = SoFT_pp_check_ig(multiOpts[0]);
 
                     if (shouldAdd == 0) {
-                #ifdef DEBUG_CFG_LINE_COUNT
+                #ifdef DEBUG_SOFT_LINE_COUNT
                         fprintf(stderr, "DEBUG: Found \"ifndef\" in \"%s\"\n",
                                 line);
                         fprintf(stderr, "Adding %s\n", multiOpts[0]);
                 #endif
-                        curr = cfg_pp_node_fill_single(curr, multiOpts[0],
+                        curr = SoFT_pp_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
                     }
 
-                    #ifdef DEBUG_CFG_CHECK_ITERATE
-                      cfg_pp_list_iterate(curr);
+                    #ifdef DEBUG_SOFT_CHECK_ITERATE
+                      SoFT_pp_list_iterate(curr);
                     #endif
 
                 }
@@ -136,44 +136,44 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                  */
                 if (strstr(line, "defined")) {
 
-                    #ifdef DEBUG_CFG_LINE_COUNT
+                    #ifdef DEBUG_SOFT_LINE_COUNT
                       fprintf(stderr, "lineCount = %d\n", lineCount);
                     #endif
 
                     /* call fill single with each string in array */
-                    for (i = 0; i < CFG_OPTS_IN_A_LINE; i++) {
+                    for (i = 0; i < SOFT_OPTS_IN_A_LINE; i++) {
                         XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                     }
 
-                    cfg_pp_string_extract_multi(multiOpts, line,
+                    SoFT_pp_string_extract_multi(multiOpts, line,
                                                 (int) lengthOfLine, &optsFound);
                     for (i = 0; i < optsFound; i++) {
-                        shouldAdd = cfg_pp_check_ig(multiOpts[i]);
+                        shouldAdd = SoFT_pp_check_ig(multiOpts[i]);
                         if (shouldAdd == 0) {
-                    #ifdef DEBUG_CFG_LINE_COUNT
+                    #ifdef DEBUG_SOFT_LINE_COUNT
                             fprintf(stderr, "DEBUG: Found \"defined\" in"
                                     " \"%s\"\n", line);
                             fprintf(stderr, "Adding %s\n", multiOpts[i]);
                     #endif
-                            curr = cfg_pp_node_fill_single(curr, multiOpts[i],
+                            curr = SoFT_pp_node_fill_single(curr, multiOpts[i],
                                                    (int) XSTRLEN(multiOpts[i]));
                         }
                     }
                     /* clear out the arrays */
-                    for (i = 0; i < CFG_OPTS_IN_A_LINE; i++) {
+                    for (i = 0; i < SOFT_OPTS_IN_A_LINE; i++) {
                         XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
                     }
                     /* reset optsFound */
                     optsFound = 0;
 
-                    #ifdef DEBUG_CFG_CHECK_ITERATE
-                      cfg_pp_list_iterate(curr);
+                    #ifdef DEBUG_SOFT_CHECK_ITERATE
+                      SoFT_pp_list_iterate(curr);
                     #endif
 
                 }
             } /* end file read while loop */
 
-            #ifdef DEBUG_CFG_LINE_COUNT
+            #ifdef DEBUG_SOFT_LINE_COUNT
               lineCount = 0;
             #endif
 
@@ -187,7 +187,7 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     if (line)
         free(line);
 
-    #ifdef DEBUG_CFG
+    #ifdef DEBUG_SOFT
       fprintf(stderr, "DEBUG: Checking the list\n");
     #endif
 
@@ -195,46 +195,46 @@ void cfg_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
     if (curr != NULL) {
         if (runBuilder == 1) {
-            cfg_pp_builder(curr);
+            SoFT_pp_builder(curr);
         } else {
-            cfg_pp_list_iterate(curr);
+            SoFT_pp_list_iterate(curr);
         }
     }
 
-    cfg_pp_list_free(curr);
+    SoFT_pp_list_free(curr);
     return;
 }
 
-PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
+PP_OPT* SoFT_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
 {
     struct PP_OPT* next;
     int i;
     int duplicateCheck = -1;
-    char c_tmp[CFG_LONGEST_PP_OPT];
+    char c_tmp[SOFT_LONGEST_PP_OPT];
 
     XMEMSET(c_tmp, 0, sizeof(c_tmp));
 
-    cfg_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
+    SoFT_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
 
     next = curr->next;
 
     if (next != NULL) {
         fprintf(stderr, "Called get_pp_macro_single with a node that has a next"
                 "\n");
-        cfg_abort();
+        SoFT_abort();
     }
 
-    next = cfg_pp_node_init(next);;
-    cfg_assrt_ne_null(next, "creating next in get_pp_macro_single");
+    next = SoFT_pp_node_init(next);;
+    SoFT_assrt_ne_null(next, "creating next in get_pp_macro_single");
 
     #ifdef IGNORE_DUPLICATES
       /* get all pre_processor macros regardless of duplicates */
-      duplicateCheck = CFG_NO_DUP;
+      duplicateCheck = SOFT_NO_DUP;
     #else
-      duplicateCheck = cfg_pp_list_check_for_dup(curr, line);
+      duplicateCheck = SoFT_pp_list_check_for_dup(curr, line);
     #endif
 
-    if (duplicateCheck == CFG_NO_DUP) {
+    if (duplicateCheck == SOFT_NO_DUP) {
         for (i = 0; i < lSz; i++) {
             curr->pp_opt[i] = line[i];
         }
@@ -248,7 +248,7 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
     return next;
 }
 
-void cfg_pp_string_extract_single(char(*out)[CFG_LONGEST_PP_OPT], char* line,
+void SoFT_pp_string_extract_single(char(*out)[SOFT_LONGEST_PP_OPT], char* line,
                                   int lSz)
 {
     int i;
@@ -258,12 +258,12 @@ void cfg_pp_string_extract_single(char(*out)[CFG_LONGEST_PP_OPT], char* line,
 
     for (i = 0; i < lSz; i++) {
 
-        if (line[i] == CFG_NLRET || line[i] == CFG_CRET) {
+        if (line[i] == SOFT_NLRET || line[i] == SOFT_CRET) {
             out[0][j] = '\0';
             break;
         }
 
-        if (line[i] == CFG_SPACE) {
+        if (line[i] == SOFT_SPACE) {
             if (checkForSpaceAfter == 1) {
                 out[0][j] = '\0';
                 break;
@@ -272,7 +272,7 @@ void cfg_pp_string_extract_single(char(*out)[CFG_LONGEST_PP_OPT], char* line,
             }
         }
 
-        if (line[i] == CFG_HASHTAG && line[i+1] == 'i' && line[i+2] == 'f') {
+        if (line[i] == SOFT_HASHTAG && line[i+1] == 'i' && line[i+2] == 'f') {
             XMEMSET(out[0], 0, sizeof(out[0]));
             checkForSpaceAfter = 1;
             if (strstr(line, "#ifdef"))
@@ -286,25 +286,25 @@ void cfg_pp_string_extract_single(char(*out)[CFG_LONGEST_PP_OPT], char* line,
         j++;
     }
 
-//    #ifdef DEBUG_CFG
+//    #ifdef DEBUG_SOFT
       fprintf(stderr, "DEBUG: extract single got %s\n", out[0]);
       fprintf(stderr, "We were processing line: \"%s\"\n", line);
 //    #endif
 }
 
-void cfg_pp_string_extract_multi(char(*out)[CFG_LONGEST_PP_OPT],
+void SoFT_pp_string_extract_multi(char(*out)[SOFT_LONGEST_PP_OPT],
                                  char* line, int lSz, int* optsFound)
 {
     int i;
     int j = 0;
     int k = 0;
-    int breakCheck = CFG_KEEP_GOING;
+    int breakCheck = SOFT_KEEP_GOING;
     int inside_comment = 0;
 
     for (i = 0; i < lSz; i++) {
 
-        if (line[i] == CFG_BACKSLASH || line[i] == CFG_NLRET ||
-            line[i] == CFG_CRET) {
+        if (line[i] == SOFT_BACKSLASH || line[i] == SOFT_NLRET ||
+            line[i] == SOFT_CRET) {
             break;
         }
 
@@ -313,83 +313,83 @@ void cfg_pp_string_extract_multi(char(*out)[CFG_LONGEST_PP_OPT],
         if (line[i] == '*' && line[i+1] == '/' && inside_comment == 1)
             inside_comment = 0;
 
-        if (line[i] == CFG_LPARAN) {
+        if (line[i] == SOFT_LPARAN) {
             /* special case for "#if (defined(THIS) && !defined(THAT))
-             * due to the leading CFG_LPARAN */
+             * due to the leading SOFT_LPARAN */
             if (line[i+1] == 'd' && line[i+2] == 'e' && line[i+3] == 'f' &&
                 line[i+4] == 'i')
-                breakCheck = CFG_KEEP_GOING;
+                breakCheck = SOFT_KEEP_GOING;
             /* special case for "( defined(THIS)" where space between leading
-             * CFG_LPARAN and word defined */
+             * SOFT_LPARAN and word defined */
             else if (line[i+2] == 'd' && line[i+3] == 'e' && line[i+4] == 'f' &&
                      line[i+5] == 'i')
-                breakCheck = CFG_KEEP_GOING;
+                breakCheck = SOFT_KEEP_GOING;
             else if (line[i+1] == '!' && line[i+2] == 'd' && line[i+3] == 'e'
                      && line[i+4] == 'f' && line[i+5] == 'i')
-                breakCheck = CFG_KEEP_GOING;
+                breakCheck = SOFT_KEEP_GOING;
             /* special case to ignore void casts in lines with word defined */
             else if (line[i+1] == 'v' && line[i+2] == 'o' && line[i+3] == 'i' &&
                      line[i+4] == 'd')
-                breakCheck = CFG_KEEP_GOING;
+                breakCheck = SOFT_KEEP_GOING;
             /* special case for keyword defined inside of comment brackets */
             else if (inside_comment == 1)
-                breakCheck = CFG_KEEP_GOING;
+                breakCheck = SOFT_KEEP_GOING;
             else
-                breakCheck = CFG_STOP_GOING;
+                breakCheck = SOFT_STOP_GOING;
         }
 
         /* special case for "WOLFSSL_MSG(" blah ... not defined .... blah"); */
         if (line[i] == 'd' && line[i+1] == 'e' && line[i+2] == 'f' &&
             line[i+3] == 'i' && ( line[i+7] != '(' && line[i+8] != '(' ) ) {
-            breakCheck = CFG_KEEP_GOING;
+            breakCheck = SOFT_KEEP_GOING;
         }
 
-        if (breakCheck == CFG_KEEP_GOING)
+        if (breakCheck == SOFT_KEEP_GOING)
             continue;
 
         if (
-             (line[i] >= CFG_UPPER_A && line[i] <= CFG_UPPER_Z)   /* regex= [A-Z]+ */
+             (line[i] >= SOFT_UPPER_A && line[i] <= SOFT_UPPER_Z)   /* regex= [A-Z]+ */
             ||
-             (line[i] == CFG_UNDERSCORE)                      /* regex= TODO:  */
+             (line[i] == SOFT_UNDERSCORE)                      /* regex= TODO:  */
             ||
-             (line[i] >= CFG_NUM_ZERO &&
-              line[i] <= CFG_NUM_NINE) /* regex= [0-9]+ */
+             (line[i] >= SOFT_NUM_ZERO &&
+              line[i] <= SOFT_NUM_NINE) /* regex= [0-9]+ */
             ||
-             (line[i] >= CFG_LOWER_A && line[i] <= CFG_LOWER_Z)   /* regex= [a-z]+ */
+             (line[i] >= SOFT_LOWER_A && line[i] <= SOFT_LOWER_Z)   /* regex= [a-z]+ */
            ) {
 
             out[j][k] = line[i];
             k++;
         }
 
-        if (line[i] == CFG_RPARAN) {
+        if (line[i] == SOFT_RPARAN) {
             *optsFound += 1;
             out[j][k] = '\0';
 
-            #ifdef DEBUG_CFG
+            #ifdef DEBUG_SOFT
               fprintf(stderr, "DEBUG: ----> In Multi, found this PP MACRO: %s"
                       "\n", out[j]);
               fprintf(stderr, "DEBUG: ----> ");
             #endif
 
-            #ifdef DEBUG_CFG_LVL2
+            #ifdef DEBUG_SOFT_LVL2
               for (k = 0; k < (int) sizeof(out[j]); k++)
                   fprintf(stderr, "%c", out[j][k]);
               fprintf(stderr, "\n");
             #endif
 
             k = 0;
-            breakCheck = CFG_KEEP_GOING;
+            breakCheck = SOFT_KEEP_GOING;
             j++;
         }
     }
 }
 
-PP_OPT* cfg_pp_node_init(PP_OPT* in)
+PP_OPT* SoFT_pp_node_init(PP_OPT* in)
 {
     if (in == NULL) {
         in = (PP_OPT*) malloc(sizeof(PP_OPT));
-        cfg_assrt_ne_null(in, "cfg_pp_node_init");
+        SoFT_assrt_ne_null(in, "SoFT_pp_node_init");
     }
 
     in->previous = NULL;
@@ -403,21 +403,21 @@ PP_OPT* cfg_pp_node_init(PP_OPT* in)
 
 /* return the one passed in to keep your place in the list when this
  * is called */
-PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
+PP_OPT* SoFT_pp_list_iterate(PP_OPT* in)
 {
     int nodeC = 0;
     struct PP_OPT* curr = NULL;
     struct PP_OPT* storeRet = in;
 
-    cfg_assrt_ne_null(in, "cfg_pp_list_iterate called with null PP_OPT");
+    SoFT_assrt_ne_null(in, "SoFT_pp_list_iterate called with null PP_OPT");
 
-    curr = cfg_pp_list_get_head(in);
+    curr = SoFT_pp_list_get_head(in);
 
     fprintf(stderr, "-------------------- LIST ----------------------------\n");
 
     while(curr->next != NULL) {
 
-        #ifdef DEBUG_CFG_CHECK_ITERATE
+        #ifdef DEBUG_SOFT_CHECK_ITERATE
             {
                 int i;
                 fprintf(stderr, "--> %p\n", curr);
@@ -453,11 +453,11 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT* in)
     return storeRet;
 }
 
-PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
+PP_OPT* SoFT_pp_list_get_head(PP_OPT* in)
 {
     int counter = 0;
 
-    cfg_assrt_ne_null(in, "cfg_pp_list_get_head called with null PP_OPT");
+    SoFT_assrt_ne_null(in, "SoFT_pp_list_get_head called with null PP_OPT");
 
     if (in->previous == NULL)
         return in;
@@ -466,7 +466,7 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
 
         in = in->previous;
         counter++;
-        #ifdef DEBUG_CFG_LVL2
+        #ifdef DEBUG_SOFT_LVL2
           fprintf(stderr, "DEBUG: Backed up %d\n", counter);
         #endif
 
@@ -477,14 +477,14 @@ PP_OPT* cfg_pp_list_get_head(PP_OPT* in)
     return in;
 }
 
-PP_OPT* cfg_pp_list_get_next(PP_OPT* in) {
+PP_OPT* SoFT_pp_list_get_next(PP_OPT* in) {
     if (in != NULL)
         return in->next;
 
     return NULL; /* Default if in is NULL */
 }
 
-PP_OPT* cfg_pp_list_get_prev(PP_OPT* in) {
+PP_OPT* SoFT_pp_list_get_prev(PP_OPT* in) {
     if (in != NULL)
         return in->previous;
 
@@ -492,12 +492,12 @@ PP_OPT* cfg_pp_list_get_prev(PP_OPT* in) {
 }
 
 
-void cfg_pp_list_free(PP_OPT* in)
+void SoFT_pp_list_free(PP_OPT* in)
 {
     struct PP_OPT* curr = NULL;
     struct PP_OPT* tmp = NULL;
 
-    curr = cfg_pp_list_get_head(in);
+    curr = SoFT_pp_list_get_head(in);
 
     while (curr != NULL) {
         tmp = curr->next;
@@ -508,26 +508,26 @@ void cfg_pp_list_free(PP_OPT* in)
     return;
 }
 
-int cfg_pp_list_check_for_dup(PP_OPT* in, char* target)
+int SoFT_pp_list_check_for_dup(PP_OPT* in, char* target)
 {
     struct PP_OPT* curr = NULL;
 
 
-    curr = cfg_pp_list_get_head(in);
+    curr = SoFT_pp_list_get_head(in);
 
     while (curr != NULL) {
 
         if (XSTRNCMP(curr->pp_opt, target, XSTRLEN(target)) == 0) {
-            return CFG_FOUND_DUP;
+            return SOFT_FOUND_DUP;
         }
 
         curr = curr->next;
     }
 
-    return CFG_NO_DUP;
+    return SOFT_NO_DUP;
 }
 
-int cfg_pp_check_ig(char* pp_to_check)
+int SoFT_pp_check_ig(char* pp_to_check)
 {
     int i = 0;
     int lenIn, lenChk, lenCmp;
@@ -540,7 +540,7 @@ int cfg_pp_check_ig(char* pp_to_check)
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
         if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], (size_t) lenCmp) == 0) {
-#ifdef DEBUG_CFG
+#ifdef DEBUG_SOFT
             fprintf(stderr, "DEBUG: Return 1, %s and %s match\n",
                     pp_to_check, ignore_pp_opts[i]);
 #endif
@@ -569,7 +569,7 @@ int cfg_pp_check_ig(char* pp_to_check)
     return 0;
 }
 
-void cfg_pp_builder(PP_OPT* in)
+void SoFT_pp_builder(PP_OPT* in)
 {
     struct PP_OPT* curr = NULL;
     struct PP_OPT* temp = NULL;
@@ -577,19 +577,19 @@ void cfg_pp_builder(PP_OPT* in)
     int i = 0, ret = 0;
     int lenIn, lenChk, lenCmp;
     int skipCheck = 0;
-    char c_cmd[CFG_LONGEST_COMMAND];
+    char c_cmd[SOFT_LONGEST_COMMAND];
     char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
     char dst[] = "pp_build_dir";
     char* pp_to_check;
 
-    cfg_clear_cmd(c_cmd);
+    SoFT_clear_cmd(c_cmd);
 
-    cfg_pp_builder_setup_buildDir(dst, src);
+    SoFT_pp_builder_setup_buildDir(dst, src);
 
-    curr = cfg_pp_list_get_head(in);
+    curr = SoFT_pp_list_get_head(in);
 
     /* case 0, single options, test each individually with defaults */
-    while (curr->next != NULL && ret != CFG_USER_INTERRUPT) {
+    while (curr->next != NULL && ret != SOFT_USER_INTERRUPT) {
 
         /* Single setting to test */
         pp_to_check = curr->pp_opt;
@@ -615,15 +615,15 @@ void cfg_pp_builder(PP_OPT* in)
         i = 0;
 
         if (!skipCheck) {
-            cfg_pp_builder_setup_reqOpts(dst);
-            cfg_write_user_settings(dst, curr->pp_opt);
+            SoFT_pp_builder_setup_reqOpts(dst);
+            SoFT_write_user_settings(dst, curr->pp_opt);
             fprintf(stderr, "Testing %s\n", curr->pp_opt);
 
 /* This is going to repeat, place in a function - Functionize-2 */
-            cfg_close_user_settings(dst);
+            SoFT_close_user_settings(dst);
 
             /* Build the project */
-            ret = cfg_build_solution(dst, CFG_BUILD_MULTI);
+            ret = SoFT_build_solution(dst, SOFT_BUILD_MULTI);
             if (ret == 0) {
                 curr->isGood = 1;
                 fprintf(stderr, "%s BUILD PASSED! ... ", curr->pp_opt);
@@ -633,8 +633,8 @@ void cfg_pp_builder(PP_OPT* in)
             }
 
             if (curr->isGood == 1) {
-                cfg_clear_cmd(c_cmd);
-                cfg_build_cmd(c_cmd, "./", dst, "/run > /dev/null", NULL);
+                SoFT_clear_cmd(c_cmd);
+                SoFT_build_cmd(c_cmd, "./", dst, "/run > /dev/null", NULL);
 
                 ret = system(c_cmd);
                 if (ret == 0) {
@@ -647,40 +647,40 @@ void cfg_pp_builder(PP_OPT* in)
             }
         }
         skipCheck = 0;
-        curr = cfg_pp_list_get_next(curr);
+        curr = SoFT_pp_list_get_next(curr);
     }
 
-    cfg_pp_print_results(curr, "The following build options were skipped",
+    SoFT_pp_print_results(curr, "The following build options were skipped",
                          SKIP_CHK);
-    cfg_pp_print_results(curr, "The following build options failed", FAIL_CHK);
-    cfg_pp_print_results(curr, "The following build options succeeded",
+    SoFT_pp_print_results(curr, "The following build options failed", FAIL_CHK);
+    SoFT_pp_print_results(curr, "The following build options succeeded",
                          SUCC_CHK);
 
     return;
 }
 
-void cfg_pp_build_test_single(char* testOption)
+void SoFT_pp_build_test_single(char* testOption)
 {
     PP_OPT* testOp = NULL;
     int ret;
     char src[] = "./wolfssl";
     char dst[] = "pp_build_dir";
-    char c_cmd[CFG_LONGEST_COMMAND];
+    char c_cmd[SOFT_LONGEST_COMMAND];
 
-    testOp = cfg_pp_node_init(testOp);
-    cfg_assrt_ne_null(testOp, "testOp is NULL");
+    testOp = SoFT_pp_node_init(testOp);
+    SoFT_assrt_ne_null(testOp, "testOp is NULL");
 
     strncpy(testOp->pp_opt, testOption, strlen(testOption));
     fprintf(stderr, "Copied: \"%s\" into testOp->pp_opt\n", testOp->pp_opt);
 
 
-    cfg_pp_builder_setup_buildDir(dst, src);
-    cfg_pp_builder_setup_reqOpts(dst);
-    cfg_write_user_settings(dst, testOp->pp_opt);
-    cfg_close_user_settings(dst);
+    SoFT_pp_builder_setup_buildDir(dst, src);
+    SoFT_pp_builder_setup_reqOpts(dst);
+    SoFT_write_user_settings(dst, testOp->pp_opt);
+    SoFT_close_user_settings(dst);
 
     /* Build the project */
-    ret = cfg_build_solution(dst, CFG_BUILD_SINGLE);
+    ret = SoFT_build_solution(dst, SOFT_BUILD_SINGLE);
     if (ret == 0)
         testOp->isGood = 1;
     else {
@@ -689,9 +689,9 @@ void cfg_pp_build_test_single(char* testOption)
         testOp->isGood = 0;
     }
 
-    cfg_clear_cmd(c_cmd);
+    SoFT_clear_cmd(c_cmd);
     if (testOp->isGood == 1) {
-        cfg_build_cmd(c_cmd, "./", dst, "/run ", NULL);
+        SoFT_build_cmd(c_cmd, "./", dst, "/run ", NULL);
 
         ret = system(c_cmd);
         if (ret == 0)
@@ -702,65 +702,65 @@ void cfg_pp_build_test_single(char* testOption)
         }
     }
 
-    cfg_pp_list_free(testOp);
+    SoFT_pp_list_free(testOp);
     return;
 }
 
-void cfg_pp_builder_setup_buildDir(char* dst, char* src)
+void SoFT_pp_builder_setup_buildDir(char* dst, char* src)
 {
-    char c_cmd[CFG_LONGEST_COMMAND];
-    cfg_clear_cmd(c_cmd);
+    char c_cmd[SOFT_LONGEST_COMMAND];
+    SoFT_clear_cmd(c_cmd);
 
 
     /* setup the directories to reflect traditional */
-    cfg_setup_traditional(dst);
+    SoFT_setup_traditional(dst);
 
     /* set to a common test app */
-    cfg_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c", NULL,
-                  " cfg-custom-test-apps/cfg_custom_test.c", NULL);
+    SoFT_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c", NULL,
+                  " SoFT-custom-test-apps/SoFT_custom_test.c", NULL);
     system(c_cmd);
-    cfg_clear_cmd(c_cmd);
+    SoFT_clear_cmd(c_cmd);
 
-    cfg_copy_test_app(src, dst);
+    SoFT_copy_test_app(src, dst);
 
     /* create the project makefile (generic solution) */
 
-    cfg_create_makefile(dst);
+    SoFT_create_makefile(dst);
 
     /* Copy in the crypto headers */
-    cfg_copy_crypto_hdr(src, dst, "copyAll");
+    SoFT_copy_crypto_hdr(src, dst, "copyAll");
 
     /* Copy in the tls headers */
-    cfg_copy_tls_hdr(src, dst, "copyAll");
+    SoFT_copy_tls_hdr(src, dst, "copyAll");
 
     /* Copy in the crypto sources */
-    cfg_copy_crypto_src(src, dst, "copyAll");
+    SoFT_copy_crypto_src(src, dst, "copyAll");
 
     /* Copy in the tls sources */
-    cfg_copy_tls_src(src, dst, "copyAll");
+    SoFT_copy_tls_src(src, dst, "copyAll");
 
     return;
 }
 
-void cfg_pp_builder_setup_reqOpts(char* dst)
+void SoFT_pp_builder_setup_reqOpts(char* dst)
 {
-    cfg_create_user_settings(dst);
+    SoFT_create_user_settings(dst);
     /* default settings always on to prevent failure */
-    cfg_write_user_settings(dst, "WC_RSA_BLINDING");
-    cfg_write_user_settings(dst, "TFM_TIMING_RESISTANT");
-    cfg_write_user_settings(dst, "ECC_TIMING_RESISTANT");
-    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
-    cfg_write_user_settings(dst, "USE_CERT_BUFFERS_256");
+    SoFT_write_user_settings(dst, "WC_RSA_BLINDING");
+    SoFT_write_user_settings(dst, "TFM_TIMING_RESISTANT");
+    SoFT_write_user_settings(dst, "ECC_TIMING_RESISTANT");
+    SoFT_write_user_settings(dst, "USE_CERT_BUFFERS_2048");
+    SoFT_write_user_settings(dst, "USE_CERT_BUFFERS_256");
 
     return;
 }
 
-void cfg_pp_print_results(PP_OPT* curr, char* msg, int value)
+void SoFT_pp_print_results(PP_OPT* curr, char* msg, int value)
 {
     PP_OPT* temp;
     int foundOne = 0;
 
-    temp = cfg_pp_list_get_head(curr);
+    temp = SoFT_pp_list_get_head(curr);
     fprintf(stderr, "-----------------------------------\n");
     fprintf(stderr, "%s\n", msg);
     while (temp->next != NULL) {

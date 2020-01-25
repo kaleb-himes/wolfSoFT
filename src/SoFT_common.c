@@ -1,46 +1,46 @@
-#include <configurator_common.h>
+#include <SoFT_common.h>
 
 
-void cfg_check_ret(int ret, int target, char* API)
+void SoFT_check_ret(int ret, int target, char* API)
 {
     if (ret != target) {
         printf("%s call failed with return %d\n", API, ret);
-        cfg_abort();
+        SoFT_abort();
     }
     return;
 }
 
-void cfg_check_ret_nlte(int ret, int target, char* API)
+void SoFT_check_ret_nlte(int ret, int target, char* API)
 {
     if (ret <= target) {
         printf("%s call failed with return %d\n", API, ret);
-        cfg_abort();
+        SoFT_abort();
     }
     return;
 }
 
-void cfg_assrt_ne_null(void* in, char* activity_description)
+void SoFT_assrt_ne_null(void* in, char* activity_description)
 {
     if (in == NULL) {
         printf("%s failed\n", activity_description);
-        cfg_abort();
+        SoFT_abort();
     }
 }
 
-void __attribute__((noreturn)) cfg_abort(void)
+void __attribute__((noreturn)) SoFT_abort(void)
 {
     printf("Configurator aborting\n");
     exit(-1);
 }
 
 
-void cfg_clear_cmd(char* cmd)
+void SoFT_clear_cmd(char* cmd)
 {
-    XMEMSET(cmd, 0, CFG_LONGEST_COMMAND);
+    XMEMSET(cmd, 0, SOFT_LONGEST_COMMAND);
     return;
 }
 
-void cfg_build_cmd(char* cmd, char* a, char* b, char* c, char* d)
+void SoFT_build_cmd(char* cmd, char* a, char* b, char* c, char* d)
 {
 
     if (a != NULL)
@@ -55,7 +55,7 @@ void cfg_build_cmd(char* cmd, char* a, char* b, char* c, char* d)
     return;
 }
 
-void cfg_build_cd_cmd(char* cmd, char* pwd)
+void SoFT_build_cd_cmd(char* cmd, char* pwd)
 {
     char* part1 = "cd ";
     unsigned long part1Sz = XSTRLEN(part1);
@@ -66,16 +66,16 @@ void cfg_build_cd_cmd(char* cmd, char* pwd)
     return;
 }
 
-void cfg_build_fname_cmd(char* cmd, char* fname, char* pwd)
+void SoFT_build_fname_cmd(char* cmd, char* fname, char* pwd)
 {
-    cfg_clear_cmd(cmd);
+    SoFT_clear_cmd(cmd);
     XSTRNCAT(cmd, pwd, XSTRLEN(pwd));
     XSTRNCAT(cmd, fname, XSTRLEN(fname));
 
     return;
 }
 
-int cfg_get_file_size(char* fname)
+int SoFT_get_file_size(char* fname)
 {
     FILE* fStream;
     int fSize = -1;
@@ -95,14 +95,14 @@ int cfg_get_file_size(char* fname)
     return fSize;
 }
 
-void cfg_clone_target_repo(char* repo)
+void SoFT_clone_target_repo(char* repo)
 {
-    char c_cmd[CFG_LONGEST_COMMAND];
+    char c_cmd[SOFT_LONGEST_COMMAND];
     char* gitCmd = "git clone https://github.com/";
 
-    cfg_clear_cmd(c_cmd);
+    SoFT_clear_cmd(c_cmd);
     printf("Cloning: %s\n", repo);
-    cfg_build_cmd(c_cmd, gitCmd, repo, ".git", NULL);
+    SoFT_build_cmd(c_cmd, gitCmd, repo, ".git", NULL);
     system(c_cmd);
-    cfg_clear_cmd(c_cmd);
+    SoFT_clear_cmd(c_cmd);
 }

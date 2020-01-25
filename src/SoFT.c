@@ -1,7 +1,7 @@
-#include <configurator_common.h>
+#include <SoFT_common.h>
 
-//#define DEBUG_CFG
-//#define DEBUG_CFG_CHECK_ITERATE
+//#define DEBUG_SOFT
+//#define DEBUG_SOFT_CHECK_ITERATE
 
 int main(int argc, char** argv)
 {
@@ -12,35 +12,35 @@ int main(int argc, char** argv)
 
     if (argc >= 2) {
 
-        if (argv[CFG_SECOND_INPUT][CFG_FIRST_POSITION] != 'h') {
-            doClone = cfg_are_we_cloning();
+        if (argv[SOFT_SECOND_INPUT][SOFT_FIRST_POSITION] != 'h') {
+            doClone = SoFT_are_we_cloning();
             if (doClone)
-                cfg_clone_target_repo("wolfssl/wolfssl");
+                SoFT_clone_target_repo("wolfssl/wolfssl");
         }
 
-        switch (argv[CFG_SECOND_INPUT][CFG_FIRST_POSITION]) {
+        switch (argv[SOFT_SECOND_INPUT][SOFT_FIRST_POSITION]) {
             case 'a':
-                if (argv[CFG_THIRD_INPUT] == NULL) {
+                if (argv[SOFT_THIRD_INPUT] == NULL) {
                     printf("Invalid input, no file name provided\n");
                     return INPUT_ERR;
                 }
-                cfg_auto_build_from_file(argv[CFG_THIRD_INPUT]);
+                SoFT_auto_build_from_file(argv[SOFT_THIRD_INPUT]);
                 break;
             case 'b':
-                cfg_bench_all_configs();
+                SoFT_bench_all_configs();
                 break;
             case 'e':
-                if (argv[CFG_THIRD_INPUT] == NULL) {
+                if (argv[SOFT_THIRD_INPUT] == NULL) {
                     printf("Invalid user input\n");
                     return INPUT_ERR;
                 }
-                if (argv[CFG_FOURTH_INPUT] == NULL ||
-                    argv[CFG_FOURTH_INPUT] == 0)
+                if (argv[SOFT_FOURTH_INPUT] == NULL ||
+                    argv[SOFT_FOURTH_INPUT] == 0)
                     runBuilder = 0;
                 else
                     runBuilder = 1;
 
-                cfg_pp_extract_from_multi_dirs(argv[CFG_THIRD_INPUT],
+                SoFT_pp_extract_from_multi_dirs(argv[SOFT_THIRD_INPUT],
                                                NULL, NULL, NULL, 1, runBuilder);
                 break;
             case 'm':
@@ -51,40 +51,40 @@ int main(int argc, char** argv)
                     if (argc < 8)
                         usage_m();
 
-                    tD1 = argv[CFG_THIRD_INPUT];
-                    tD2 = argv[CFG_FOURTH_INPUT];
-                    tD3 = argv[CFG_FIFTH_INPUT];
-                    tD4 = argv[CFG_SIXTH_INPUT];
-                    if (XSTRNCMP("1", argv[CFG_SEVENTH_INPUT], 1) == 0)
+                    tD1 = argv[SOFT_THIRD_INPUT];
+                    tD2 = argv[SOFT_FOURTH_INPUT];
+                    tD3 = argv[SOFT_FIFTH_INPUT];
+                    tD4 = argv[SOFT_SIXTH_INPUT];
+                    if (XSTRNCMP("1", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 1;
-                    else if (XSTRNCMP("2", argv[CFG_SEVENTH_INPUT], 1) == 0)
+                    else if (XSTRNCMP("2", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 2;
-                    else if (XSTRNCMP("3", argv[CFG_SEVENTH_INPUT], 1) == 0)
+                    else if (XSTRNCMP("3", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 3;
-                    else if (XSTRNCMP("4", argv[CFG_SEVENTH_INPUT], 1) == 0)
+                    else if (XSTRNCMP("4", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 4;
                     else {
                         usage_m();
                         break;
                     }
 
-                    if (XSTRNCMP("0", argv[CFG_EIGHTH_INPUT], 1) == 0)
+                    if (XSTRNCMP("0", argv[SOFT_EIGHTH_INPUT], 1) == 0)
                         runBuilder = 0;
                     else
                         runBuilder = 1;
 
-                    cfg_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4,
+                    SoFT_pp_extract_from_multi_dirs(tD1, tD2, tD3, tD4,
                                                    numDirs, runBuilder);
                 }
                 break;
             case 'c':
                 printf("OK! Doing a custom build, let's do it!\n");
-                cfg_do_custom_build(argv[CFG_THIRD_INPUT],
-                                    argv[CFG_FOURTH_INPUT]);
+                SoFT_do_custom_build(argv[SOFT_THIRD_INPUT],
+                                    argv[SOFT_FOURTH_INPUT]);
                 break;
             case 's':
-                printf("Testing single option: %s\n", argv[CFG_THIRD_INPUT]);
-                cfg_pp_build_test_single(argv[CFG_THIRD_INPUT]);
+                printf("Testing single option: %s\n", argv[SOFT_THIRD_INPUT]);
+                SoFT_pp_build_test_single(argv[SOFT_THIRD_INPUT]);
                 break;
             default:
                 printf("TODO: Add Usage\n");
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
     return 0;
 }
 
-int cfg_are_we_cloning(void)
+int SoFT_are_we_cloning(void)
 {
     char cloneWolf = 'y';
 
@@ -105,14 +105,14 @@ int cfg_are_we_cloning(void)
            "\nhave a working copy?\nDefault is: [Y]\n"
            "Please input either [Y/N] >");
     cloneWolf = getchar();
-    if (cloneWolf == CFG_UPPER_Y || cloneWolf == CFG_UPPER_N)
+    if (cloneWolf == SOFT_UPPER_Y || cloneWolf == SOFT_UPPER_N)
         cloneWolf += 32;
-    if (cloneWolf != CFG_LOWER_Y && cloneWolf != CFG_LOWER_N) {
+    if (cloneWolf != SOFT_LOWER_Y && cloneWolf != SOFT_LOWER_N) {
         printf("Invalid option: %c\n", cloneWolf);
-        cfg_abort();
+        SoFT_abort();
     }
 
-    if (cloneWolf == CFG_LOWER_Y)
+    if (cloneWolf == SOFT_LOWER_Y)
         return 1;
     else
         return 0;
@@ -134,5 +134,5 @@ void usage_m()
            " 2 0\n");
     printf("\t./run m wolfssl/wolfssl wolfssl/wolfcrypt/src"
            "wolfssl/src wolfssl/wolfssl/wolfcrypt 4 1\n\n\n");
-    cfg_abort();
+    SoFT_abort();
 }

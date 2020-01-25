@@ -1,19 +1,8 @@
-#ifndef CFG_BUILDS_H
-#define CFG_BUILDS_H
+#ifndef SOFT_BUILDS_H
+#define SOFT_BUILDS_H
 
 #define ARM_THUMB "ARM-THUMB"
 
-/* Supported Recipes */
-#define AES_ONLY_DST "aes_only"
-#define AES_PWDBASED_DST "aes_pwdbased"
-#define CERT_MNGR_ONLY_DST "cert_manager_only" // example myCustomDir
-#define DSA_ONLY_DST "dsa_only" // example myCustomDir
-#define ECC_ONLY_DST "ecc_only" // example myCustomDir
-#define RSA_PSS_PKCS_DST "rsa_pss_pkcs"
-#define SHA256_ECC_DST "sha256_ecc" // example myCustomDir
-#define SHA256_ECC_NM_DST "sha256_ecc_nm" // example myCustomDir
-#define SHA256_ONLY_DST "sha256_only" // example myCustomDir
-#define SHA512_ONLY_DST "sha512_only" // example myCustomDir
 
 static char MakefileBuf[] = "# wolfSSL-custom-makefile-project\n\
 #\n\
@@ -82,4 +71,4 @@ clean:\n\
 distclean: clean\n";
 
 
-#endif /* CFG_BUILDS_H */
+#endif /* SOFT_BUILDS_H */

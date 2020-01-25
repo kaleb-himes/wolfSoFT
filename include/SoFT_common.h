@@ -9,53 +9,53 @@
 #include <wolfssl/options.h>
 #include <wolfssl/ssl.h>
 
-#include <configurator_configs.h>
+#include <SoFT_configs.h>
 
 /*----------------------------------------------------------------------------*/
 /* DEFINES */
 /*----------------------------------------------------------------------------*/
 /* known ascii char hex values for comparison purposes */
-#define CFG_SPACE 0x20      /* self explanitory = ' '  */
-#define CFG_DASH 0x2D       /* self explanitory = '-'  */
-#define CFG_L_BRACKET 0x5B  /* self explanitory = '['  */
-#define CFG_CRET 0xD        /* Carriage Return  = '\r' */
-#define CFG_NLRET 0xA       /* New Line Return  = '\n' */
-#define CFG_UPPER_A 0x41    /* uppercase A      = 'A'  */
-#define CFG_UPPER_Z 0x5A    /* uppercase Z      = 'Z'  */
-#define CFG_LPARAN 0X28     /* Left Parna       = '('  */
-#define CFG_RPARAN 0x29     /* Right Paran      = ')'  */
-#define CFG_UNDERSCORE 0x5F /* Underscore       = '_'  */
-#define CFG_NUM_ZERO   0x30 /* number zero      = '0'  */
-#define CFG_NUM_NINE   0x39 /* number nine      = '9'  */
-#define CFG_LOWER_A    0x61 /* lowercase a      = 'a'  */
-#define CFG_LOWER_Z    0x7A /* lowercase z      = 'z'  */
-#define CFG_HASHTAG    0x23 /* the hashtag      = '#'  */
-#define CFG_BACKSLASH  0x5C /* the escape char  = '\'  */
-#define CFG_UPPER_Y    0x59 /* uppercase Y      = 'Y'  */
-#define CFG_UPPER_N    0x4E /* uppercase N      = 'N'  */
-#define CFG_LOWER_Y    0x79 /* lowercase y      = 'y'  */
-#define CFG_LOWER_N    0x6E /* lowercase n      = 'n'  */
+#define SOFT_SPACE 0x20      /* self explanitory = ' '  */
+#define SOFT_DASH 0x2D       /* self explanitory = '-'  */
+#define SOFT_L_BRACKET 0x5B  /* self explanitory = '['  */
+#define SOFT_CRET 0xD        /* Carriage Return  = '\r' */
+#define SOFT_NLRET 0xA       /* New Line Return  = '\n' */
+#define SOFT_UPPER_A 0x41    /* uppercase A      = 'A'  */
+#define SOFT_UPPER_Z 0x5A    /* uppercase Z      = 'Z'  */
+#define SOFT_LPARAN 0X28     /* Left Parna       = '('  */
+#define SOFT_RPARAN 0x29     /* Right Paran      = ')'  */
+#define SOFT_UNDERSCORE 0x5F /* Underscore       = '_'  */
+#define SOFT_NUM_ZERO   0x30 /* number zero      = '0'  */
+#define SOFT_NUM_NINE   0x39 /* number nine      = '9'  */
+#define SOFT_LOWER_A    0x61 /* lowercase a      = 'a'  */
+#define SOFT_LOWER_Z    0x7A /* lowercase z      = 'z'  */
+#define SOFT_HASHTAG    0x23 /* the hashtag      = '#'  */
+#define SOFT_BACKSLASH  0x5C /* the escape char  = '\'  */
+#define SOFT_UPPER_Y    0x59 /* uppercase Y      = 'Y'  */
+#define SOFT_UPPER_N    0x4E /* uppercase N      = 'N'  */
+#define SOFT_LOWER_Y    0x79 /* lowercase y      = 'y'  */
+#define SOFT_LOWER_N    0x6E /* lowercase n      = 'n'  */
 
-#define CFG_NO_DUP                  0
-#define CFG_FOUND_DUP               1
-#define CFG_STOP_GOING              1
-#define CFG_KEEP_GOING              0
-#define CFG_SINGLE_CHAR             1
-#define CFG_LONGEST_PATH            4096
-#define CFG_MOST_CONFIGS            200
-#define CFG_MOST_IGNORES            22
-#define CFG_NUM_BINARIES            3
-#define CFG_OPTS_IN_A_LINE          5
-#define CFG_LONGEST_CONFIG          80
-#define CFG_FIRST_POSITION          0
-#define CFG_LONGEST_PP_OPT          100*sizeof(char)
-#define CFG_LONGEST_COMMAND         4096
-#define CFG_CONFIG_NOT_SUPPORTED    256
-#define CFG_LONGEST_LINE            80
-#define CFG_MOST_SETTINGS           80
-#define CFG_LARGEST_FILE_LIST       70
-#define CFG_LONGEST_FILE_NAME       150
-#define CFG_USER_INTERRUPT          2
+#define SOFT_NO_DUP                  0
+#define SOFT_FOUND_DUP               1
+#define SOFT_STOP_GOING              1
+#define SOFT_KEEP_GOING              0
+#define SOFT_SINGLE_CHAR             1
+#define SOFT_LONGEST_PATH            4096
+#define SOFT_MOST_CONFIGS            200
+#define SOFT_MOST_IGNORES            22
+#define SOFT_NUM_BINARIES            3
+#define SOFT_OPTS_IN_A_LINE          5
+#define SOFT_LONGEST_CONFIG          80
+#define SOFT_FIRST_POSITION          0
+#define SOFT_LONGEST_PP_OPT          100*sizeof(char)
+#define SOFT_LONGEST_COMMAND         4096
+#define SOFT_CONFIG_NOT_SUPPORTED    256
+#define SOFT_LONGEST_LINE            80
+#define SOFT_MOST_SETTINGS           80
+#define SOFT_LARGEST_FILE_LIST       70
+#define SOFT_LONGEST_FILE_NAME       150
+#define SOFT_USER_INTERRUPT          2
 /*----------------------------------------------------------------------------*/
 /* ENUMS */
 /*----------------------------------------------------------------------------*/
@@ -67,21 +67,21 @@ enum {
 
 /* For use in command line args processing */
 enum {
-    CFG_FIRST_INPUT   = 0,
-    CFG_SECOND_INPUT  = 1,
-    CFG_THIRD_INPUT   = 2,
-    CFG_FOURTH_INPUT  = 3,
-    CFG_FIFTH_INPUT   = 4,
-    CFG_SIXTH_INPUT   = 5,
-    CFG_SEVENTH_INPUT = 6,
-    CFG_EIGHTH_INPUT  = 7,
+    SOFT_FIRST_INPUT   = 0,
+    SOFT_SECOND_INPUT  = 1,
+    SOFT_THIRD_INPUT   = 2,
+    SOFT_FOURTH_INPUT  = 3,
+    SOFT_FIFTH_INPUT   = 4,
+    SOFT_SIXTH_INPUT   = 5,
+    SOFT_SEVENTH_INPUT = 6,
+    SOFT_EIGHTH_INPUT  = 7,
 };
 
 /* test cases */
 enum {
-    CFG_BUILD_MULTI = 2,
-    CFG_BUILD_SINGLE = 3,
-    CFG_BUILD_CUSTOM = 4
+    SOFT_BUILD_MULTI = 2,
+    SOFT_BUILD_SINGLE = 3,
+    SOFT_BUILD_CUSTOM = 4
 };
 
 /*----------------------------------------------------------------------------*/
@@ -92,7 +92,7 @@ typedef struct PP_OPT
 {
     struct PP_OPT* previous;
     struct PP_OPT* next;
-    char pp_opt[CFG_LONGEST_PP_OPT];
+    char pp_opt[SOFT_LONGEST_PP_OPT];
     int isGood;
 } PP_OPT;
 
@@ -104,7 +104,7 @@ typedef struct PP_OPT
 /* a fixed array of options to ignore if found when scrubbing the output
  * of configure help menu
  */
-static char ignore_opts[CFG_MOST_CONFIGS][CFG_LONGEST_CONFIG] = {
+static char ignore_opts[SOFT_MOST_CONFIGS][SOFT_LONGEST_CONFIG] = {
 {"jobserver"},              /* 1 */
 {"options-checking"},       /* 2 */
 {"option-checking"},        /* 3 */
@@ -141,7 +141,7 @@ static char ignore_opts[CFG_MOST_CONFIGS][CFG_LONGEST_CONFIG] = {
  *          this call will compare value to 0 and if not equal will abort the
  *          program and print the msg: "my_api_name".
  */
-void cfg_check_ret(int, int, char*);
+void SoFT_check_ret(int, int, char*);
 /*
  * @p1 - value returned from function call
  * @p2 - target value to compare against
@@ -149,25 +149,25 @@ void cfg_check_ret(int, int, char*);
  * See notes for check_ret, does same except checks to make sure that
  * p1 is not less than or equal to p2
  */
-void cfg_check_ret_nlte(int, int, char*);
+void SoFT_check_ret_nlte(int, int, char*);
 
 /* assert not null */
-void cfg_assrt_ne_null(void*, char*);
+void SoFT_assrt_ne_null(void*, char*);
 
 /*
- * aborts the configurator early
+ * aborts the SoFT early
  */
-void cfg_abort(void);
+void SoFT_abort(void);
 
 /*
  * A function to zero out a buffer.
  *
  * @p1 - a buffer to zero-out
- * uses XMEMSET to zero a command of CFG_LONGEST_COMMAND length
+ * uses XMEMSET to zero a command of SOFT_LONGEST_COMMAND length
  * TODO: needs some sanity checks, could behave badly if called with shorter
  *       buffers.
  */
-void cfg_clear_cmd(char*);
+void SoFT_clear_cmd(char*);
 /*
  * A function to build up ANY command with optional parameters
  *
@@ -179,7 +179,7 @@ void cfg_clear_cmd(char*);
  * @p4 - same as p2
  * @p5 - same as p2
  */
-void cfg_build_cmd(char*, char*, char*, char*, char*);
+void SoFT_build_cmd(char*, char*, char*, char*, char*);
 /*
  * A useful way to build up a change to directory command
  *
@@ -189,7 +189,7 @@ void cfg_build_cmd(char*, char*, char*, char*, char*);
  *          will result in a buffer containing the string:
  *          "cd /Users/uname/wolfssl"
  */
-void cfg_build_cd_cmd(char*, char*);
+void SoFT_build_cd_cmd(char*, char*);
 
 /*
  * A function to build the name of file + some path to that file.
@@ -204,7 +204,7 @@ void cfg_build_cd_cmd(char*, char*);
  *          will result in a buffer containing the string:
  *          $PWD"/wolfssl/tests/unit.test"
  */
-void cfg_build_fname_cmd(char*, char*, char*);
+void SoFT_build_fname_cmd(char*, char*, char*);
 
 /*
  * @p1 - the name of the file to be opened
@@ -214,7 +214,7 @@ void cfg_build_fname_cmd(char*, char*, char*);
  * NOTE: include the  path+fname if not in current dir.
  * See also: build_fname_cmd
  */
-int cfg_get_file_size(char*);
+int SoFT_get_file_size(char*);
 
 /*
  * @p1 - path to cd to before executing the command. If NULL will default to the
@@ -223,7 +223,7 @@ int cfg_get_file_size(char*);
  * @p2 - The set of configure options to run, no assumptions are made for the
  *       configure options passed in and there are no sanity checks at this time
  */
-int cfg_run_config_opts(char*, char*);
+int SoFT_run_config_opts(char*, char*);
 /*
  * A function for checking the increase footprint size of wolfSSL when
  * configured with p1
@@ -235,9 +235,9 @@ int cfg_run_config_opts(char*, char*);
  *       Assumption1: configPart contains no leading `-` and no preceeding
  *       enable IE to test --enable-tls13 just pass in the string "tls13".
  */
-void cfg_check_increase(int, char*);
-/* same as cfg_check_increase but for --disable-option */
-void cfg_check_decrease(int, char*);
+void SoFT_check_increase(int, char*);
+/* same as SoFT_check_increase but for --disable-option */
+void SoFT_check_decrease(int, char*);
 
 /*
  * @p1 - a file name to dump the output of "./configure -h"
@@ -248,13 +248,13 @@ void cfg_check_decrease(int, char*);
  * Scrubs the output of "./configure -h" help menu for configure options
  * to test, will pick up new configure options added to wolfSSL
  */
-void cfg_scrub_config_out(char*, char(*)[CFG_LONGEST_CONFIG],
-                          char(*)[CFG_LONGEST_CONFIG]);
+void SoFT_scrub_config_out(char*, char(*)[SOFT_LONGEST_CONFIG],
+                          char(*)[SOFT_LONGEST_CONFIG]);
 
 /*
- * Runs the configure options returned by cfg_scrub_config_out
+ * Runs the configure options returned by SoFT_scrub_config_out
  */
-void cfg_bench_all_configs(void);
+void SoFT_bench_all_configs(void);
 
 /*
  * @p1 - a String identifying the repo to clone
@@ -263,10 +263,10 @@ void cfg_bench_all_configs(void);
  * resides at https://github.com/, will not work against repos hosted on
  * other servers.
  *
- * EXAMPLE: cfg_clone_target_repo("wolfssl/wolfssl");
+ * EXAMPLE: SoFT_clone_target_repo("wolfssl/wolfssl");
  * will clone "https://github.com/wolfssl/wolfssl.git"
  */
-void cfg_clone_target_repo(char*);
+void SoFT_clone_target_repo(char*);
 
 /*
  * @p1 - The node to fill in the C Pre Processor macro
@@ -276,9 +276,9 @@ void cfg_clone_target_repo(char*);
  * A function to populate a single node in a doubly linked list. Each node
  * contains two parts, a pointer to the next node, a pointer to the previous
  * node, and an array to hold the C Pre Processor macro extracted by either
- * cfg_pp_string_extract_multi or cfg_pp_string_extract_single
+ * SoFT_pp_string_extract_multi or SoFT_pp_string_extract_single
  */
-PP_OPT* cfg_pp_node_fill_single(PP_OPT*, char*, int);
+PP_OPT* SoFT_pp_node_fill_single(PP_OPT*, char*, int);
 
 /*
  * PRELUDE to the below API's
@@ -300,24 +300,25 @@ PP_OPT* cfg_pp_node_fill_single(PP_OPT*, char*, int);
  * @p4 - a variable to be updated letting the calling function know how many
  *       Pre Processor Macros were found in p2
  *
- * cfg_pp_string_extract_multi is for handling lines that contain the key words
+ * SoFT_pp_string_extract_multi is for handling lines that contain the key words
  * "defined". It can handle a line with only a single pre-processor
  * macro but it can also handle cases such as:
  * #if defined(THIS) && defined (THAT) \
  *     && !defined(OTHER)
  */
-void cfg_pp_string_extract_multi(char(*)[CFG_LONGEST_PP_OPT], char*, int, int*);
+void SoFT_pp_string_extract_multi(char(*)[SOFT_LONGEST_PP_OPT], char*, int,
+                                  int*);
 
 /*
  * @p1 - A 2D array for holding the C Pre-Processor extracted from (p2)
  * @p2 - The line to extract the single Pre Processor Macro from
  * @p3 - The length of p2
  *
- * cfg_pp_string_extract_single is for handling lines that contain the key words
+ * SoFT_pp_string_extract_single is for handling lines that contain the key words
  * "#ifdef" or "#ifndef". It can handle a line with only a single pre-processor
  * macro.
   */
-void cfg_pp_string_extract_single(char(*)[CFG_LONGEST_PP_OPT], char*, int);
+void SoFT_pp_string_extract_single(char(*)[SOFT_LONGEST_PP_OPT], char*, int);
 
 /*
  * @p1 - a node from the doubly linked list to be initialized. Will set the
@@ -330,14 +331,14 @@ void cfg_pp_string_extract_single(char(*)[CFG_LONGEST_PP_OPT], char*, int);
  *
  * EXAMPLE:
  *          struct PP_OPT* myNode = NULL;
- *          myNode = cfg_pp_init(myNode);
+ *          myNode = SoFT_pp_init(myNode);
  */
-PP_OPT* cfg_pp_node_init(PP_OPT*);
+PP_OPT* SoFT_pp_node_init(PP_OPT*);
 
 /*
  * @p1 - Any node in the doubly linked list
  *
- * This function will use cfg_pp_list_get_head to return to the head of the list
+ * This function will use SoFT_pp_list_get_head to return to the head of the list
  * once at the head this function will then traverse the entirety of the list
  * printing out each pre-processor macro in every node. At the end will also
  * print the number of pre-processor macros contained in the list.
@@ -345,16 +346,16 @@ PP_OPT* cfg_pp_node_init(PP_OPT*);
  * RETURN: a pointer to the original node passed in
  *
  * EXAMPLE:
- *          currentNode = cfg_pp_list_iterate(currentNode);
+ *          currentNode = SoFT_pp_list_iterate(currentNode);
  *
  * NOTE: All operations IE backing up to head and iterating over the list are
  *       done with a COPY of the passed in node so the original node never gets
  *       changed. You will retain your place in the list when calling this
  *       function and not getting the return also IE:
- *       cfg_pp_list_iterate(currentNode); // no return assignment also retains
+ *       SoFT_pp_list_iterate(currentNode); // no return assignment also retains
  *                                         // your place in the list.
  */
-PP_OPT* cfg_pp_list_iterate(PP_OPT*);
+PP_OPT* SoFT_pp_list_iterate(PP_OPT*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -363,9 +364,9 @@ PP_OPT* cfg_pp_list_iterate(PP_OPT*);
  *
  * RETURN: returns a pointer to the head of the list.
  */
-PP_OPT* cfg_pp_list_get_head(PP_OPT*);
-PP_OPT* cfg_pp_list_get_next(PP_OPT*);
-PP_OPT* cfg_pp_list_get_prev(PP_OPT*);
+PP_OPT* SoFT_pp_list_get_head(PP_OPT*);
+PP_OPT* SoFT_pp_list_get_next(PP_OPT*);
+PP_OPT* SoFT_pp_list_get_prev(PP_OPT*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -374,7 +375,7 @@ PP_OPT* cfg_pp_list_get_prev(PP_OPT*);
  * the entire list freeing each node it encounters until the tail of the list is
  * free'd
  */
-void cfg_pp_list_free(PP_OPT*);
+void SoFT_pp_list_free(PP_OPT*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -389,7 +390,7 @@ void cfg_pp_list_free(PP_OPT*);
  *
  * RETURN: An integer indicating if a duplicate was found or not.
  */
-int cfg_pp_list_check_for_dup(PP_OPT*, char*);
+int SoFT_pp_list_check_for_dup(PP_OPT*, char*);
 
 /*
  * @p1 - a string containing the name of a directory or the value NULL
@@ -401,69 +402,69 @@ int cfg_pp_list_check_for_dup(PP_OPT*, char*);
  * invalid manner. The following are not supported where the word "valid"
  * indicates a valid directory path:
  *
- * cfg_pp_extract_from_multi_dirs(NULL, valid, NULL, NULL);     // INVALID
- * cfg_pp_extract_from_multi_dirs(NULL, NULL, valid, NULL);     // INVALID
- * cfg_pp_extract_from_multi_dirs(NULL, NULL, NULL, valid);     // INVALID
- * cfg_pp_extract_from_multi_dirs(NULL, valid, valid2, NULL);   // INVALID
- * cfg_pp_extract_from_multi_dirs(NULL, NULL, valid, valid2);   // INVALID
- * cfg_pp_extract_from_multi_dirs(NULL, valid, valid2, valid3); // INVALID
+ * SoFT_pp_extract_from_multi_dirs(NULL, valid, NULL, NULL);     // INVALID
+ * SoFT_pp_extract_from_multi_dirs(NULL, NULL, valid, NULL);     // INVALID
+ * SoFT_pp_extract_from_multi_dirs(NULL, NULL, NULL, valid);     // INVALID
+ * SoFT_pp_extract_from_multi_dirs(NULL, valid, valid2, NULL);   // INVALID
+ * SoFT_pp_extract_from_multi_dirs(NULL, NULL, valid, valid2);   // INVALID
+ * SoFT_pp_extract_from_multi_dirs(NULL, valid, valid2, valid3); // INVALID
  *
  * If called in one of the above ways the NULL directory will fail to open
- * and the configurator will detect it and abort the program exiting cleanly.
+ * and the SoFT will detect it and abort the program exiting cleanly.
  *
  * The following ARE SUPPORTED and will run as expected:
  *
- * cfg_pp_extract_from_multi_dirs(valid, NULL, NULL, NULL);       // VALID
- * cfg_pp_extract_from_multi_dirs(valid, valid2, NULL, NULL);     // VALID
- * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, NULL);   // VALID
- * cfg_pp_extract_from_multi_dirs(valid, valid2, valid3, valid4); // VALID
+ * SoFT_pp_extract_from_multi_dirs(valid, NULL, NULL, NULL);       // VALID
+ * SoFT_pp_extract_from_multi_dirs(valid, valid2, NULL, NULL);     // VALID
+ * SoFT_pp_extract_from_multi_dirs(valid, valid2, valid3, NULL);   // VALID
+ * SoFT_pp_extract_from_multi_dirs(valid, valid2, valid3, valid4); // VALID
  */
-void cfg_pp_extract_from_multi_dirs(char*, char*, char*, char*, int, int);
-int cfg_pp_check_ig(char*);
-void cfg_pp_builder(PP_OPT*);
-void cfg_pp_build_test_single(char*);
-void cfg_pp_builder_setup_buildDir(char*, char*);
-void cfg_pp_builder_setup_reqOpts(char*);
-void cfg_pp_print_results(PP_OPT*, char*, int);
+void SoFT_pp_extract_from_multi_dirs(char*, char*, char*, char*, int, int);
+int SoFT_pp_check_ig(char*);
+void SoFT_pp_builder(PP_OPT*);
+void SoFT_pp_build_test_single(char*);
+void SoFT_pp_builder_setup_buildDir(char*, char*);
+void SoFT_pp_builder_setup_reqOpts(char*);
+void SoFT_pp_print_results(PP_OPT*, char*, int);
 
-int cfg_auto_build_from_file(char*);
+int SoFT_auto_build_from_file(char*);
 
-void cfg_do_custom_build(char*, char*);
-void cfg_custom_build_usage(void);
-int cfg_are_we_cloning(void);
-void cfg_setup_traditional(char*);
-void cfg_copy_crypto_hdr(char*, char*, char*);
-void cfg_copy_crypto_src(char*, char*, char*);
-void cfg_copy_tls_hdr(char*, char*, char*);
-void cfg_copy_tls_src(char*, char*, char*);
-void cfg_create_makefile(char*);
-void cfg_create_arm_thumb_makefile(char*, char*);
-int cfg_build_solution(char*, int);
-void cfg_copy_test_app(char*, char*);
-void cfg_create_user_settings(char*);
-void cfg_write_user_settings(char*, char*);
-void cfg_close_user_settings(char*);
-FILE* cfg_open_file_append_mode(char*);
-void cfg_check_fwrite_success(size_t, size_t);
-void cfg_build_aes_only(void);
-void cfg_build_rsa_pss_pkcs(char*, char*);
-void cfg_check_recipe_supported(char* option);
-void cfg_get_recipe_ingredients(char*,
+void SoFT_do_custom_build(char*, char*);
+void SoFT_custom_build_usage(void);
+int SoFT_are_we_cloning(void);
+void SoFT_setup_traditional(char*);
+void SoFT_copy_crypto_hdr(char*, char*, char*);
+void SoFT_copy_crypto_src(char*, char*, char*);
+void SoFT_copy_tls_hdr(char*, char*, char*);
+void SoFT_copy_tls_src(char*, char*, char*);
+void SoFT_create_makefile(char*);
+void SoFT_create_arm_thumb_makefile(char*, char*);
+int SoFT_build_solution(char*, int);
+void SoFT_copy_test_app(char*, char*);
+void SoFT_create_user_settings(char*);
+void SoFT_write_user_settings(char*, char*);
+void SoFT_close_user_settings(char*);
+FILE* SoFT_open_file_append_mode(char*);
+void SoFT_check_fwrite_success(size_t, size_t);
+void SoFT_build_aes_only(void);
+void SoFT_build_rsa_pss_pkcs(char*, char*);
+void SoFT_check_submodule_supported(char* option);
+void SoFT_get_submodule_configuration(char*,
                                 char*,
-                                char(*)[CFG_LONGEST_FILE_NAME],
-                                char(*)[CFG_LONGEST_FILE_NAME],
-                                char(*)[CFG_LONGEST_FILE_NAME],
-                                char(*)[CFG_LONGEST_FILE_NAME],
-                                char(*)[CFG_LONGEST_FILE_NAME]);
+                                char(*)[SOFT_LONGEST_FILE_NAME],
+                                char(*)[SOFT_LONGEST_FILE_NAME],
+                                char(*)[SOFT_LONGEST_FILE_NAME],
+                                char(*)[SOFT_LONGEST_FILE_NAME],
+                                char(*)[SOFT_LONGEST_FILE_NAME]);
 
-void cfg_parse_conf(const char* abortLine, size_t abortLen,
-                    char(*)[CFG_LONGEST_FILE_NAME], FILE* fStream);
+void SoFT_parse_conf(const char* abortLine, size_t abortLen,
+                    char(*)[SOFT_LONGEST_FILE_NAME], FILE* fStream);
 
-void cfg_build_custom_specific(char*, char*,
-                               char(*)[CFG_LONGEST_FILE_NAME],
-                               char(*)[CFG_LONGEST_FILE_NAME],
-                               char(*)[CFG_LONGEST_FILE_NAME],
-                               char(*)[CFG_LONGEST_FILE_NAME],
-                               char(*)[CFG_LONGEST_FILE_NAME], char*);
+void SoFT_build_custom_specific(char*, char*,
+                               char(*)[SOFT_LONGEST_FILE_NAME],
+                               char(*)[SOFT_LONGEST_FILE_NAME],
+                               char(*)[SOFT_LONGEST_FILE_NAME],
+                               char(*)[SOFT_LONGEST_FILE_NAME],
+                               char(*)[SOFT_LONGEST_FILE_NAME], char*);
 void usage_m(void);
 #endif /* C_CONF_COMMN */

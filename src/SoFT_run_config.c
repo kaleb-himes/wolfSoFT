@@ -1,10 +1,9 @@
+#include <SoFT_common.h>
 
-#include <configurator_common.h>
-
-int cfg_run_config_opts(char* c_pwd, char* config_opts)
+int SoFT_run_config_opts(char* c_pwd, char* config_opts)
 {
     int ret;
-    char c_cmd[CFG_LONGEST_COMMAND];
+    char c_cmd[SOFT_LONGEST_COMMAND];
 
     /* On a mac */
     char* c_fNm1 = "/wolfssl/src/.libs/libwolfssl.dylib";
@@ -16,57 +15,57 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
     int mallocFlag = 0;
 
     if (c_pwd == NULL) {
-        c_pwd = (char*) malloc(sizeof(char) * CFG_LONGEST_PATH);
+        c_pwd = (char*) malloc(sizeof(char) * SOFT_LONGEST_PATH);
         if (c_pwd == NULL)
-            cfg_abort();
+            SoFT_abort();
         else
             mallocFlag = 1;
         /* get path to working directory */
-        if (getcwd(c_pwd, CFG_LONGEST_PATH) == NULL)
-            cfg_abort();
+        if (getcwd(c_pwd, SOFT_LONGEST_PATH) == NULL)
+            SoFT_abort();
     }
 
-    XMEMSET(c_cmd, 0, CFG_LONGEST_COMMAND);
+    XMEMSET(c_cmd, 0, SOFT_LONGEST_COMMAND);
 
     /* build the change to directory, configure and make command */
-    cfg_build_cd_cmd(c_cmd, c_pwd);
-    cfg_build_cmd(c_cmd, "/wolfssl && ./configure ", config_opts,
+    SoFT_build_cd_cmd(c_cmd, c_pwd);
+    SoFT_build_cmd(c_cmd, "/wolfssl && ./configure ", config_opts,
               " > /dev/null", NULL);
     ret = system(c_cmd);
-    if (ret != CFG_CONFIG_NOT_SUPPORTED) /* skip the ones that aren't supported */
-        cfg_check_ret(ret, 0, "configure library");
-    if (ret == CFG_CONFIG_NOT_SUPPORTED) {
+    if (ret != SOFT_CONFIG_NOT_SUPPORTED) /* skip those not supported */
+        SoFT_check_ret(ret, 0, "configure library");
+    if (ret == SOFT_CONFIG_NOT_SUPPORTED) {
         if (mallocFlag == 1)
             free(c_pwd);
         return ret;
     }
 
-    cfg_clear_cmd(c_cmd);
-    cfg_build_cd_cmd(c_cmd, c_pwd);
-    cfg_build_cmd(c_cmd, "/wolfssl && make > /dev/null", NULL, NULL, NULL);
+    SoFT_clear_cmd(c_cmd);
+    SoFT_build_cd_cmd(c_cmd, c_pwd);
+    SoFT_build_cmd(c_cmd, "/wolfssl && make > /dev/null", NULL, NULL, NULL);
     ret = system(c_cmd);
     if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
         return ret;
     }
-    cfg_check_ret(ret, 0, "make library");
+    SoFT_check_ret(ret, 0, "make library");
 
-    cfg_clear_cmd(c_cmd);
-    cfg_build_cd_cmd(c_cmd, c_pwd);
+    SoFT_clear_cmd(c_cmd);
+    SoFT_build_cd_cmd(c_cmd, c_pwd);
     ret = system(c_cmd);
     if (ret != 0 && mallocFlag == 1) {
         free(c_pwd);
         return ret;
     }
-    cfg_check_ret(ret, 0, "change directory");
+    SoFT_check_ret(ret, 0, "change directory");
 
-    cfg_build_fname_cmd(c_cmd, c_fNm1, c_pwd);
-    c_fSz1 = cfg_get_file_size(c_cmd);
+    SoFT_build_fname_cmd(c_cmd, c_fNm1, c_pwd);
+    c_fSz1 = SoFT_get_file_size(c_cmd);
 
-    cfg_build_fname_cmd(c_cmd, c_fNm2, c_pwd);
-    c_fSz2 = cfg_get_file_size(c_cmd);
+    SoFT_build_fname_cmd(c_cmd, c_fNm2, c_pwd);
+    c_fSz2 = SoFT_get_file_size(c_cmd);
 
-    #ifdef DEBUG_CFG
+    #ifdef DEBUG_SOFT
       printf("size of %s was %d\n", c_fNm1, c_fSz1);
       printf("size of %s was %d\n", c_fNm2, c_fSz2);
     #endif
@@ -79,19 +78,19 @@ int cfg_run_config_opts(char* c_pwd, char* config_opts)
     return c_sumSz;
 }
 
-void cfg_check_increase(int baseLine, char* configPart)
+void SoFT_check_increase(int baseLine, char* configPart)
 {
     int ret;
-    char c_config[CFG_LONGEST_COMMAND];
+    char c_config[SOFT_LONGEST_COMMAND];
     float original = (float) baseLine;
     float newNum;
 
-    cfg_clear_cmd(c_config);
-    cfg_build_cmd(c_config, CFG_DEFAULT_OPTS, " --enable-", configPart, NULL);
+    SoFT_clear_cmd(c_config);
+    SoFT_build_cmd(c_config, SOFT_DEFAULT_OPTS, " --enable-", configPart, NULL);
 
-    ret = cfg_run_config_opts(NULL, c_config);
+    ret = SoFT_run_config_opts(NULL, c_config);
 
-    if (ret == CFG_CONFIG_NOT_SUPPORTED) {
+    if (ret == SOFT_CONFIG_NOT_SUPPORTED) {
         printf("--enable-%s !~ NS ~!\n", configPart);
         return;
     }
@@ -112,19 +111,19 @@ void cfg_check_increase(int baseLine, char* configPart)
     return;
 }
 
-void cfg_check_decrease(int baseLine, char* configPart)
+void SoFT_check_decrease(int baseLine, char* configPart)
 {
     int ret;
-    char c_config[CFG_LONGEST_COMMAND];
+    char c_config[SOFT_LONGEST_COMMAND];
     float original = (float) baseLine;
     float newNum;
 
-    cfg_clear_cmd(c_config);
-    cfg_build_cmd(c_config, CFG_DEFAULT_OPTS, " --disable-", configPart, NULL);
+    SoFT_clear_cmd(c_config);
+    SoFT_build_cmd(c_config, SOFT_DEFAULT_OPTS, " --disable-", configPart,NULL);
 
-    ret = cfg_run_config_opts(NULL, c_config);
+    ret = SoFT_run_config_opts(NULL, c_config);
 
-    if (ret == CFG_CONFIG_NOT_SUPPORTED) {
+    if (ret == SOFT_CONFIG_NOT_SUPPORTED) {
         printf("--disable-%s !~ NS ~!\n", configPart);
         return;
     }

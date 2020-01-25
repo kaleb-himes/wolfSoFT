@@ -4,18 +4,26 @@
 void SoFT_do_custom_build(char* option, char* toolChain)
 {
     char submoduleTestFile     [SOFT_LONGEST_FILE_NAME] = {0};
-    char submoduleCryptHdrs    [SOFT_LARGEST_FILE_LIST][SOFT_LONGEST_FILE_NAME]
-                                                                           ={0};
-    char submoduleCryptSrcs    [SOFT_LARGEST_FILE_LIST][SOFT_LONGEST_FILE_NAME]
-                                                                           ={0};
-    char submoduleTlsHdrs      [SOFT_LARGEST_FILE_LIST][SOFT_LONGEST_FILE_NAME]
-                                                                           ={0};
-    char submoduleTlsSrcs      [SOFT_LARGEST_FILE_LIST][SOFT_LONGEST_FILE_NAME]
-                                                                           ={0};
-    char submoduleUserSettings [SOFT_LARGEST_FILE_LIST][SOFT_LONGEST_FILE_NAME]
-                                                                           ={0};
+    D_LINKED_LIST_NODE* submoduleCryptHdrs    = NULL;
+    D_LINKED_LIST_NODE* submoduleCryptSrcs    = NULL;
+    D_LINKED_LIST_NODE* submoduleTlsHdrs      = NULL;
+    D_LINKED_LIST_NODE* submoduleTlsSrcs      = NULL;
+    D_LINKED_LIST_NODE* submoduleUserSettings = NULL;
+
+    if (option == NULL || toolChain == NULL) {
+        printf("Invalid input\n");
+        SoFT_custom_build_usage();
+        return;
+    }
 
     SoFT_check_submodule_supported(option);
+
+    submoduleCryptHdrs = SoFT_d_lnkd_list_node_init(submoduleCryptHdrs);
+    submoduleCryptSrcs = SoFT_d_lnkd_list_node_init(submoduleCryptSrcs);
+    submoduleTlsHdrs = SoFT_d_lnkd_list_node_init(submoduleTlsHdrs);
+    submoduleTlsSrcs = SoFT_d_lnkd_list_node_init(submoduleTlsSrcs);
+    submoduleUserSettings = SoFT_d_lnkd_list_node_init(submoduleUserSettings);
+
 
     SoFT_get_submodule_configuration(option, submoduleTestFile,
                                submoduleCryptHdrs, submoduleCryptSrcs,
@@ -27,14 +35,11 @@ void SoFT_do_custom_build(char* option, char* toolChain)
                               submoduleTlsHdrs, submoduleTlsSrcs,
                               submoduleUserSettings, toolChain);
 
-    return;
-
-    if (option == NULL || toolChain == NULL) {
-        printf("Invalid input\n");
-        SoFT_custom_build_usage();
-        return;
-    }
-
+    SoFT_d_lnkd_list_free(submoduleCryptHdrs);
+    SoFT_d_lnkd_list_free(submoduleCryptSrcs);
+    SoFT_d_lnkd_list_free(submoduleTlsHdrs);
+    SoFT_d_lnkd_list_free(submoduleTlsSrcs);
+    SoFT_d_lnkd_list_free(submoduleUserSettings);
 }
 
 /* Supported Recipes */
@@ -76,11 +81,11 @@ void SoFT_check_submodule_supported(char* option)
 
 void SoFT_get_submodule_configuration(char* submoduleOption,
                           char* submoduleTestFile,
-                          char(* submoduleCryptHdrs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleCryptSrcs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleTlsHdrs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleTlsSrcs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleUserSettings)[SOFT_LONGEST_FILE_NAME])
+                          D_LINKED_LIST_NODE* submoduleCryptHdrs,
+                          D_LINKED_LIST_NODE* submoduleCryptSrcs,
+                          D_LINKED_LIST_NODE* submoduleTlsHdrs,
+                          D_LINKED_LIST_NODE* submoduleTlsSrcs,
+                          D_LINKED_LIST_NODE* submoduleUserSettings)
 {
     FILE* fStream = NULL;
     char fName[50] = {0};
@@ -147,7 +152,7 @@ void SoFT_get_submodule_configuration(char* submoduleOption,
 }
 
 void SoFT_parse_conf(const char* abortLine, size_t abortLen,
-                    char(* fillBuffer)[SOFT_LONGEST_FILE_NAME], FILE* fStream)
+                    D_LINKED_LIST_NODE*  fillNode, FILE* fStream)
 {
     char * line = NULL;
     size_t len = 0;
@@ -161,19 +166,22 @@ void SoFT_parse_conf(const char* abortLine, size_t abortLen,
             XSTRNCMP(line, "EOF", 3) == 0 || XSTRSTR(line, "//")) {
             continue;
         }
-        XSTRNCPY(fillBuffer[position], line, XSTRLEN(line) - 1);
+        fillNode = SoFT_d_lnkd_list_node_fill_single(fillNode, line,
+                                                     (int) (XSTRLEN(line) - 1));
         position++;
     }
+
+    fillNode = SoFT_d_lnkd_list_get_head(fillNode);
 
     return;
 }
 
 void SoFT_build_custom_specific(char* testFile, char* dst,
-                          char(* submoduleCryptHdrs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleCryptSrcs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleTlsHdrs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleTlsSrcs)[SOFT_LONGEST_FILE_NAME],
-                          char(* submoduleUserSettings)[SOFT_LONGEST_FILE_NAME],
+                          D_LINKED_LIST_NODE*  submoduleCryptHdrs,
+                          D_LINKED_LIST_NODE*  submoduleCryptSrcs,
+                          D_LINKED_LIST_NODE*  submoduleTlsHdrs,
+                          D_LINKED_LIST_NODE*  submoduleTlsSrcs,
+                          D_LINKED_LIST_NODE*  submoduleUserSettings,
                           char* toolChain)
 {
     int i;
@@ -181,7 +189,7 @@ void SoFT_build_custom_specific(char* testFile, char* dst,
     SoFT_clear_cmd(c_cmd);
     char src[] = "./wolfssl"; /* assume for now TODO: make src user specified */
     char* customFName = testFile;
-
+    D_LINKED_LIST_NODE* curr = NULL;
 
     /* setup the directories to reflect traditional */
     SoFT_setup_traditional(dst);
@@ -202,36 +210,36 @@ void SoFT_build_custom_specific(char* testFile, char* dst,
         SoFT_create_makefile(dst);
 
     /* Copy in the crypto headers */
-    for (i = 0; i < SOFT_LARGEST_FILE_LIST; i++) {
-        if (XSTRLEN(submoduleCryptHdrs[i]) > 0) {
-            SoFT_copy_crypto_hdr(src, dst, submoduleCryptHdrs[i]);
-        }
+    curr = SoFT_d_lnkd_list_get_head(submoduleCryptHdrs);
+    while (curr->next != NULL) {
+        SoFT_copy_crypto_hdr(src, dst, curr->value);
+        curr = SoFT_d_lnkd_list_get_next(curr);
     }
     /* Copy in the tls headers */
-    for (i = 0; i < SOFT_LARGEST_FILE_LIST; i++) {
-        if (XSTRLEN(submoduleCryptSrcs[i]) > 0) {
-            SoFT_copy_crypto_src(src, dst, submoduleCryptSrcs[i]);
-        }
+    curr = SoFT_d_lnkd_list_get_head(submoduleTlsHdrs);
+    while (curr->next != NULL) {
+        SoFT_copy_tls_hdr(src, dst, curr->value);
+        curr = SoFT_d_lnkd_list_get_next(curr);
     }
     /* Copy in the crypto sources */
-    for (i = 0; i < SOFT_LARGEST_FILE_LIST; i++) {
-        if (XSTRLEN(submoduleTlsHdrs[i]) > 0) {
-            SoFT_copy_tls_hdr(src, dst, submoduleTlsHdrs[i]);
-        }
+    curr = SoFT_d_lnkd_list_get_head(submoduleCryptSrcs);
+    while (curr->next != NULL) {
+        SoFT_copy_crypto_src(src, dst, curr->value);
+        curr = SoFT_d_lnkd_list_get_next(curr);
     }
     /* Copy in the tls sources */
-    for (i = 0; i < SOFT_LARGEST_FILE_LIST; i++) {
-        if (XSTRLEN(submoduleTlsSrcs[i]) > 0) {
-            SoFT_copy_tls_src(src, dst, submoduleTlsSrcs[i]);
-        }
+    curr = SoFT_d_lnkd_list_get_head(submoduleTlsSrcs);
+    while (curr->next != NULL) {
+        SoFT_copy_tls_src(src, dst, curr->value);
+        curr = SoFT_d_lnkd_list_get_next(curr);
     }
 
     SoFT_create_user_settings(dst);
 
-    for (i = 0; i < SOFT_MOST_SETTINGS; i++) {
-        if (XSTRLEN(submoduleUserSettings[i]) > 0) {
-            SoFT_write_user_settings(dst, submoduleUserSettings[i]);
-        }
+    curr = SoFT_d_lnkd_list_get_head(submoduleUserSettings);
+    while (curr->next != NULL) {
+        SoFT_write_user_settings(dst, curr->value);
+        curr = SoFT_d_lnkd_list_get_next(curr);
     }
 
     SoFT_close_user_settings(dst);

@@ -93,7 +93,7 @@ typedef struct D_LINKED_LIST_NODE
 {
     struct D_LINKED_LIST_NODE* previous;
     struct D_LINKED_LIST_NODE* next;
-    char pp_opt[SOFT_LONGEST_PP_OPT];
+    char value[SOFT_LONGEST_PP_OPT];
     int isGood;
 } D_LINKED_LIST_NODE;
 
@@ -454,20 +454,20 @@ void SoFT_build_rsa_pss_pkcs(char*, char*);
 void SoFT_check_submodule_supported(char* option);
 void SoFT_get_submodule_configuration(char*,
                                 char*,
-                                char(*)[SOFT_LONGEST_FILE_NAME],
-                                char(*)[SOFT_LONGEST_FILE_NAME],
-                                char(*)[SOFT_LONGEST_FILE_NAME],
-                                char(*)[SOFT_LONGEST_FILE_NAME],
-                                char(*)[SOFT_LONGEST_FILE_NAME]);
+                                D_LINKED_LIST_NODE*,
+                                D_LINKED_LIST_NODE*,
+                                D_LINKED_LIST_NODE*,
+                                D_LINKED_LIST_NODE*,
+                                D_LINKED_LIST_NODE*);
 
 void SoFT_parse_conf(const char* abortLine, size_t abortLen,
-                    char(*)[SOFT_LONGEST_FILE_NAME], FILE* fStream);
+                     D_LINKED_LIST_NODE* fillNode, FILE* fStream);
 
 void SoFT_build_custom_specific(char*, char*,
-                               char(*)[SOFT_LONGEST_FILE_NAME],
-                               char(*)[SOFT_LONGEST_FILE_NAME],
-                               char(*)[SOFT_LONGEST_FILE_NAME],
-                               char(*)[SOFT_LONGEST_FILE_NAME],
-                               char(*)[SOFT_LONGEST_FILE_NAME], char*);
+                               D_LINKED_LIST_NODE*,
+                               D_LINKED_LIST_NODE*,
+                               D_LINKED_LIST_NODE*,
+                               D_LINKED_LIST_NODE*,
+                               D_LINKED_LIST_NODE*, char*);
 void usage_m(void);
 #endif /* C_CONF_COMMN */

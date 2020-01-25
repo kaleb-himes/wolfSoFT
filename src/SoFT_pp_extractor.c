@@ -19,8 +19,8 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     char*   line          = NULL;
     DIR*    dStream       = NULL;
     FILE*   currFStream   = NULL;
-    struct  D_LINKED_LIST_NODE* curr  = NULL;
     struct  dirent* currF = NULL;
+    struct  D_LINKED_LIST_NODE* curr  = NULL;
     char    cmdArray[SOFT_LONGEST_COMMAND] = {0};
     char    multiOpts[SOFT_OPTS_IN_A_LINE][SOFT_LONGEST_PP_OPT] = {0};
 
@@ -407,7 +407,7 @@ void SoFT_pp_builder(D_LINKED_LIST_NODE* in)
     while (curr->next != NULL && ret != SOFT_USER_INTERRUPT) {
 
         /* Single setting to test */
-        pp_to_check = curr->pp_opt;
+        pp_to_check = curr->value;
         lenIn = (int) XSTRLEN(pp_to_check);
 
         while (XSTRNCMP(END_ALERT, ignore_pp_opts_single_testing[i],
@@ -431,8 +431,8 @@ void SoFT_pp_builder(D_LINKED_LIST_NODE* in)
 
         if (!skipCheck) {
             SoFT_pp_builder_setup_reqOpts(dst);
-            SoFT_write_user_settings(dst, curr->pp_opt);
-            fprintf(stderr, "Testing %s\n", curr->pp_opt);
+            SoFT_write_user_settings(dst, curr->value);
+            fprintf(stderr, "Testing %s\n", curr->value);
 
 /* This is going to repeat, place in a function - Functionize-2 */
             SoFT_close_user_settings(dst);
@@ -441,9 +441,9 @@ void SoFT_pp_builder(D_LINKED_LIST_NODE* in)
             ret = SoFT_build_solution(dst, SOFT_BUILD_MULTI);
             if (ret == 0) {
                 curr->isGood = 1;
-                fprintf(stderr, "%s BUILD PASSED! ... ", curr->pp_opt);
+                fprintf(stderr, "%s BUILD PASSED! ... ", curr->value);
             } else {
-                fprintf(stderr, "%s BUILD FAILED!\n", curr->pp_opt);
+                fprintf(stderr, "%s BUILD FAILED!\n", curr->value);
                 curr->isGood = 0;
             }
 
@@ -485,13 +485,13 @@ void SoFT_pp_build_test_single(char* testOption)
     testOp = SoFT_d_lnkd_list_node_init(testOp);
     SoFT_assrt_ne_null(testOp, "testOp is NULL");
 
-    strncpy(testOp->pp_opt, testOption, strlen(testOption));
-    fprintf(stderr, "Copied: \"%s\" into testOp->pp_opt\n", testOp->pp_opt);
+    strncpy(testOp->value, testOption, strlen(testOption));
+    fprintf(stderr, "Copied: \"%s\" into testOp->value\n", testOp->value);
 
 
     SoFT_pp_builder_setup_buildDir(dst, src);
     SoFT_pp_builder_setup_reqOpts(dst);
-    SoFT_write_user_settings(dst, testOp->pp_opt);
+    SoFT_write_user_settings(dst, testOp->value);
     SoFT_close_user_settings(dst);
 
     /* Build the project */
@@ -499,7 +499,7 @@ void SoFT_pp_build_test_single(char* testOption)
     if (ret == 0)
         testOp->isGood = 1;
     else {
-        fprintf(stderr, "%s caused a failure\n", testOp->pp_opt);
+        fprintf(stderr, "%s caused a failure\n", testOp->value);
         fprintf(stderr, "Ret val: %d\n", ret);
         testOp->isGood = 0;
     }
@@ -512,7 +512,7 @@ void SoFT_pp_build_test_single(char* testOption)
         if (ret == 0)
             testOp->isGood = 1;
         else {
-            fprintf(stderr, "%s caused a failure\n", testOp->pp_opt);
+            fprintf(stderr, "%s caused a failure\n", testOp->value);
             testOp->isGood = 0;
         }
     }
@@ -580,7 +580,7 @@ void SoFT_pp_print_results(D_LINKED_LIST_NODE* curr, char* msg, int value)
     fprintf(stderr, "%s\n", msg);
     while (temp->next != NULL) {
         if (temp->isGood == value) {
-            fprintf(stderr, "%s\n", temp->pp_opt);
+            fprintf(stderr, "%s\n", temp->value);
             foundOne++;
         }
         temp = temp->next;

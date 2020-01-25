@@ -11,18 +11,20 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_fill_single(D_LINKED_LIST_NODE* curr,
 
     XMEMSET(c_tmp, 0, sizeof(c_tmp));
 
-    SoFT_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
+    SoFT_assrt_ne_null(curr, "Called SoFT_d_lnkd_list_node_fill_single"
+                             "with null argument");
 
     next = curr->next;
 
     if (next != NULL) {
-        fprintf(stderr, "Called get_pp_macro_single with a node that has a next"
-                "\n");
+        fprintf(stderr, "Called SoFT_d_lnkd_list_node_fill_single with a node "
+                        "that has a next\n");
         SoFT_abort();
     }
 
     next = SoFT_d_lnkd_list_node_init(next);;
-    SoFT_assrt_ne_null(next, "creating next in get_pp_macro_single");
+    SoFT_assrt_ne_null(next, "creating next in "
+                             "SoFT_d_lnkd_list_node_fill_single");
 
     #ifdef IGNORE_DUPLICATES
       /* get all pre_processor macros regardless of duplicates */
@@ -33,13 +35,14 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_fill_single(D_LINKED_LIST_NODE* curr,
 
     if (duplicateCheck == SOFT_NO_DUP) {
         for (i = 0; i < lSz; i++) {
-            curr->pp_opt[i] = line[i];
+            curr->value[i] = line[i];
         }
     } else {
         free(next);
         return curr;
     }
 
+    printf("curr->value = %s\n", curr->value);
     curr->next = next;
     next->previous = curr;
     return next;
@@ -54,8 +57,8 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_init(D_LINKED_LIST_NODE* in)
 
     in->previous = NULL;
     in->next = NULL;
-    XMEMSET(in->pp_opt, 0, sizeof(in->pp_opt));
-    in->pp_opt[0] = '\n';
+    XMEMSET(in->value, 0, sizeof(in->value));
+    in->value[0] = '\n';
     in->isGood = -1;
 
     return in;
@@ -92,13 +95,13 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_iterate(D_LINKED_LIST_NODE* in)
                     fprintf(stderr, "\t\t|-->(null)\n");
 
                 fprintf(stderr, "\t\t|-->");
-                for (i = 0; i < sizeof(curr->pp_opt); i++)
-                    fprintf(stderr, "%c", curr->pp_opt[i]);
+                for (i = 0; i < sizeof(curr->value); i++)
+                    fprintf(stderr, "%c", curr->value[i]);
                 fprintf(stderr, "\n");
             }
         #endif
 
-        fprintf(stderr, "%s\n", curr->pp_opt);
+        fprintf(stderr, "%s\n", curr->value);
 
         curr = curr->next;
 
@@ -179,7 +182,7 @@ int SoFT_d_lnkd_list_check_for_dup(D_LINKED_LIST_NODE* in, char* target)
 
     while (curr != NULL) {
 
-        if (XSTRNCMP(curr->pp_opt, target, XSTRLEN(target)) == 0) {
+        if (XSTRNCMP(curr->value, target, XSTRLEN(target)) == 0) {
             return SOFT_FOUND_DUP;
         }
 

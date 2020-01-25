@@ -19,7 +19,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
     char*   line          = NULL;
     DIR*    dStream       = NULL;
     FILE*   currFStream   = NULL;
-    struct  PP_OPT* curr  = NULL;
+    struct  D_LINKED_LIST_NODE* curr  = NULL;
     struct  dirent* currF = NULL;
     char    cmdArray[SOFT_LONGEST_COMMAND] = {0};
     char    multiOpts[SOFT_OPTS_IN_A_LINE][SOFT_LONGEST_PP_OPT] = {0};
@@ -28,7 +28,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
     SoFT_clear_cmd(cmdArray);
 
-    curr = SoFT_pp_node_init(curr);
+    curr = SoFT_d_lnkd_list_node_init(curr);
 
     fprintf(stderr, "numDirs = %d\n", numDirs);
     for (dCounter = 0; dCounter < numDirs; dCounter++) {
@@ -83,7 +83,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     SoFT_pp_string_extract_single(multiOpts, line,
                                                  (int) lengthOfLine);
 
-                    shouldAdd = SoFT_pp_check_ig(multiOpts[0]);
+                    shouldAdd = SoFT_pp_check_ignore(multiOpts[0]);
 
                     if (shouldAdd == 0) {
                 #ifdef DEBUG_SOFT_LINE_COUNT
@@ -92,12 +92,12 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                         fprintf(stderr, "Adding %s\n", multiOpts[0]);
                 #endif
 
-                        curr = SoFT_pp_node_fill_single(curr, multiOpts[0],
+                        curr = SoFT_d_lnkd_list_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
                     }
 
                     #ifdef DEBUG_SOFT_CHECK_ITERATE
-                      SoFT_pp_list_iterate(curr);
+                      SoFT_d_lnkd_list_iterate(curr);
                     #endif
                 }
 
@@ -110,7 +110,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     SoFT_pp_string_extract_single(multiOpts, line,
                                                  (int) lengthOfLine);
 
-                    shouldAdd = SoFT_pp_check_ig(multiOpts[0]);
+                    shouldAdd = SoFT_pp_check_ignore(multiOpts[0]);
 
                     if (shouldAdd == 0) {
                 #ifdef DEBUG_SOFT_LINE_COUNT
@@ -118,12 +118,12 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                                 line);
                         fprintf(stderr, "Adding %s\n", multiOpts[0]);
                 #endif
-                        curr = SoFT_pp_node_fill_single(curr, multiOpts[0],
+                        curr = SoFT_d_lnkd_list_node_fill_single(curr, multiOpts[0],
                                                    (int) XSTRLEN(multiOpts[0]));
                     }
 
                     #ifdef DEBUG_SOFT_CHECK_ITERATE
-                      SoFT_pp_list_iterate(curr);
+                      SoFT_d_lnkd_list_iterate(curr);
                     #endif
 
                 }
@@ -148,14 +148,14 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     SoFT_pp_string_extract_multi(multiOpts, line,
                                                 (int) lengthOfLine, &optsFound);
                     for (i = 0; i < optsFound; i++) {
-                        shouldAdd = SoFT_pp_check_ig(multiOpts[i]);
+                        shouldAdd = SoFT_pp_check_ignore(multiOpts[i]);
                         if (shouldAdd == 0) {
                     #ifdef DEBUG_SOFT_LINE_COUNT
                             fprintf(stderr, "DEBUG: Found \"defined\" in"
                                     " \"%s\"\n", line);
                             fprintf(stderr, "Adding %s\n", multiOpts[i]);
                     #endif
-                            curr = SoFT_pp_node_fill_single(curr, multiOpts[i],
+                            curr = SoFT_d_lnkd_list_node_fill_single(curr, multiOpts[i],
                                                    (int) XSTRLEN(multiOpts[i]));
                         }
                     }
@@ -167,7 +167,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                     optsFound = 0;
 
                     #ifdef DEBUG_SOFT_CHECK_ITERATE
-                      SoFT_pp_list_iterate(curr);
+                      SoFT_d_lnkd_list_iterate(curr);
                     #endif
 
                 }
@@ -197,55 +197,12 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
         if (runBuilder == 1) {
             SoFT_pp_builder(curr);
         } else {
-            SoFT_pp_list_iterate(curr);
+            SoFT_d_lnkd_list_iterate(curr);
         }
     }
 
-    SoFT_pp_list_free(curr);
+    SoFT_d_lnkd_list_free(curr);
     return;
-}
-
-PP_OPT* SoFT_pp_node_fill_single(PP_OPT* curr, char* line, int lSz)
-{
-    struct PP_OPT* next;
-    int i;
-    int duplicateCheck = -1;
-    char c_tmp[SOFT_LONGEST_PP_OPT];
-
-    XMEMSET(c_tmp, 0, sizeof(c_tmp));
-
-    SoFT_assrt_ne_null(curr, "Called get_pp_macro_single with null argument");
-
-    next = curr->next;
-
-    if (next != NULL) {
-        fprintf(stderr, "Called get_pp_macro_single with a node that has a next"
-                "\n");
-        SoFT_abort();
-    }
-
-    next = SoFT_pp_node_init(next);;
-    SoFT_assrt_ne_null(next, "creating next in get_pp_macro_single");
-
-    #ifdef IGNORE_DUPLICATES
-      /* get all pre_processor macros regardless of duplicates */
-      duplicateCheck = SOFT_NO_DUP;
-    #else
-      duplicateCheck = SoFT_pp_list_check_for_dup(curr, line);
-    #endif
-
-    if (duplicateCheck == SOFT_NO_DUP) {
-        for (i = 0; i < lSz; i++) {
-            curr->pp_opt[i] = line[i];
-        }
-    } else {
-        free(next);
-        return curr;
-    }
-
-    curr->next = next;
-    next->previous = curr;
-    return next;
 }
 
 void SoFT_pp_string_extract_single(char(*out)[SOFT_LONGEST_PP_OPT], char* line,
@@ -286,10 +243,10 @@ void SoFT_pp_string_extract_single(char(*out)[SOFT_LONGEST_PP_OPT], char* line,
         j++;
     }
 
-//    #ifdef DEBUG_SOFT
+    #ifdef DEBUG_SOFT
       fprintf(stderr, "DEBUG: extract single got %s\n", out[0]);
       fprintf(stderr, "We were processing line: \"%s\"\n", line);
-//    #endif
+    #endif
 }
 
 void SoFT_pp_string_extract_multi(char(*out)[SOFT_LONGEST_PP_OPT],
@@ -385,149 +342,7 @@ void SoFT_pp_string_extract_multi(char(*out)[SOFT_LONGEST_PP_OPT],
     }
 }
 
-PP_OPT* SoFT_pp_node_init(PP_OPT* in)
-{
-    if (in == NULL) {
-        in = (PP_OPT*) malloc(sizeof(PP_OPT));
-        SoFT_assrt_ne_null(in, "SoFT_pp_node_init");
-    }
-
-    in->previous = NULL;
-    in->next = NULL;
-    XMEMSET(in->pp_opt, 0, sizeof(in->pp_opt));
-    in->pp_opt[0] = '\n';
-    in->isGood = -1;
-
-    return in;
-}
-
-/* return the one passed in to keep your place in the list when this
- * is called */
-PP_OPT* SoFT_pp_list_iterate(PP_OPT* in)
-{
-    int nodeC = 0;
-    struct PP_OPT* curr = NULL;
-    struct PP_OPT* storeRet = in;
-
-    SoFT_assrt_ne_null(in, "SoFT_pp_list_iterate called with null PP_OPT");
-
-    curr = SoFT_pp_list_get_head(in);
-
-    fprintf(stderr, "-------------------- LIST ----------------------------\n");
-
-    while(curr->next != NULL) {
-
-        #ifdef DEBUG_SOFT_CHECK_ITERATE
-            {
-                int i;
-                fprintf(stderr, "--> %p\n", curr);
-                if (curr->previous != NULL)
-                    fprintf(stderr, "\t\t|-->%p\n", curr->previous);
-                else
-                    fprintf(stderr, "\t\t|-->(null)\n");
-                if (curr->next != NULL)
-                    fprintf(stderr, "\t\t|-->%p\n", curr->next);
-                else
-                    fprintf(stderr, "\t\t|-->(null)\n");
-
-                fprintf(stderr, "\t\t|-->");
-                for (i = 0; i < sizeof(curr->pp_opt); i++)
-                    fprintf(stderr, "%c", curr->pp_opt[i]);
-                fprintf(stderr, "\n");
-            }
-        #endif
-
-        fprintf(stderr, "%s\n", curr->pp_opt);
-
-        curr = curr->next;
-
-        if (curr == NULL)
-            break;
-
-        nodeC++;
-    }
-
-    fprintf(stderr, "Total C Pre Processor Macros Identified was: %d\n", nodeC);
-    fprintf(stderr, "------------------------------------------------------\n");
-
-    return storeRet;
-}
-
-PP_OPT* SoFT_pp_list_get_head(PP_OPT* in)
-{
-    int counter = 0;
-
-    SoFT_assrt_ne_null(in, "SoFT_pp_list_get_head called with null PP_OPT");
-
-    if (in->previous == NULL)
-        return in;
-
-    while (in->previous != NULL) {
-
-        in = in->previous;
-        counter++;
-        #ifdef DEBUG_SOFT_LVL2
-          fprintf(stderr, "DEBUG: Backed up %d\n", counter);
-        #endif
-
-        if (in == NULL)
-            break;
-    }
-
-    return in;
-}
-
-PP_OPT* SoFT_pp_list_get_next(PP_OPT* in) {
-    if (in != NULL)
-        return in->next;
-
-    return NULL; /* Default if in is NULL */
-}
-
-PP_OPT* SoFT_pp_list_get_prev(PP_OPT* in) {
-    if (in != NULL)
-        return in->previous;
-
-    return NULL; /* Default if in is NULL */
-}
-
-
-void SoFT_pp_list_free(PP_OPT* in)
-{
-    struct PP_OPT* curr = NULL;
-    struct PP_OPT* tmp = NULL;
-
-    curr = SoFT_pp_list_get_head(in);
-
-    while (curr != NULL) {
-        tmp = curr->next;
-        free(curr);
-        curr = tmp;
-    }
-
-    return;
-}
-
-int SoFT_pp_list_check_for_dup(PP_OPT* in, char* target)
-{
-    struct PP_OPT* curr = NULL;
-
-
-    curr = SoFT_pp_list_get_head(in);
-
-    while (curr != NULL) {
-
-        if (XSTRNCMP(curr->pp_opt, target, XSTRLEN(target)) == 0) {
-            return SOFT_FOUND_DUP;
-        }
-
-        curr = curr->next;
-    }
-
-    return SOFT_NO_DUP;
-}
-
-int SoFT_pp_check_ig(char* pp_to_check)
+int SoFT_pp_check_ignore(char* pp_to_check)
 {
     int i = 0;
     int lenIn, lenChk, lenCmp;
@@ -569,10 +384,10 @@ int SoFT_pp_check_ig(char* pp_to_check)
     return 0;
 }
 
-void SoFT_pp_builder(PP_OPT* in)
+void SoFT_pp_builder(D_LINKED_LIST_NODE* in)
 {
-    struct PP_OPT* curr = NULL;
-    struct PP_OPT* temp = NULL;
+    struct D_LINKED_LIST_NODE* curr = NULL;
+    struct D_LINKED_LIST_NODE* temp = NULL;
 
     int i = 0, ret = 0;
     int lenIn, lenChk, lenCmp;
@@ -586,7 +401,7 @@ void SoFT_pp_builder(PP_OPT* in)
 
     SoFT_pp_builder_setup_buildDir(dst, src);
 
-    curr = SoFT_pp_list_get_head(in);
+    curr = SoFT_d_lnkd_list_get_head(in);
 
     /* case 0, single options, test each individually with defaults */
     while (curr->next != NULL && ret != SOFT_USER_INTERRUPT) {
@@ -647,7 +462,7 @@ void SoFT_pp_builder(PP_OPT* in)
             }
         }
         skipCheck = 0;
-        curr = SoFT_pp_list_get_next(curr);
+        curr = SoFT_d_lnkd_list_get_next(curr);
     }
 
     SoFT_pp_print_results(curr, "The following build options were skipped",
@@ -661,13 +476,13 @@ void SoFT_pp_builder(PP_OPT* in)
 
 void SoFT_pp_build_test_single(char* testOption)
 {
-    PP_OPT* testOp = NULL;
+    D_LINKED_LIST_NODE* testOp = NULL;
     int ret;
     char src[] = "./wolfssl";
     char dst[] = "pp_build_dir";
     char c_cmd[SOFT_LONGEST_COMMAND];
 
-    testOp = SoFT_pp_node_init(testOp);
+    testOp = SoFT_d_lnkd_list_node_init(testOp);
     SoFT_assrt_ne_null(testOp, "testOp is NULL");
 
     strncpy(testOp->pp_opt, testOption, strlen(testOption));
@@ -702,7 +517,7 @@ void SoFT_pp_build_test_single(char* testOption)
         }
     }
 
-    SoFT_pp_list_free(testOp);
+    SoFT_d_lnkd_list_free(testOp);
     return;
 }
 
@@ -755,12 +570,12 @@ void SoFT_pp_builder_setup_reqOpts(char* dst)
     return;
 }
 
-void SoFT_pp_print_results(PP_OPT* curr, char* msg, int value)
+void SoFT_pp_print_results(D_LINKED_LIST_NODE* curr, char* msg, int value)
 {
-    PP_OPT* temp;
+    D_LINKED_LIST_NODE* temp;
     int foundOne = 0;
 
-    temp = SoFT_pp_list_get_head(curr);
+    temp = SoFT_d_lnkd_list_get_head(curr);
     fprintf(stderr, "-----------------------------------\n");
     fprintf(stderr, "%s\n", msg);
     while (temp->next != NULL) {

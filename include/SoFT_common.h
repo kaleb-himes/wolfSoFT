@@ -49,9 +49,10 @@
 #define SOFT_LONGEST_CONFIG          80
 #define SOFT_FIRST_POSITION          0
 #define SOFT_LONGEST_PP_OPT          100*sizeof(char)
+#define SOFT_LONGEST_PP_OPT          100*sizeof(char)
 #define SOFT_LONGEST_COMMAND         4096
 #define SOFT_CONFIG_NOT_SUPPORTED    256
-#define SOFT_LONGEST_LINE            80
+#define SOFT_LONGEST_LINE            100*sizeof(char)
 #define SOFT_MOST_SETTINGS           80
 #define SOFT_LARGEST_FILE_LIST       70
 #define SOFT_LONGEST_FILE_NAME       150
@@ -88,13 +89,13 @@ enum {
 /* STRUCTS */
 /*----------------------------------------------------------------------------*/
 
-typedef struct PP_OPT
+typedef struct D_LINKED_LIST_NODE
 {
-    struct PP_OPT* previous;
-    struct PP_OPT* next;
+    struct D_LINKED_LIST_NODE* previous;
+    struct D_LINKED_LIST_NODE* next;
     char pp_opt[SOFT_LONGEST_PP_OPT];
     int isGood;
-} PP_OPT;
+} D_LINKED_LIST_NODE;
 
 /*----------------------------------------------------------------------------*/
 /* Static strings */
@@ -278,7 +279,8 @@ void SoFT_clone_target_repo(char*);
  * node, and an array to hold the C Pre Processor macro extracted by either
  * SoFT_pp_string_extract_multi or SoFT_pp_string_extract_single
  */
-PP_OPT* SoFT_pp_node_fill_single(PP_OPT*, char*, int);
+D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_fill_single(D_LINKED_LIST_NODE*,
+                                                      char*, int);
 
 /*
  * PRELUDE to the below API's
@@ -330,32 +332,33 @@ void SoFT_pp_string_extract_single(char(*)[SOFT_LONGEST_PP_OPT], char*, int);
  * RETURN: a pointer to the newly initialized node.
  *
  * EXAMPLE:
- *          struct PP_OPT* myNode = NULL;
+ *          struct D_LINKED_LIST_NODE* myNode = NULL;
  *          myNode = SoFT_pp_init(myNode);
  */
-PP_OPT* SoFT_pp_node_init(PP_OPT*);
+D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_init(D_LINKED_LIST_NODE*);
 
 /*
  * @p1 - Any node in the doubly linked list
  *
- * This function will use SoFT_pp_list_get_head to return to the head of the list
- * once at the head this function will then traverse the entirety of the list
- * printing out each pre-processor macro in every node. At the end will also
- * print the number of pre-processor macros contained in the list.
+ * This function will use SoFT_d_lnkd_list_get_head to return to the head of the
+ * list once at the head this function will then traverse the entirety of the
+ * list printing out each pre-processor macro in every node. At the end will
+ * also print the number of pre-processor macros contained in the list.
  *
  * RETURN: a pointer to the original node passed in
  *
  * EXAMPLE:
- *          currentNode = SoFT_pp_list_iterate(currentNode);
+ *          currentNode = SoFT_d_lnkd_list_iterate(currentNode);
  *
  * NOTE: All operations IE backing up to head and iterating over the list are
  *       done with a COPY of the passed in node so the original node never gets
  *       changed. You will retain your place in the list when calling this
  *       function and not getting the return also IE:
- *       SoFT_pp_list_iterate(currentNode); // no return assignment also retains
+ *       SoFT_d_lnkd_list_iterate(currentNode);
+ *                                         // no return assignment also retains
  *                                         // your place in the list.
  */
-PP_OPT* SoFT_pp_list_iterate(PP_OPT*);
+D_LINKED_LIST_NODE* SoFT_d_lnkd_list_iterate(D_LINKED_LIST_NODE*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -364,9 +367,9 @@ PP_OPT* SoFT_pp_list_iterate(PP_OPT*);
  *
  * RETURN: returns a pointer to the head of the list.
  */
-PP_OPT* SoFT_pp_list_get_head(PP_OPT*);
-PP_OPT* SoFT_pp_list_get_next(PP_OPT*);
-PP_OPT* SoFT_pp_list_get_prev(PP_OPT*);
+D_LINKED_LIST_NODE* SoFT_d_lnkd_list_get_head(D_LINKED_LIST_NODE*);
+D_LINKED_LIST_NODE* SoFT_d_lnkd_list_get_next(D_LINKED_LIST_NODE*);
+D_LINKED_LIST_NODE* SoFT_d_lnkd_list_get_prev(D_LINKED_LIST_NODE*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -375,7 +378,7 @@ PP_OPT* SoFT_pp_list_get_prev(PP_OPT*);
  * the entire list freeing each node it encounters until the tail of the list is
  * free'd
  */
-void SoFT_pp_list_free(PP_OPT*);
+void SoFT_d_lnkd_list_free(D_LINKED_LIST_NODE*);
 
 /*
  * @p1 - Any node in the doubly linked list
@@ -390,7 +393,7 @@ void SoFT_pp_list_free(PP_OPT*);
  *
  * RETURN: An integer indicating if a duplicate was found or not.
  */
-int SoFT_pp_list_check_for_dup(PP_OPT*, char*);
+int SoFT_d_lnkd_list_check_for_dup(D_LINKED_LIST_NODE*, char*);
 
 /*
  * @p1 - a string containing the name of a directory or the value NULL
@@ -420,12 +423,12 @@ int SoFT_pp_list_check_for_dup(PP_OPT*, char*);
  * SoFT_pp_extract_from_multi_dirs(valid, valid2, valid3, valid4); // VALID
  */
 void SoFT_pp_extract_from_multi_dirs(char*, char*, char*, char*, int, int);
-int SoFT_pp_check_ig(char*);
-void SoFT_pp_builder(PP_OPT*);
+int SoFT_pp_check_ignore(char*);
+void SoFT_pp_builder(D_LINKED_LIST_NODE*);
 void SoFT_pp_build_test_single(char*);
 void SoFT_pp_builder_setup_buildDir(char*, char*);
 void SoFT_pp_builder_setup_reqOpts(char*);
-void SoFT_pp_print_results(PP_OPT*, char*, int);
+void SoFT_pp_print_results(D_LINKED_LIST_NODE*, char*, int);
 
 int SoFT_auto_build_from_file(char*);
 

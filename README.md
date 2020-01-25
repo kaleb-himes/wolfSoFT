@@ -11,9 +11,9 @@ clone is available is: ```wolfSoFT/wolfssl```
 
 FRAMEWORKS:
 
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 FRAMEWORK 1: Pre Processor Extraction and Testing Tool
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 
 
 ```
@@ -61,7 +61,8 @@ wolfSoFT/wolfssl/wolfssl/wolfcrypt
 In addition to just listing the pre-processors found the ```m``` option also
 accounts for duplicates across directories unlike the ```e``` option below.
 
-\-------------------------------------------------------------------------------
+
+\--------------------------------------------------------------------------</br>
 
 ```
 ./run e <path>/<to>/<dir>
@@ -86,7 +87,7 @@ EXAMPLE:
 The above would give you all the pre-processor macros found in wolfssl/src and
 wolfssl/wolfcrypt/src directories.
 
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 
 ```
 ./run s <PP_MACRO>
@@ -101,9 +102,9 @@ EXAMPLE:
 ./run s HAVE_POLY1305
 ```
 
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 FRAMEWORK 2: Footprint Benchmarking
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 
 ```
 ./run b
@@ -133,9 +134,9 @@ footprint. This program will allow Jenkins to crank out some numbers each night
 and a support engineer can check the output log to answer customer questions of
 this nature.
 
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 FRAMEWORK 3: Building Custom SubModules (of the wolfSSL and wolfCrypt libraries)
-\-------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 
 ```
 ./run c <custom build name>
@@ -162,9 +163,9 @@ cert_manager_only - cert manager functionality and dependencies
 
 More builds will be added over time, check back often!
 
---------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 FRAMEWORK 4: Automated testing using Jenkins .txt input files
---------------------------------------------------------------------------------
+\--------------------------------------------------------------------------</br>
 
 ```
 ./run a <file name>

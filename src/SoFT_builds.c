@@ -77,6 +77,7 @@ void SoFT_check_submodule_supported(char* option)
                "submodules_available to reflect the new count", option);
         SoFT_custom_build_usage();
     }
+    return;
 }
 
 void SoFT_get_submodule_configuration(char* submoduleOption,
@@ -149,6 +150,13 @@ void SoFT_get_submodule_configuration(char* submoduleOption,
             fillUserSettings = 1;
         }
     }
+
+    if (line)
+        free(line);
+
+    fclose(fStream);
+
+    return;
 }
 
 void SoFT_parse_conf(const char* abortLine, size_t abortLen,
@@ -170,6 +178,9 @@ void SoFT_parse_conf(const char* abortLine, size_t abortLen,
                                                      (int) (XSTRLEN(line) - 1));
         position++;
     }
+
+    if (line)
+        free(line);
 
     fillNode = SoFT_d_lnkd_list_get_head(fillNode);
 
@@ -660,8 +671,6 @@ void SoFT_create_user_settings(char* dst)
     SoFT_clear_cmd(fName);
 
     SoFT_build_cmd(fName, dst, "/user_settings.h", NULL, NULL);
-//    SoFT_build_cmd(c_cmd, "rm ", fName, NULL, NULL);
-//    system(c_cmd);
     SoFT_clear_cmd(c_cmd);
     SoFT_build_cmd(c_cmd, "touch ", fName, NULL, NULL);
     system(c_cmd);
@@ -672,13 +681,11 @@ void SoFT_create_user_settings(char* dst)
     SoFT_build_cmd(c_cmd, "#ifndef USER_SETTINGS_H\n", NULL, NULL, NULL);
     writeLen = XSTRLEN(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
-//    SoFT_check_fwrite_success(ret, writeLen);
     SoFT_clear_cmd(c_cmd);
 
     SoFT_build_cmd(c_cmd, "#define USER_SETTINGS_H\n\n", NULL, NULL, NULL);
     writeLen = XSTRLEN(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
-    //SoFT_check_fwrite_success(ret, writeLen);
     SoFT_clear_cmd(c_cmd);
 
     fclose(fStream);
@@ -710,14 +717,12 @@ void SoFT_write_user_settings(char* dst, char* setting)
     finSetLen = XSTRLEN(finSet);
 
     ret = fwrite(finSet, 1, finSetLen, fStream);
-    //SoFT_check_fwrite_success(ret, finSetLen);
     SoFT_clear_cmd(finSet);
 
     SoFT_build_cmd(finSet, "#define ", setting, "\n\n", NULL);
     finSetLen = XSTRLEN(finSet);
 
     ret = fwrite(finSet, 1, finSetLen, fStream);
-    //SoFT_check_fwrite_success(ret, finSetLen);
     SoFT_clear_cmd(finSet);
 
     fclose(fStream);

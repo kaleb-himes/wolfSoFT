@@ -15,3 +15,5 @@ ecc_only/
 sha256_only/
 SoFT-custom-test-apps/test.c
 aes_pwdbased/
+dynamic_submodule/
+pp_build_dir/

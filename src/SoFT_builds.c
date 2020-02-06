@@ -42,18 +42,6 @@ void SoFT_do_custom_build(char* option, char* toolChain)
     SoFT_d_lnkd_list_free(submoduleUserSettings);
 }
 
-/* Supported Recipes */
-//#define AES_ONLY_DST "aes_only"
-//#define AES_PWDBASED_DST "aes_pwdbased"
-//#define CERT_MNGR_ONLY_DST "cert_manager_only" // example myCustomDir
-//#define DSA_ONLY_DST "dsa_only" // example myCustomDir
-//#define ECC_ONLY_DST "ecc_only" // example myCustomDir
-//#define RSA_PSS_PKCS_DST "rsa_pss_pkcs"
-//#define SHA256_ECC_DST "sha256_ecc" // example myCustomDir
-//#define SHA256_ECC_NM_DST "sha256_ecc_nm" // example myCustomDir
-//#define SHA256_ONLY_DST "sha256_only" // example myCustomDir
-//#define SHA512_ONLY_DST "sha512_only" // example myCustomDir
-
 void SoFT_check_submodule_supported(char* option)
 {
     const char* supported[25] = {"aes_only","aes_pwdbased", "cert_manager_only",
@@ -206,8 +194,13 @@ void SoFT_build_custom_specific(char* testFile, char* dst,
     SoFT_setup_traditional(dst);
 
     /* set to a common test app */
-    SoFT_build_cmd(c_cmd, "cp SoFT-custom-test-apps/", customFName,
+    if (XSTRNCMP(testFile, "DYNAMIC_TEST", 12) == 0) {
+        SoFT_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c",
+                  " SoFT-custom-test-apps/SoFT_custom_test.c", NULL, NULL);
+    } else {
+        SoFT_build_cmd(c_cmd, "cp SoFT-custom-test-apps/", customFName,
                   " SoFT-custom-test-apps/SoFT_custom_test.c", NULL);
+    }
     system(c_cmd);
     SoFT_clear_cmd(c_cmd);
 

@@ -1,5 +1,5 @@
-#ifndef C_CONF_COMMN
-#define C_CONF_COMMN
+#ifndef SOFT_COMMON_HDR
+#define SOFT_COMMON_HDR
 
 #include <stdio.h>
 #include <stdlib.h> /* For system calls */
@@ -469,5 +469,7 @@ void SoFT_build_custom_specific(char*, char*,
                                D_LINKED_LIST_NODE*,
                                D_LINKED_LIST_NODE*,
                                D_LINKED_LIST_NODE*, char*);
+
+void SoFT_parse_dynamic_conf();
 void usage_m(void);
-#endif /* C_CONF_COMMN */
+#endif /* SOFT_COMMON_HDR */

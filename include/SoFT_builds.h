@@ -1,6 +1,8 @@
 #ifndef SOFT_BUILDS_H
 #define SOFT_BUILDS_H
 
+#include <SoFT_common.h>
+
 #define ARM_THUMB "ARM-THUMB"
 
 
@@ -70,5 +72,148 @@ clean:\n\
 \n\
 distclean: clean\n";
 
+#define SOFT_CH  D_LINKED_LIST_NODE** CHdrs
+#define SOFT_CS  D_LINKED_LIST_NODE** CSrcs
+#define SOFT_TH  D_LINKED_LIST_NODE** THdrs
+#define SOFT_TS  D_LINKED_LIST_NODE** TSrcs
+#define SOFT_US D_LINKED_LIST_NODE** USettings
+
+void SoFT_add_defaults(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/*------------------------------------------------------------------------*/
+/* major features */
+/*------------------------------------------------------------------------*/
+
+/* DEFAULT RNG */
+void SoFT_add_feature_DEFAULT_RNG(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_DEFAULT_RNG(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* RSA */
+void SoFT_add_feature_RSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_RSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* ECC */
+void SoFT_add_feature_ECC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_ECC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* DH */
+void SoFT_add_feature_DH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_DH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* DSA */
+void SoFT_add_feature_DSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_DSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* PWDBASED */
+void SoFT_add_feature_PWDBASED(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_PWDBASED(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* AES */
+void SoFT_add_feature_AES(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* ASN */
+void SoFT_add_feature_ASN(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_ASN(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* DES3 */
+void SoFT_add_feature_DES3(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_DES3(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* RABBIT */
+void SoFT_add_feature_RABBIT(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_RABBIT(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* CHACHA */
+void SoFT_add_feature_CHACHA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* ARC4 / RC4 */
+void SoFT_add_feature_ARC4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_ARC4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* MD2 */
+void SoFT_add_feature_MD2(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* MD4 */
+void SoFT_add_feature_MD4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_MD4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* MD5 */
+void SoFT_add_feature_MD5(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_MD5(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* SHA / SHA1 */
+void SoFT_add_feature_SHA1(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_SHA1(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* SHA256 */
+void SoFT_add_feature_SHA256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_SHA256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+void SoFT_add_feature_SHA384(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_add_feature_SHA512(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* MATHS */
+void SoFT_add_feature_FAST_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_add_feature_NORMAL_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_add_feature_SP_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* OLD_TLS */
+void SoFT_add_feature_OLD_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_OLD_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* TLS */
+void SoFT_add_feature_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* SIG WRAPPER */
+void SoFT_add_feature_SIG_WRAP(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_SIG_WRAP(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/*------------------------------------------------------------------------*/
+/* minor features */
+/*------------------------------------------------------------------------*/
+
+/* RSA PSS */
+void SoFT_add_feature_RSA_PSS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* HASH:
+ *      NOTE:Non Configurable, default when using a hash algo that requires it
+ */
+void SoFT_add_feature_HASH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* RSA 3072 */
+void SoFT_add_feature_RSA_3072(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+/* RSA 4096 */
+void SoFT_add_feature_RSA_4096(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+/* RSA 8192 */
+void SoFT_add_feature_RSA_8192(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+/* Cert Buffers 2048 */
+void SoFT_add_feature_CB2048(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+/* Cert Buffers 3072 */
+void SoFT_add_feature_CB3072(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+/* Cert Buffers 4096 */
+void SoFT_add_feature_CB4096(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* Cert Buffers 256 */
+void SoFT_add_feature_CB256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+
+void SoFT_add_feature_AES_128(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_add_feature_AES_192(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_add_feature_AES_256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_add_feature_SP_ASM(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/*------------------------------------------------------------------------*/
+/* Accelerators */
+/*------------------------------------------------------------------------*/
+
+void SoFT_add_feature_AESNI(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/*------------------------------------------------------------------------*/
+/* Helpers */
+/*------------------------------------------------------------------------*/
+
+int SoFT_check_conf_for_opt(char* checkForOption);
 
 #endif /* SOFT_BUILDS_H */

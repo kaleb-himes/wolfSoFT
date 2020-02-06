@@ -86,6 +86,10 @@ int main(int argc, char** argv)
                 printf("Testing single option: %s\n", argv[SOFT_THIRD_INPUT]);
                 SoFT_pp_build_test_single(argv[SOFT_THIRD_INPUT]);
                 break;
+            case 'd':
+                printf("Doing a dynamic build\n");
+                SoFT_parse_dynamic_conf();
+                break;
             default:
                 printf("TODO: Add Usage\n");
                 printf("Invalid option\n");

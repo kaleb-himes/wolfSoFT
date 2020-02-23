@@ -194,12 +194,12 @@ void SoFT_build_custom_specific(char* testFile, char* dst,
     SoFT_setup_traditional(dst);
 
     /* set to a common test app */
-    if (XSTRNCMP(testFile, "DYNAMIC_TEST", 12) == 0) {
-        SoFT_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c",
-                  " SoFT-custom-test-apps/SoFT_custom_test.c", NULL, NULL);
-    } else {
+    if (XSTRNCMP(testFile, "submodule_cert_manager_only.c", 12) == 0) {
         SoFT_build_cmd(c_cmd, "cp SoFT-custom-test-apps/", customFName,
                   " SoFT-custom-test-apps/SoFT_custom_test.c", NULL);
+    } else {
+        SoFT_build_cmd(c_cmd, "cp ./wolfssl/wolfcrypt/test/test.c",
+                  " SoFT-custom-test-apps/SoFT_custom_test.c", NULL, NULL);
     }
     system(c_cmd);
     SoFT_clear_cmd(c_cmd);
@@ -562,7 +562,7 @@ void SoFT_create_arm_thumb_makefile(char* dst, char* toolChain)
     SoFT_clear_cmd(c_cmd);
     SoFT_clear_cmd(outFName);
 
-    SoFT_build_cmd(c_cmd, "cp ", toolChainPath, "* ", dst);
+    SoFT_build_cmd(c_cmd, "cp -r ", toolChainPath, "* ", dst);
     system(c_cmd);
     SoFT_clear_cmd(c_cmd);
 

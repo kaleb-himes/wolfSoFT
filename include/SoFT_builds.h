@@ -145,11 +145,18 @@ void SoFT_remove_feature_MD5(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 void SoFT_add_feature_SHA1(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 void SoFT_remove_feature_SHA1(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 
+/* HMAC */
+void SoFT_add_feature_HMAC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_HMAC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
 /* SHA256 */
 void SoFT_add_feature_SHA256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 void SoFT_remove_feature_SHA256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 
+/* SHA384 */
 void SoFT_add_feature_SHA384(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* SHA512 */
 void SoFT_add_feature_SHA512(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 
 /* MATHS */
@@ -181,22 +188,32 @@ void SoFT_add_feature_RSA_PSS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
  *      NOTE:Non Configurable, default when using a hash algo that requires it
  */
 void SoFT_add_feature_HASH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_HASH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 
 /* RSA 3072 */
 void SoFT_add_feature_RSA_3072(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
 /* RSA 4096 */
 void SoFT_add_feature_RSA_4096(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
 /* RSA 8192 */
 void SoFT_add_feature_RSA_8192(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
 /* Cert Buffers 2048 */
 void SoFT_add_feature_CB2048(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
 /* Cert Buffers 3072 */
 void SoFT_add_feature_CB3072(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
 /* Cert Buffers 4096 */
 void SoFT_add_feature_CB4096(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 
 /* Cert Buffers 256 */
 void SoFT_add_feature_CB256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+
+/* CODING */
+void SoFT_add_feature_CODING(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
+void SoFT_remove_feature_CODING(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 
 
 void SoFT_add_feature_AES_128(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
@@ -215,5 +232,10 @@ void SoFT_add_feature_AESNI(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US);
 /*------------------------------------------------------------------------*/
 
 int SoFT_check_conf_for_opt(char* checkForOption);
+void SoFT_add_crypto_src(SOFT_CS, const char* src);
+void SoFT_add_crypto_hdr(SOFT_CH, const char* hdr);
+void SoFT_add_tls_src(SOFT_TS, const char* src);
+void SoFT_add_tls_hdr(SOFT_TH, const char* hdr);
+void SoFT_add_setting(SOFT_US, const char* setting);
 
 #endif /* SOFT_BUILDS_H */

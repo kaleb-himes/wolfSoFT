@@ -116,11 +116,22 @@ void SoFT_parse_dynamic_conf()
         SoFT_remove_feature_MD5(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
 
     /* SHA */
+    if (SoFT_check_conf_for_opt("ADD_HASH") == 1)
+        SoFT_add_feature_HASH(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
+    else
+        SoFT_remove_feature_HASH(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
+
     if (SoFT_check_conf_for_opt("ADD_SHA1") == 1 ||
         SoFT_check_conf_for_opt("ADD_SHA") == 1)
         SoFT_add_feature_SHA1(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
     else
         SoFT_remove_feature_SHA1(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
+
+    /* HMAC */
+    if (SoFT_check_conf_for_opt("ADD_HMAC") == 1)
+        SoFT_add_feature_HMAC(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
+    else
+        SoFT_remove_feature_HMAC(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
 
     /* SHA256 */
     if (SoFT_check_conf_for_opt("ADD_SHA256") == 1)
@@ -202,6 +213,11 @@ void SoFT_parse_dynamic_conf()
     if (SoFT_check_conf_for_opt("CB4096") == 1)
         SoFT_add_feature_CB4096(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
 
+    if (SoFT_check_conf_for_opt("ADD_CODING") == 1)
+        SoFT_add_feature_CODING(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
+    else
+        SoFT_remove_feature_CODING(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
+
 /*------------------------------------------------------------------------*/
 /* Accelerators */
 /*------------------------------------------------------------------------*/
@@ -234,140 +250,63 @@ void SoFT_parse_dynamic_conf()
 
 void SoFT_add_defaults(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "settings.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-    char headerB[] = "visibility.h";
-    int  headerBLen = (int) XSTRLEN(headerB);
-    char headerC[] = "version.h";
-    int  headerCLen = (int) XSTRLEN(headerC);
-    char headerD[] = "wc_port.h";
-    int  headerDLen = (int) XSTRLEN(headerD);
-    char headerE[] = "memory.h";
-    int  headerELen = (int) XSTRLEN(headerE);
-    char headerF[] = "types.h";
-    int  headerFLen = (int) XSTRLEN(headerF);
-    char headerG[] = "logging.h";
-    int  headerGLen = (int) XSTRLEN(headerG);
-    char headerH[] = "error-crypt.h";
-    int  headerHLen = (int) XSTRLEN(headerH);
-    char headerI[] = "misc.h";
-    int  headerILen = (int) XSTRLEN(headerI);
+    SoFT_add_crypto_hdr(CHdrs, "settings.h");
+    SoFT_add_crypto_hdr(CHdrs, "visibility.h");
+    SoFT_add_crypto_hdr(CHdrs, "wc_port.h");
+    SoFT_add_crypto_hdr(CHdrs, "memory.h");
+    SoFT_add_crypto_hdr(CHdrs, "types.h");
+    SoFT_add_crypto_hdr(CHdrs, "logging.h");
+    SoFT_add_crypto_hdr(CHdrs, "error-crypt.h");
+    SoFT_add_crypto_hdr(CHdrs, "misc.h");
 
-    char srcA[] = "misc.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "memory.c";
-    int  srcBLen = (int) XSTRLEN(srcB);
-    char srcC[] = "error.c";
-    int  srcCLen = (int) XSTRLEN(srcC);
-    char srcD[] = "logging.c";
-    int  srcDLen = (int) XSTRLEN(srcD);
-    char srcE[] = "wc_port.c";
-    int  srcELen = (int) XSTRLEN(srcE);
+    SoFT_add_crypto_src(CSrcs, "misc.c");
+    SoFT_add_crypto_src(CSrcs, "memory.c");
+    SoFT_add_crypto_src(CSrcs, "error.c");
+    SoFT_add_crypto_src(CSrcs, "logging.c");
+    SoFT_add_crypto_src(CSrcs, "wc_port.c");
 
+    SoFT_add_tls_hdr(THdrs, "certs_test.h");
+    SoFT_add_tls_hdr(THdrs, "version.h");
 
-    /* Crypto Headers */
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerB, headerBLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerD, headerDLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerE, headerELen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerF, headerFLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerG, headerGLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerH, headerHLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerI, headerILen);
-
-    /* Crypto Srcs */
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcC, srcCLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcD, srcDLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcE, srcELen);
-
-    /* TLS Headers */
-    *THdrs = SoFT_d_lnkd_list_node_fill_single(*THdrs, headerC, headerCLen);
     return;
 }
 
 /* DEFAULT RNG */
 void SoFT_add_feature_DEFAULT_RNG(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "random.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-    char headerB[] = "sha256.h";
-    int  headerBLen = (int) XSTRLEN(headerB);
-    char headerC[] = "hmac.h";
-    int  headerCLen = (int) XSTRLEN(headerC);
+    SoFT_add_crypto_hdr(CHdrs, "random.h");
+    SoFT_add_crypto_hdr(CHdrs, "sha256.h");
+    SoFT_add_crypto_hdr(CHdrs, "hmac.h");
 
-    char srcA[] = "random.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "sha256.c";
-    int  srcBLen = (int) XSTRLEN(srcB);
-    char srcC[] = "hmac.c";
-    int  srcCLen = (int) XSTRLEN(srcC);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerB, headerBLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerC, headerCLen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcC, srcCLen);
+    SoFT_add_crypto_src(CSrcs, "random.c");
+    SoFT_add_crypto_src(CSrcs, "sha256.c");
+    SoFT_add_crypto_src(CSrcs, "hmac.c");
 }
 
 void SoFT_remove_feature_DEFAULT_RNG(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS,
                                      SOFT_US)
 {
-    char optA[] = "WC_NO_RNG";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "WC_NO_RNG");
 }
 
 /* RSA */
 void SoFT_add_feature_RSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "rsa.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-
-    char srcA[] = "rsa.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-
-    char tHeaderA[] = "certs_test.h";
-    int  tHeaderALen = (int) XSTRLEN(tHeaderA);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-
-    *THdrs = SoFT_d_lnkd_list_node_fill_single(*THdrs, tHeaderA, tHeaderALen);
+    SoFT_add_crypto_hdr(CHdrs, "rsa.h");
+    SoFT_add_crypto_src(CSrcs, "rsa.c");
 }
 
 void SoFT_remove_feature_RSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_RSA";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_RSA");
 }
 
 /* ECC */
 void SoFT_add_feature_ECC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "ecc.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-
-    char srcA[] = "ecc.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-
-    char optA[] = "HAVE_ECC";
-    int  optALen = (int) XSTRLEN(optA);
-
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_crypto_hdr(CHdrs, "ecc.h");
+    SoFT_add_crypto_src(CSrcs, "ecc.c");
+    SoFT_add_setting(USettings, "HAVE_ECC");
 }
 
 void SoFT_remove_feature_ECC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
@@ -381,10 +320,7 @@ void SoFT_add_feature_DH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 
 void SoFT_remove_feature_DH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_DH";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_DH");
 }
 
 /* DSA */
@@ -394,82 +330,41 @@ void SoFT_add_feature_DSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 
 void SoFT_remove_feature_DSA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_DSA";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_DSA");
 }
 
 /* PWDBASED */
 void SoFT_add_feature_PWDBASED(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
 }
 
 void SoFT_remove_feature_PWDBASED(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_PWDBASED";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_PWDBASED");
 }
 
 /* ASN */
 void SoFT_add_feature_ASN(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "asn.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-    char headerB[] = "asn_public.h";
-    int  headerBLen = (int) XSTRLEN(headerB);
-    char headerC[] = "coding.h";
-    int  headerCLen = (int) XSTRLEN(headerC);
+    SoFT_add_crypto_hdr(CHdrs, "asn.h");
+    SoFT_add_crypto_hdr(CHdrs, "asn_public.h");
 
-    char srcA[] = "asn.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "coding.c";
-    int  srcBLen = (int) XSTRLEN(srcB);
-
-    char tHeaderA[] = "certs_test.h";
-    int  tHeaderALen = (int) XSTRLEN(tHeaderA);
-
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerB, headerBLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerC, headerCLen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-
-    *THdrs = SoFT_d_lnkd_list_node_fill_single(*THdrs, tHeaderA, tHeaderALen);
+    SoFT_add_crypto_src(CSrcs, "asn.c");
 }
 
 void SoFT_remove_feature_ASN(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_ASN";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_ASN");
 }
 
 /* AES */
 void SoFT_add_feature_AES(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "aes.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-    char headerB[] = "wc_encrypt.h";
-    int  headerBLen = (int) XSTRLEN(headerB);
+    SoFT_add_crypto_hdr(CHdrs, "aes.h");
+    SoFT_add_crypto_hdr(CHdrs, "wc_encrypt.h");
 
-    char srcA[] = "aes.c";
-    int srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "wc_encrypt.c";
-    int srcBLen = (int) XSTRLEN(srcB);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerB, headerBLen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-
+    SoFT_add_crypto_src(CSrcs, "aes.c");
+    SoFT_add_crypto_src(CSrcs, "wc_encrypt.c");
 }
 
 /* DES3 */
@@ -479,10 +374,7 @@ void SoFT_add_feature_DES3(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 }
 void SoFT_remove_feature_DES3(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_DES3";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_DES3");
 }
 
 /* RABBIT */
@@ -492,20 +384,13 @@ void SoFT_add_feature_RABBIT(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 }
 void SoFT_remove_feature_RABBIT(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_RABBIT";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_RABBIT");
 }
 
 /* CHACHA */
 void SoFT_add_feature_CHACHA(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "HAVE_CHACHA";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "HAVE_CHACHA");
 }
 
 /* ARC4 / RC4 */
@@ -514,20 +399,13 @@ void SoFT_add_feature_ARC4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 }
 void SoFT_remove_feature_ARC4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_RC4";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_RC4");
 }
 
 /* MD2 */
 void SoFT_add_feature_MD2(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "WOLFSSL_MD2";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "WOLFSSL_MD2");
 }
 
 /* MD4 */
@@ -537,11 +415,7 @@ void SoFT_add_feature_MD4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 }
 void SoFT_remove_feature_MD4(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_MD4";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "NO_MD4");
 }
 
 /* MD5 */
@@ -551,95 +425,66 @@ void SoFT_add_feature_MD5(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 }
 void SoFT_remove_feature_MD5(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_MD5";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "NO_MD5");
 }
 
 /* SHA / SHA1 */
 void SoFT_add_feature_SHA1(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
+    SoFT_add_crypto_hdr(CHdrs, "sha.h");
 }
 
 void SoFT_remove_feature_SHA1(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_SHA";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
+    SoFT_add_setting(USettings, "NO_SHA");
 }
 
+/* HMAC */
+void SoFT_add_feature_HMAC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
+{
+    SoFT_add_crypto_hdr(CHdrs, "hmac.h");
+}
+
+void SoFT_remove_feature_HMAC(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
+{
+    SoFT_add_setting(USettings, "NO_HMAC");
+}
+
+/* SHA256 */
 void SoFT_add_feature_SHA256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "sha256.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
+    SoFT_add_crypto_hdr(CHdrs, "sha256.h");
 }
 
 void SoFT_remove_feature_SHA256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_SHA256";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
+    SoFT_add_setting(USettings, "NO_SHA256");
 }
 
 void SoFT_add_feature_SHA384(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
+    SoFT_add_crypto_hdr(CHdrs, "sha512.h");
 }
 
 void SoFT_add_feature_SHA512(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    SoFT_add_feature_HASH(CHdrs, CSrcs, THdrs, TSrcs, USettings);
+    SoFT_add_crypto_hdr(CHdrs, "sha512.h");
 }
 
 /* FAST MATH */
 void SoFT_add_feature_FAST_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "tfm.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-    char headerB[] = "wolfmath.h";
-    int  headerBLen = (int) XSTRLEN(headerB);
+    SoFT_add_crypto_hdr(CHdrs, "tfm.h");
+    SoFT_add_crypto_hdr(CHdrs, "wolfmath.h");
 
-    char srcA[] = "tfm.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "asm.c";
-    int  srcBLen = (int) XSTRLEN(srcB);
-    char srcC[] = "wolfmath.c";
-    int  srcCLen = (int) XSTRLEN(srcC);
+    SoFT_add_crypto_src(CSrcs, "tfm.c");
+    SoFT_add_crypto_src(CSrcs, "asm.c");
+    SoFT_add_crypto_src(CSrcs, "wolfmath.c");
 
-    char optA[] = "TFM_TIMING_RESISTANT";
-    int  optALen = (int) XSTRLEN(optA);
-    char optB[] = "ECC_TIMING_RESISTANT";
-    int  optBLen = (int) XSTRLEN(optB);
-    char optC[] = "WC_RSA_BLINDING";
-    int  optCLen = (int) XSTRLEN(optC);
-    char optD[] = "USE_FAST_MATH";
-    int  optDLen = (int) XSTRLEN(optD);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerB, headerBLen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcC, srcCLen);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optB, optBLen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optC, optCLen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optD, optDLen);
-
+    SoFT_add_setting(USettings, "USE_FAST_MATH");
+    SoFT_add_setting(USettings, "WC_RSA_BLINDING");
+    SoFT_add_setting(USettings, "TFM_TIMING_RESISTANT");
+    SoFT_add_setting(USettings, "ECC_TIMING_RESISTANT");
 }
 
 void SoFT_add_feature_NORMAL_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
@@ -649,68 +494,42 @@ void SoFT_add_feature_NORMAL_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 
 void SoFT_add_feature_SP_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "sp_int.h";
-    int  headerALen = (int) XSTRLEN(headerA);
-    char headerB[] = "sp.h";
-    int  headerBLen = (int) XSTRLEN(headerB);
-    char headerC[] = "tfm.h";
-    int  headerCLen = (int) XSTRLEN(headerC);
-    char headerD[] = "mpi_class.h";
-    int  headerDLen = (int) XSTRLEN(headerD);
-    char headerE[] = "mpi_superclass.h";
-    int  headerELen = (int) XSTRLEN(headerE);
-    char headerF[] = "wolfmath.h";
-    int  headerFLen = (int) XSTRLEN(headerF);
+    SoFT_add_crypto_hdr(CHdrs, "sp_int.h");
+    SoFT_add_crypto_hdr(CHdrs, "sp.h");
+    SoFT_add_crypto_hdr(CHdrs, "integer.h");
+    SoFT_add_crypto_hdr(CHdrs, "mpi_class.h");
+    SoFT_add_crypto_hdr(CHdrs, "mpi_superclass.h");
+    SoFT_add_crypto_hdr(CHdrs, "wolfmath.h");
 
-    char srcA[] = "sp_int.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "asm.c";
-    int  srcBLen = (int) XSTRLEN(srcB);
-    char srcC[] = "wolfmath.c";
-    int  srcCLen = (int) XSTRLEN(srcC);
-    char srcD[] = "tfm.c";
-    int  srcDLen = (int) XSTRLEN(srcD);
+    SoFT_add_crypto_src(CSrcs, "sp_int.c");
+    SoFT_add_crypto_src(CSrcs, "asm.c");
+    SoFT_add_crypto_src(CSrcs, "wolfmath.c");
+    SoFT_add_crypto_src(CSrcs, "tfm.c");
+    SoFT_add_crypto_src(CSrcs, "sp_arm32.c");
+    SoFT_add_crypto_src(CSrcs, "sp_arm64.c");
+    SoFT_add_crypto_src(CSrcs, "sp_armthumb.c");
+    SoFT_add_crypto_src(CSrcs, "sp_c32.c");
+    SoFT_add_crypto_src(CSrcs, "sp_c64.c");
+    SoFT_add_crypto_src(CSrcs, "sp_cortexm.c");
+    SoFT_add_crypto_src(CSrcs, "sp_dsp32.c");
+    SoFT_add_crypto_src(CSrcs, "sp_int.c");
+    SoFT_add_crypto_src(CSrcs, "sp_x86_64.c");
+    SoFT_add_crypto_src(CSrcs, "sp_x86_64_asm.S");
 
-    char optA[] = "WOLFSSL_SP";
-    int  optALen = (int) XSTRLEN(optA);
-    char optB[] = "TFM_TIMING_RESISTANT";
-    int  optBLen = (int) XSTRLEN(optB);
-    char optC[] = "ECC_TIMING_RESISTANT";
-    int  optCLen = (int) XSTRLEN(optC);
-    char optD[] = "WC_RSA_BLINDING";
-    int  optDLen = (int) XSTRLEN(optD);
-    char optE[] = "WOLFSSL_SP_ASM";
-    int  optELen = (int) XSTRLEN(optE);
-    char optF[] = "USE_FAST_MATH";
-    int  optFLen = (int) XSTRLEN(optF);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerB, headerBLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerC, headerCLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerD, headerDLen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerE, headerELen);
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerF, headerFLen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcC, srcCLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcD, srcDLen);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optB, optBLen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optC, optCLen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optD, optDLen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optE, optELen);
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optF, optFLen);
+    SoFT_add_setting(USettings, "WOLFSSL_SP");
+    SoFT_add_setting(USettings, "WC_RSA_BLINDING");
+    SoFT_add_setting(USettings, "TFM_TIMING_RESISTANT");
+    SoFT_add_setting(USettings, "ECC_TIMING_RESISTANT");
+    SoFT_add_setting(USettings, "WOLFSSL_SP_MATH");
+    SoFT_add_setting(USettings, "WOLFSSL_HAVE_SP_RSA");
+    SoFT_add_setting(USettings, "WOLFSSL_HAVE_SP_ECC");
+    SoFT_add_setting(USettings, "WOLFSSL_HAVE_SP_DH");
 }
 
 /* ANY MATH */
 void SoFT_remove_feature_MATH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_WOLF_MATH";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_BIG_INT");
 }
 
 /* OLD_TLS */
@@ -721,11 +540,7 @@ void SoFT_add_feature_OLD_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 
 void SoFT_remove_feature_OLD_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_OLD_TLS";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "NO_OLD_TLS");
 }
 
 /* TLS */
@@ -736,34 +551,20 @@ void SoFT_add_feature_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 
 void SoFT_remove_feature_TLS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "WOLFCRYPT_ONLY";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
-
+    SoFT_add_setting(USettings, "WOLFCRYPT_ONLY");
 }
 
 /* SIG WRAPPER */
 void SoFT_add_feature_SIG_WRAP(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "signature.h";
-    int  headerALen = (int) XSTRLEN(headerA);
+    SoFT_add_crypto_hdr(CHdrs, "signature.h");
 
-    char srcA[] = "signature.c";
-    int  srcALen = (int) XSTRLEN(srcA);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-
+    SoFT_add_crypto_src(CSrcs, "signature.c");
 }
 
 void SoFT_remove_feature_SIG_WRAP(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "NO_SIG_WRAPPER";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "NO_SIG_WRAPPER");
 }
 
 /*------------------------------------------------------------------------*/
@@ -781,17 +582,14 @@ void SoFT_add_feature_RSA_PSS(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
  */
 void SoFT_add_feature_HASH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "hash.h";
-    int  headerALen = (int) XSTRLEN(headerA);
+    SoFT_add_crypto_hdr(CHdrs, "hash.h");
 
-    char srcA[] = "hash.c";
-    int  srcALen = (int) XSTRLEN(srcA);
+    SoFT_add_crypto_src(CSrcs, "hash.c");
+}
 
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-
-
+void SoFT_remove_feature_HASH(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
+{
+    SoFT_add_setting(USettings, "WOLFSSL_NO_HASH");
 }
 
 void SoFT_add_feature_RSA_3072(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
@@ -812,39 +610,42 @@ void SoFT_add_feature_RSA_8192(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 /* Cert buffers 2048 */
 void SoFT_add_feature_CB2048(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "USE_CERT_BUFFERS_2048";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "USE_CERT_BUFFERS_2048");
 }
 
 /* Cert buffers 3072 */
 void SoFT_add_feature_CB3072(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "USE_CERT_BUFFERS_3072";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "USE_CERT_BUFFERS_3072");
 }
 
 /* Cert buffers 4096 */
 void SoFT_add_feature_CB4096(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "USE_CERT_BUFFERS_4096";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "USE_CERT_BUFFERS_4096");
 }
 
 /* Cert buffers 256 */
 void SoFT_add_feature_CB256(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char optA[] = "USE_CERT_BUFFERS_256";
-    int  optALen = (int) XSTRLEN(optA);
-
-    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, optA, optALen);
+    SoFT_add_setting(USettings, "USE_CERT_BUFFERS_256");
 }
 
+/* CODING */
+void SoFT_add_feature_CODING(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
+{
+    SoFT_add_crypto_hdr(CHdrs, "coding.h");
+
+    SoFT_add_crypto_src(CSrcs, "coding.c");
+}
+
+void SoFT_remove_feature_CODING(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
+{
+    SoFT_add_setting(USettings, "NO_CODING");
+    SoFT_add_setting(USettings, "NO_BIG_INT");
+}
+
+/* AES-128 */
 void SoFT_add_feature_AES_128(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
 
@@ -868,22 +669,44 @@ void SoFT_add_feature_SP_ASM(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 /* AESNI */
 void SoFT_add_feature_AESNI(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 {
-    char headerA[] = "cpuid.h";
-    int  headerALen = (int) XSTRLEN(headerA);
+    SoFT_add_crypto_hdr(CHdrs, "cpuid.h");
 
-    char srcA[] = "aes_asm.S"; /* Linux */
-    int  srcALen = (int) XSTRLEN(srcA);
-    char srcB[] = "aes_asm.asm"; /* Windows */
-    int  srcBLen = (int) XSTRLEN(srcB);
-    char srcC[] = "aes_gcm_asm.S"; /* Linux */
-    int  srcCLen = (int) XSTRLEN(srcC);
-
-    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, headerA, headerALen);
-
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcA, srcALen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcB, srcBLen);
-    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, srcC, srcCLen);
+    SoFT_add_crypto_src(CSrcs, "aes_asm.S");
+    SoFT_add_crypto_src(CSrcs, "aes_asm.asm");
+    SoFT_add_crypto_src(CSrcs, "aes_gcm_asm.S");
 }
+
+void SoFT_add_crypto_src(SOFT_CS, const char* src)
+{
+    int len = (int) XSTRLEN(src);
+    *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, (char*) src, len);
+}
+
+void SoFT_add_crypto_hdr(SOFT_CH, const char* hdr)
+{
+    int len = (int) XSTRLEN(hdr);
+    *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, (char*) hdr, len);
+}
+
+void SoFT_add_tls_src(SOFT_TS, const char* src)
+{
+    int len = (int) XSTRLEN(src);
+    *TSrcs = SoFT_d_lnkd_list_node_fill_single(*TSrcs, (char*) src, len);
+}
+
+void SoFT_add_tls_hdr(SOFT_TH, const char* hdr)
+{
+    int len = (int) XSTRLEN(hdr);
+    *THdrs = SoFT_d_lnkd_list_node_fill_single(*THdrs, (char*) hdr, len);
+}
+
+void SoFT_add_setting(SOFT_US, const char* setting)
+{
+    int len = (int) XSTRLEN(setting);
+    *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, (char*) setting,
+                                                   len);
+}
+
 
 int SoFT_check_conf_for_opt(char* checkForOption)
 {

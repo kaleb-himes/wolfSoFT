@@ -12,7 +12,8 @@ int main(int argc, char** argv)
 
     if (argc >= 2) {
 
-        if (argv[SOFT_SECOND_INPUT][SOFT_FIRST_POSITION] != 'h') {
+        if (argv[SOFT_SECOND_INPUT][SOFT_FIRST_POSITION] != 'h' &&
+            argv[SOFT_SECOND_INPUT][SOFT_FIRST_POSITION] != 'd') {
             doClone = SoFT_are_we_cloning();
             if (doClone)
                 SoFT_clone_target_repo("wolfssl/wolfssl");

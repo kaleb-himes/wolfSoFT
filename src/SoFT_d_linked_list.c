@@ -42,7 +42,6 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_fill_single(D_LINKED_LIST_NODE* curr,
         return curr;
     }
 
-    printf("curr->value = %s\n", curr->value);
     curr->next = next;
     next->previous = curr;
     return next;

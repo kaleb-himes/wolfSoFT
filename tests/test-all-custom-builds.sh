@@ -34,7 +34,6 @@ run_custom_toolchain_build(){
     fi
     cd $ROOT_DIR || exit 6
     test_result $RESULT $1
-
 }
 
 run_dynamic_build(){

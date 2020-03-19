@@ -258,6 +258,44 @@ void SoFT_add_defaults(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
     SoFT_add_crypto_hdr(CHdrs, "logging.h");
     SoFT_add_crypto_hdr(CHdrs, "error-crypt.h");
     SoFT_add_crypto_hdr(CHdrs, "misc.h");
+    /*
+     * Begin unnecessary header includes, no sanity checks so have to copy
+     * them over 100% of the time anyway :-(
+     */
+    SoFT_add_crypto_hdr(CHdrs, "asn.h");
+    SoFT_add_crypto_hdr(CHdrs, "asn_public.h");
+    SoFT_add_crypto_hdr(CHdrs, "arc4.h");
+    SoFT_add_crypto_hdr(CHdrs, "md2.h");
+    SoFT_add_crypto_hdr(CHdrs, "md4.h");
+    SoFT_add_crypto_hdr(CHdrs, "md5.h");
+    SoFT_add_crypto_hdr(CHdrs, "sha.h");
+    SoFT_add_crypto_hdr(CHdrs, "sha256.h");
+    SoFT_add_crypto_hdr(CHdrs, "sha512.h");
+    SoFT_add_crypto_hdr(CHdrs, "integer.h");
+    SoFT_add_crypto_hdr(CHdrs, "random.h");
+    SoFT_add_crypto_hdr(CHdrs, "mpi_class.h");
+    SoFT_add_crypto_hdr(CHdrs, "mpi_superclass.h");
+    SoFT_add_crypto_hdr(CHdrs, "wolfmath.h");
+    SoFT_add_crypto_hdr(CHdrs, "coding.h");
+    SoFT_add_crypto_hdr(CHdrs, "signature.h");
+    SoFT_add_crypto_hdr(CHdrs, "hash.h");
+    SoFT_add_crypto_hdr(CHdrs, "rsa.h");
+    SoFT_add_crypto_hdr(CHdrs, "des3.h");
+    SoFT_add_crypto_hdr(CHdrs, "chacha.h");
+    SoFT_add_crypto_hdr(CHdrs, "chacha20_poly1305.h");
+    SoFT_add_crypto_hdr(CHdrs, "poly1305.h");
+    SoFT_add_crypto_hdr(CHdrs, "cmac.h");
+    SoFT_add_crypto_hdr(CHdrs, "camellia.h");
+    SoFT_add_crypto_hdr(CHdrs, "hmac.h");
+    SoFT_add_crypto_hdr(CHdrs, "dh.h");
+    SoFT_add_crypto_hdr(CHdrs, "dsa.h");
+    SoFT_add_crypto_hdr(CHdrs, "srp.h");
+    SoFT_add_crypto_hdr(CHdrs, "idea.h");
+    SoFT_add_crypto_hdr(CHdrs, "hc128.h");
+    SoFT_add_crypto_hdr(CHdrs, "rabbit.h");
+    SoFT_add_crypto_hdr(CHdrs, "pwdbased.h");
+    SoFT_add_crypto_hdr(CHdrs, "ripemd.h");
+    SoFT_add_crypto_hdr(CHdrs, "cpuid.h");
 
     SoFT_add_crypto_src(CSrcs, "misc.c");
     SoFT_add_crypto_src(CSrcs, "memory.c");

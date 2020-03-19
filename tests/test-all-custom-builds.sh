@@ -46,10 +46,10 @@ run_dynamic_build(){
     test_result $RESULT $1
 }
 
-run_build aes_only DEFAULT
-run_build aes_pwdbased DEFAULT
-run_build cert_manager_only DEFAULT
-run_build dsa_only DEFAULT
+#run_build aes_only DEFAULT
+#run_build aes_pwdbased DEFAULT
+#run_build cert_manager_only DEFAULT
+#run_build dsa_only DEFAULT
 run_build ecc_only DEFAULT
 run_build sha256_ecc DEFAULT
 run_build sha256_ecc_nm DEFAULT

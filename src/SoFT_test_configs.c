@@ -30,7 +30,7 @@ int SoFT_auto_build_from_file(char* configOpsFile)
 
             printf("Testing configuration:\n./configure %s\n", tmpLine);
 
-            SoFT_build_cmd(c_cmd, "cd ./wolfssl && ./configure ", tmpLine,
+            SoFT_build_cmd(c_cmd, "./configure ", tmpLine,
                           " > /dev/null 2> /dev/null", NULL);
             printf("Configuring wolfSSL...\n");
             ret = system(c_cmd);

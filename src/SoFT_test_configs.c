@@ -42,14 +42,14 @@ int SoFT_auto_build_from_file(char* configOpsFile)
             }
 
             SoFT_clear_cmd(c_cmd);
-            SoFT_build_cmd(c_cmd, "cd ./wolfssl && make check > /dev/null",
+            SoFT_build_cmd(c_cmd, "make check > /dev/null",
                           " 2> /dev/null", NULL, NULL);
             printf("Running \"make check\"...\n");
             ret = system(c_cmd);
             if (ret != 0) {
                 printf("Make check Failed!\n\n");
                 SoFT_clear_cmd(c_cmd);
-                SoFT_build_cmd(c_cmd, "cd ./wolfssl && cat test-suite.log",
+                SoFT_build_cmd(c_cmd, "cat test-suite.log",
                               NULL, NULL, NULL);
                 system(c_cmd);
                 SoFT_clear_cmd(c_cmd);

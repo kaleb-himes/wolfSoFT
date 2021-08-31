@@ -8,7 +8,6 @@ program_LIBRARIES :=
 
 program_INCLUDE_DIRS += /usr/local/include
 program_LIBRARY_DIRS += /usr/local/lib
-program_INCLUDE_DIRS += ./configure
 #program_INCLUDE_DIRS += /Users/kalebhimes/work/testDir/wolf-install-dir-for-testing/include
 #program_LIBRARY_DIRS += /Users/kalebhimes/work/testDir/wolf-install-dir-for-testing/lib
 program_LIBRARIES += wolfssl

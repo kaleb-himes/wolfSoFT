@@ -28,7 +28,7 @@ int SoFT_auto_build_from_file(char* configOpsFile)
             XMEMSET(tmpLine, 0, read);
             XMEMCPY(tmpLine, line, read-1);
 
-            printf("Testing configuration:\n./configure %s\n", tmpLine);
+            printf("Testing configuration:\n./configure C_EXTRA_FLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=4 %s\n", tmpLine);
 
             SoFT_build_cmd(c_cmd, "./configure C_EXTRA_FLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=4", tmpLine,
                           " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
@@ -48,18 +48,27 @@ int SoFT_auto_build_from_file(char* configOpsFile)
             }
 
             SoFT_clear_cmd(c_cmd);
-            SoFT_build_cmd(c_cmd, "make check > /dev/null",
-                          " 2> /dev/null", NULL, NULL);
+            SoFT_build_cmd(c_cmd, "make check > ./make-output-log.txt",
+                          " 2> ./make-output-log.txt", NULL, NULL);
             printf("Running \"make check\"...\n");
             ret = system(c_cmd);
             if (ret != 0) {
-                printf("Make check Failed!\n\n");
+                /* In the event the "make" failed this should have the output */
+                SoFT_clear_cmd(c_cmd);
+                SoFT_build_cmd(c_cmd, "make-output-log.txt",
+                               NULL, NULL, NULL);
+                ret = system(c_cmd);
+                (void) ret;
+
+                /* In the event the "test" failed this should have the output */
                 SoFT_clear_cmd(c_cmd);
                 SoFT_build_cmd(c_cmd, "cat test-suite.log",
                                NULL, NULL, NULL);
                 ret = system(c_cmd);
                 (void) ret;
                 SoFT_clear_cmd(c_cmd);
+
+                printf("Make check Failed!\n\n");
                 SoFT_abort();
             } else {
                 printf("Make check Passed!\n\n");

@@ -46,6 +46,7 @@ int SoFT_auto_build_from_file(char* configOpsFile)
 int SoFT_run_config(char* config, int extra)
 {
     int ret = 0;
+    char c_cmd[SOFT_LONGEST_COMMAND] = {0};
 
     (void) ret;
 

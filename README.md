@@ -174,3 +174,14 @@ FRAMEWORK 4: Automated testing using Jenkins .txt input files</br>
 The ```a``` option is to utilize wolfSSL's auto-tools functionality for testing
 purposes. The file provided should contain a list of configurations to be tested
 Example provided in wolfSoFT/test-config-input.txt
+
+NOTE: This can run from anywhere so for example cd to a wolfSSL directory you 
+      desire to test and invoke from the wolfSSL root, example: 
+ 
+      example directory structure: 
+      wolfSSL-root/wolfSoft (cloned locally after a checkout) 
+ 
+      example commands: 
+      `cd /path-to/wolfSSL-root/` 
+      `./wolfSoft/run -a /var/lib/jenkins/backups/expected_pairs_list.txt` 
+

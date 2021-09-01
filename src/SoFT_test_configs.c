@@ -2,6 +2,7 @@
 
 
 int SoFT_run_config(char* config, int extra); /* local to file only */
+void SoFT_printf(const char* format, ...);
 
 int SoFT_auto_build_from_file(char* configOpsFile)
 {
@@ -21,9 +22,9 @@ int SoFT_auto_build_from_file(char* configOpsFile)
 
     while ((read = getline(&line, &lengthOfLine, fStream)) != EOF) {
         if (strstr(line, "#")) {
-            printf("Ignoring line: %s", line);
+            SoFT_printf("Ignoring line: %s", line);
         } else if (read == 1) {
-            printf("single character line, ignoring as blank line\n");
+            SoFT_printf("single character line, ignoring as blank line\n");
         } else {
             SoFT_clear_cmd(c_cmd);
             tmpLine = (char*) malloc(sizeof(char) * read);
@@ -59,16 +60,16 @@ int SoFT_run_config(char* config, int extra)
 #endif
 
     if (extra == 0) {
-        printf("Testing configuration:\n./configure --enable-jobserver=2 %s\n", config);
+        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 %s\n", config);
         SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=2 ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
     } else {
-        printf("Testing configuration:\n./configure --enable-jobserver=2 --enable-opensslextra%s\n", config);
+        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 --enable-opensslextra%s\n", config);
         SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=2 --enable-opensslextra ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
     }
 
-    printf("Configuring wolfSSL...\n");
+    SoFT_printf("Configuring wolfSSL...\n");
     ret = system(c_cmd);
 
     if (ret != 0) {
@@ -77,7 +78,7 @@ int SoFT_run_config(char* config, int extra)
                        NULL, NULL, NULL);
         ret = system(c_cmd);
         (void) ret;
-        printf("Configuration Failed!\n\n");
+        SoFT_printf("Configuration Failed!\n\n");
         SoFT_clear_cmd(c_cmd);
         SoFT_abort();
     }
@@ -85,7 +86,7 @@ int SoFT_run_config(char* config, int extra)
     SoFT_clear_cmd(c_cmd);
     SoFT_build_cmd(c_cmd, "make check > ./make-output-log.txt",
                   " 2> ./make-output-log.txt", NULL, NULL);
-    printf("Running \"make check\"...\n");
+    SoFT_printf("Running \"make check\"...\n");
     ret = system(c_cmd);
     if (ret != 0) {
         /* In the event the "make" failed this should have the output */
@@ -94,7 +95,7 @@ int SoFT_run_config(char* config, int extra)
                        NULL, NULL, NULL);
         ret = system(c_cmd);
         (void) ret;
-        printf("End of Make Output <-------------------------------\n");
+        SoFT_printf("End of Make Output <-------------------------------\n");
 
         /* In the event the "test" failed this should have the output */
         SoFT_clear_cmd(c_cmd);
@@ -103,13 +104,23 @@ int SoFT_run_config(char* config, int extra)
         ret = system(c_cmd);
         (void) ret;
         SoFT_clear_cmd(c_cmd);
-        printf("End of test-suite.log <----------------------------\n");
+        SoFT_printf("End of test-suite.log <----------------------------\n");
 
-        printf("Make check Failed!\n\n");
+        SoFT_printf("Make check Failed!\n\n");
         SoFT_abort();
     } else {
-        printf("Make check Passed!\n\n");
+        SoFT_printf("Make check Passed!\n\n");
     }
 
     return ret;
+}
+
+
+void SoFT_printf(const char* format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    vfprintf(stdout, format, args);
+    va_end(args);
+    fflush(stdout);
 }

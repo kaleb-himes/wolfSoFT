@@ -28,20 +28,10 @@ int SoFT_auto_build_from_file(char* configOpsFile)
             XMEMSET(tmpLine, 0, read);
             XMEMCPY(tmpLine, line, read-1);
 
-            printf("Testing configuration:\n./configure --enable-jobserver=4 %s\n", tmpLine);
+            printf("Testing configuration:\n./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 %s\n", tmpLine);
 
-            SoFT_build_cmd(c_cmd, "export CFLAGS=\"-fdebug-types-section -g1\"",
-                           NULL, NULL, NULL);
-            ret = system(c_cmd);
-            if (ret != 0) {
-                printf("ret from exporting CFLAGS = %d\n", ret);
-                SoFT_abort();
-            }
-
-            SoFT_clear_cmd(c_cmd);
-            SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=4 ", tmpLine,
-                          " > ./config-output-log.txt ",
-                          "2> ./config-output-log.txt");
+            SoFT_build_cmd(c_cmd, "./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 ", tmpLine,
+                          " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
             printf("Configuring wolfSSL...\n");
             ret = system(c_cmd);
             free(tmpLine);

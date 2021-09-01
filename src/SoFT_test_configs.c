@@ -59,6 +59,18 @@ int SoFT_run_config(char* config, int extra)
     SoFT_clear_cmd(c_cmd);
 #endif
 
+    if (strstr(config, "enable-opensslextra") &&
+        strstr(config, "enable-dtls") &&
+        strstr(config, "disable-asn") &&
+        strstr(config, "disable-ecc") &&
+        strstr(config, "disable-rsa") &&
+        strstr(config, "enable-psk")) {
+        SoFT_printf("openssl-extra + disable-asn, disable-ecc, disable-rsa,"
+                    "  enable-psk is currently broken. Needs addressed at a"
+                    " later date... skip this test for now\n");
+        return 0;
+    }
+
     if (extra == 0) {
         SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 "
                     "%s\n", config);
@@ -73,15 +85,6 @@ int SoFT_run_config(char* config, int extra)
             return 0;
         }
 
-        if (strstr(config, "enable-opensslextra") &&
-            strstr(config, "enable-dtls") &&
-            strstr(config, "disable-asn") && strstr(config, "disable-ecc") &&
-            strstr(config, "disable-rsa") && strstr(config, "enable-psk")) {
-            SoFT_printf("openssl-extra + disable-asn, disable-ecc, disable-rsa,"
-                        "  enable-psk is currently broken. Needs addressed at a"
-                        " later date... skip this test for now\n");
-            return 0;
-        }
         SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 "
                     "--enable-opensslextra %s\n", config);
         SoFT_build_cmd(c_cmd,

@@ -30,8 +30,18 @@ int SoFT_auto_build_from_file(char* configOpsFile)
 
             printf("Testing configuration:\n./configure C_EXTRA_FLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=4 %s\n", tmpLine);
 
-            SoFT_build_cmd(c_cmd, "./configure C_EXTRA_FLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=4", tmpLine,
-                          " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
+            SoFT_build_cmd(c_cmd, "export CFLAGS=\"-fdebug-types-section -g1\"",
+                           NULL, NULL, NULL);
+            ret = system(c_cmd);
+            if (ret != 0) {
+                printf("ret from exporting CFLAGS = %d\n", ret);
+                SoFT_abort();
+            }
+
+            SoFT_clear_cmd(c_cmd);
+            SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=4", tmpLine,
+                          " > ./config-output-log.txt ",
+                          "2> ./config-output-log.txt");
             printf("Configuring wolfSSL...\n");
             ret = system(c_cmd);
             free(tmpLine);
@@ -59,6 +69,7 @@ int SoFT_auto_build_from_file(char* configOpsFile)
                                NULL, NULL, NULL);
                 ret = system(c_cmd);
                 (void) ret;
+                printf("End of Make Output <-------------------------------\n");
 
                 /* In the event the "test" failed this should have the output */
                 SoFT_clear_cmd(c_cmd);
@@ -67,6 +78,7 @@ int SoFT_auto_build_from_file(char* configOpsFile)
                 ret = system(c_cmd);
                 (void) ret;
                 SoFT_clear_cmd(c_cmd);
+                printf("End of test-suite.log <----------------------------\n");
 
                 printf("Make check Failed!\n\n");
                 SoFT_abort();

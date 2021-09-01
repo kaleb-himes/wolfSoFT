@@ -5,6 +5,7 @@
 #include <stdlib.h> /* For system calls */
 #include <unistd.h> /* path to working directory */
 #include <dirent.h>
+#include <stdarg.h> /* to use va_start */
 
 #include <wolfssl/options.h>
 #include <wolfssl/ssl.h>

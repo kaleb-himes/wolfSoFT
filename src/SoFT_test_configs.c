@@ -50,13 +50,21 @@ int SoFT_run_config(char* config, int extra)
 
     (void) ret;
 
+#if 1
+    SoFT_build_cmd(c_cmd, "export C_EXTRA_FLAGS=\"-fdebug-types-section -g1\"",
+                   NULL, NULL, NULL);
+    ret = system(c_cmd);
+    (void) ret;
+    SoFT_clear_cmd(c_cmd);
+#endif
+
     if (extra == 0) {
-        printf("Testing configuration:\n./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 %s\n", config);
-        SoFT_build_cmd(c_cmd, "./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 ", config,
+        printf("Testing configuration:\n./configure --enable-jobserver=2 %s\n", config);
+        SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=2 ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
     } else {
-        printf("Testing configuration:\n./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 --enable-opensslextra%s\n", config);
-        SoFT_build_cmd(c_cmd, "./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 --enable-opensslextra ", config,
+        printf("Testing configuration:\n./configure --enable-jobserver=2 --enable-opensslextra%s\n", config);
+        SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=2 --enable-opensslextra ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
     }
 

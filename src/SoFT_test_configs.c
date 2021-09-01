@@ -1,5 +1,8 @@
 #include <SoFT_common.h>
 
+
+int SoFT_run_config(char* config, int extra); /* local to file only */
+
 int SoFT_auto_build_from_file(char* configOpsFile)
 {
     FILE* fStream;
@@ -28,55 +31,76 @@ int SoFT_auto_build_from_file(char* configOpsFile)
             XMEMSET(tmpLine, 0, read);
             XMEMCPY(tmpLine, line, read-1);
 
-            printf("Testing configuration:\n./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 %s\n", tmpLine);
-
-            SoFT_build_cmd(c_cmd, "./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 ", tmpLine,
-                          " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
-            printf("Configuring wolfSSL...\n");
-            ret = system(c_cmd);
+/* Config without opensslextra */
+            ret = SoFT_run_config(tmpLine, 0);
+/* Config with opensslextra */
+            ret = SoFT_run_config(tmpLine, 1);
+/* Done */
             free(tmpLine);
-
-            if (ret != 0) {
-                SoFT_clear_cmd(c_cmd);
-                SoFT_build_cmd(c_cmd, "cat config-output-log.txt",
-                               NULL, NULL, NULL);
-                ret = system(c_cmd);
-                (void) ret;
-                printf("Configuration Failed!\n\n");
-                SoFT_clear_cmd(c_cmd);
-                SoFT_abort();
-            }
-
-            SoFT_clear_cmd(c_cmd);
-            SoFT_build_cmd(c_cmd, "make check > ./make-output-log.txt",
-                          " 2> ./make-output-log.txt", NULL, NULL);
-            printf("Running \"make check\"...\n");
-            ret = system(c_cmd);
-            if (ret != 0) {
-                /* In the event the "make" failed this should have the output */
-                SoFT_clear_cmd(c_cmd);
-                SoFT_build_cmd(c_cmd, "make-output-log.txt",
-                               NULL, NULL, NULL);
-                ret = system(c_cmd);
-                (void) ret;
-                printf("End of Make Output <-------------------------------\n");
-
-                /* In the event the "test" failed this should have the output */
-                SoFT_clear_cmd(c_cmd);
-                SoFT_build_cmd(c_cmd, "cat test-suite.log",
-                               NULL, NULL, NULL);
-                ret = system(c_cmd);
-                (void) ret;
-                SoFT_clear_cmd(c_cmd);
-                printf("End of test-suite.log <----------------------------\n");
-
-                printf("Make check Failed!\n\n");
-                SoFT_abort();
-            } else {
-                printf("Make check Passed!\n\n");
-            }
         }
     }
 
     return 0;
+}
+
+int SoFT_run_config(char* config, int extra)
+{
+    int ret = 0;
+
+    (void) ret;
+
+    if (extra == 0) {
+        printf("Testing configuration:\n./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 %s\n", config);
+        SoFT_build_cmd(c_cmd, "./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 ", config,
+                       " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
+    } else {
+        printf("Testing configuration:\n./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 --enable-opensslextra%s\n", config);
+        SoFT_build_cmd(c_cmd, "./configure CFLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=2 --enable-opensslextra ", config,
+                       " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
+    }
+
+    printf("Configuring wolfSSL...\n");
+    ret = system(c_cmd);
+
+    if (ret != 0) {
+        SoFT_clear_cmd(c_cmd);
+        SoFT_build_cmd(c_cmd, "cat config-output-log.txt",
+                       NULL, NULL, NULL);
+        ret = system(c_cmd);
+        (void) ret;
+        printf("Configuration Failed!\n\n");
+        SoFT_clear_cmd(c_cmd);
+        SoFT_abort();
+    }
+
+    SoFT_clear_cmd(c_cmd);
+    SoFT_build_cmd(c_cmd, "make check > ./make-output-log.txt",
+                  " 2> ./make-output-log.txt", NULL, NULL);
+    printf("Running \"make check\"...\n");
+    ret = system(c_cmd);
+    if (ret != 0) {
+        /* In the event the "make" failed this should have the output */
+        SoFT_clear_cmd(c_cmd);
+        SoFT_build_cmd(c_cmd, "make-output-log.txt",
+                       NULL, NULL, NULL);
+        ret = system(c_cmd);
+        (void) ret;
+        printf("End of Make Output <-------------------------------\n");
+
+        /* In the event the "test" failed this should have the output */
+        SoFT_clear_cmd(c_cmd);
+        SoFT_build_cmd(c_cmd, "cat test-suite.log",
+                       NULL, NULL, NULL);
+        ret = system(c_cmd);
+        (void) ret;
+        SoFT_clear_cmd(c_cmd);
+        printf("End of test-suite.log <----------------------------\n");
+
+        printf("Make check Failed!\n\n");
+        SoFT_abort();
+    } else {
+        printf("Make check Passed!\n\n");
+    }
+
+    return ret;
 }

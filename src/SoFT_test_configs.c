@@ -64,7 +64,7 @@ int SoFT_run_config(char* config, int extra)
         SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=2 ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
     } else {
-        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 --enable-opensslextra%s\n", config);
+        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 --enable-opensslextra %s\n", config);
         SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=2 --enable-opensslextra ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
     }

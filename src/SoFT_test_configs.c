@@ -51,7 +51,7 @@ int SoFT_run_config(char* config, int extra)
 
     (void) ret;
 
-#if 1
+#if 0
     SoFT_build_cmd(c_cmd, "export C_EXTRA_FLAGS=\"-fdebug-types-section -g1\"",
                    NULL, NULL, NULL);
     ret = system(c_cmd);

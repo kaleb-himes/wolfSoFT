@@ -30,14 +30,20 @@ int SoFT_auto_build_from_file(char* configOpsFile)
 
             printf("Testing configuration:\n./configure %s\n", tmpLine);
 
-            SoFT_build_cmd(c_cmd, "./configure ", tmpLine,
-                          " > /dev/null 2> /dev/null", NULL);
+            SoFT_build_cmd(c_cmd, "./configure C_EXTRA_FLAGS=\"-fdebug-types-section -g1\" --enable-jobserver=4", tmpLine,
+                          " > ./config-output-log.txt 2> ./config-output-log.txt", NULL);
             printf("Configuring wolfSSL...\n");
             ret = system(c_cmd);
             free(tmpLine);
 
             if (ret != 0) {
+                SoFT_clear_cmd(c_cmd);
+                SoFT_build_cmd(c_cmd, "cat config-output-log.txt",
+                               NULL, NULL, NULL);
+                ret = system(c_cmd);
+                (void) ret;
                 printf("Configuration Failed!\n\n");
+                SoFT_clear_cmd(c_cmd);
                 SoFT_abort();
             }
 
@@ -50,8 +56,9 @@ int SoFT_auto_build_from_file(char* configOpsFile)
                 printf("Make check Failed!\n\n");
                 SoFT_clear_cmd(c_cmd);
                 SoFT_build_cmd(c_cmd, "cat test-suite.log",
-                              NULL, NULL, NULL);
-                system(c_cmd);
+                               NULL, NULL, NULL);
+                ret = system(c_cmd);
+                (void) ret;
                 SoFT_clear_cmd(c_cmd);
                 SoFT_abort();
             } else {

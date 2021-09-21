@@ -87,6 +87,7 @@ int SoFT_run_config(char* config, int extra)
                        NULL);
     } else {
 
+        /* Exception unique to the openssl extra build */
         if (strstr(config, "opensslextra") || strstr(config, "opensslall") ||
             strstr(config, "enable-all")) {
             SoFT_printf("config already contains the extra test so skipping\n");

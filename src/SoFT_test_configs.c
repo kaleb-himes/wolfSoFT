@@ -72,13 +72,6 @@ int SoFT_run_config(char* config, int extra)
         return 0;
     }
 
-    if (strstr(config, "enable-opensslextra") &&
-        strstr(config, "enable-sp-math")) {
-        SoFT_printf("opensslextra + sp-math do not play nicely... skip this"
-                    " test for now\n");
-        return 0;
-    }
-
     if (extra == 0) {
         SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 "
                     "%s\n", config);
@@ -91,6 +84,12 @@ int SoFT_run_config(char* config, int extra)
         if (strstr(config, "opensslextra") || strstr(config, "opensslall") ||
             strstr(config, "enable-all")) {
             SoFT_printf("config already contains the extra test so skipping\n");
+            return 0;
+        }
+
+        if (strstr(config, "sp-math")) {
+            SoFT_printf("opensslextra + sp-math do not play nicely... skip this"
+                        " test for now\n");
             return 0;
         }
 

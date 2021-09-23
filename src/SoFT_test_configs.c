@@ -73,9 +73,9 @@ int SoFT_run_config(char* config, int extra)
     }
 
     if (extra == 0) {
-        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=16 "
+        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=4 "
                     "%s\n", config);
-        SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=16 ", config,
+        SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=4 ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt",
                        NULL);
     } else {
@@ -93,10 +93,10 @@ int SoFT_run_config(char* config, int extra)
             return 0;
         }
 
-        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=2 "
+        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=4 "
                     "--enable-opensslextra %s\n", config);
         SoFT_build_cmd(c_cmd,
-                       "./configure --enable-jobserver=2 --enable-opensslextra ",
+                       "./configure --enable-jobserver=4 --enable-opensslextra ",
                        config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt",
                        NULL);

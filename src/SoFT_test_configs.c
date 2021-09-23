@@ -73,9 +73,9 @@ int SoFT_run_config(char* config, int extra)
     }
 
     if (extra == 0) {
-        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=60 "
+        SoFT_printf("Testing configuration:\n./configure --enable-jobserver=16 "
                     "%s\n", config);
-        SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=60 ", config,
+        SoFT_build_cmd(c_cmd, "./configure --enable-jobserver=16 ", config,
                        " > ./config-output-log.txt 2> ./config-output-log.txt",
                        NULL);
     } else {

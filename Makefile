@@ -6,11 +6,12 @@ program_CXX_OBJS := ${program_CXX_SRCS:.cpp=.o}
 program_OBJS := $(program_C_OBJS) $(program_CXX_OBJS)
 program_LIBRARIES :=
 
-program_INCLUDE_DIRS += /usr/local/include
-program_LIBRARY_DIRS += /usr/local/lib
+#program_INCLUDE_DIRS += /usr/local/include
+#program_LIBRARY_DIRS += /usr/local/lib
+program_INCLUDE_DIRS += ./include
 #program_INCLUDE_DIRS += /Users/kalebhimes/work/testDir/wolf-install-dir-for-testing/include
 #program_LIBRARY_DIRS += /Users/kalebhimes/work/testDir/wolf-install-dir-for-testing/lib
-program_LIBRARIES += wolfssl
+#program_LIBRARIES += wolfssl
 
 CPPFLAGS += $(foreach includedir,$(program_INCLUDE_DIRS),-I$(includedir))
 CPPFLAGS += -Werror

@@ -36,7 +36,7 @@ void __attribute__((noreturn)) SoFT_abort(void)
 
 void SoFT_clear_cmd(char* cmd)
 {
-    XMEMSET(cmd, 0, SOFT_LONGEST_COMMAND);
+    memset(cmd, 0, SOFT_LONGEST_COMMAND);
     return;
 }
 
@@ -44,13 +44,13 @@ void SoFT_build_cmd(char* cmd, char* a, char* b, char* c, char* d)
 {
 
     if (a != NULL)
-        XSTRNCAT(cmd, a, XSTRLEN(a));
+        strncat(cmd, a, strlen(a));
     if (b != NULL)
-        XSTRNCAT(cmd, b, XSTRLEN(b));
+        strncat(cmd, b, strlen(b));
     if (c != NULL)
-        XSTRNCAT(cmd, c, XSTRLEN(c));
+        strncat(cmd, c, strlen(c));
     if (d != NULL)
-        XSTRNCAT(cmd, d, XSTRLEN(d));
+        strncat(cmd, d, strlen(d));
 
     return;
 }
@@ -58,10 +58,10 @@ void SoFT_build_cmd(char* cmd, char* a, char* b, char* c, char* d)
 void SoFT_build_cd_cmd(char* cmd, char* pwd)
 {
     char* part1 = "cd ";
-    unsigned long part1Sz = XSTRLEN(part1);
+    unsigned long part1Sz = strlen(part1);
 
-    XSTRNCAT(cmd, part1, part1Sz);
-    XSTRNCAT(cmd, pwd, XSTRLEN(pwd));
+    strncat(cmd, part1, part1Sz);
+    strncat(cmd, pwd, strlen(pwd));
 
     return;
 }
@@ -69,8 +69,8 @@ void SoFT_build_cd_cmd(char* cmd, char* pwd)
 void SoFT_build_fname_cmd(char* cmd, char* fname, char* pwd)
 {
     SoFT_clear_cmd(cmd);
-    XSTRNCAT(cmd, pwd, XSTRLEN(pwd));
-    XSTRNCAT(cmd, fname, XSTRLEN(fname));
+    strncat(cmd, pwd, strlen(pwd));
+    strncat(cmd, fname, strlen(fname));
 
     return;
 }

@@ -26,7 +26,7 @@ void SoFT_parse_dynamic_conf()
     char tc[] = "DEFAULT";
     toolChain = (char*) malloc(sizeof(char) * 50);
     SoFT_assrt_ne_null(toolChain, "toolChain in SoFT_parse_dynamic_conf");
-    XMEMCPY(toolChain, tc, XSTRLEN(tc));
+    memcpy(toolChain, tc, strlen(tc));
 
     SoFT_add_defaults(&CHdrs, &CSrcs, &THdrs, &TSrcs, &USettings);
 
@@ -716,31 +716,31 @@ void SoFT_add_feature_AESNI(SOFT_CH, SOFT_CS, SOFT_TH, SOFT_TS, SOFT_US)
 
 void SoFT_add_crypto_src(SOFT_CS, const char* src)
 {
-    int len = (int) XSTRLEN(src);
+    int len = (int) strlen(src);
     *CSrcs = SoFT_d_lnkd_list_node_fill_single(*CSrcs, (char*) src, len);
 }
 
 void SoFT_add_crypto_hdr(SOFT_CH, const char* hdr)
 {
-    int len = (int) XSTRLEN(hdr);
+    int len = (int) strlen(hdr);
     *CHdrs = SoFT_d_lnkd_list_node_fill_single(*CHdrs, (char*) hdr, len);
 }
 
 void SoFT_add_tls_src(SOFT_TS, const char* src)
 {
-    int len = (int) XSTRLEN(src);
+    int len = (int) strlen(src);
     *TSrcs = SoFT_d_lnkd_list_node_fill_single(*TSrcs, (char*) src, len);
 }
 
 void SoFT_add_tls_hdr(SOFT_TH, const char* hdr)
 {
-    int len = (int) XSTRLEN(hdr);
+    int len = (int) strlen(hdr);
     *THdrs = SoFT_d_lnkd_list_node_fill_single(*THdrs, (char*) hdr, len);
 }
 
 void SoFT_add_setting(SOFT_US, const char* setting)
 {
-    int len = (int) XSTRLEN(setting);
+    int len = (int) strlen(setting);
     *USettings = SoFT_d_lnkd_list_node_fill_single(*USettings, (char*) setting,
                                                    len);
 }
@@ -765,8 +765,8 @@ int SoFT_check_conf_for_opt(char* checkForOption)
                 line[i] = '\0';
         }
 
-        if (XSTRNCMP(line, checkForOption, XSTRLEN(checkForOption)) == 0 &&
-            XSTRNCMP(line, checkForOption, XSTRLEN(line)) == 0) {
+        if (strncmp(line, checkForOption, strlen(checkForOption)) == 0 &&
+            strncmp(line, checkForOption, strlen(line)) == 0) {
 
             fclose(fStream);
             if (line)

@@ -52,7 +52,7 @@ void SoFT_check_submodule_supported(char* option)
     int i;
     int is_supported = 0;
     for (i = 0; i < submodules_available; i++) {
-       if (XSTRNCMP(option, supported[i], XSTRLEN(option)) == 0) {
+       if (strncmp(option, supported[i], strlen(option)) == 0) {
             is_supported = 1;
             break;
         }
@@ -104,36 +104,36 @@ void SoFT_get_submodule_configuration(char* submoduleOption,
     while ((read = getline(&line, &len, fStream)) != -1 &&
             fillUserSettings == 0) {
         if (fillCryptHdrs == 0 &&
-            XSTRNCMP(line, abort1, XSTRLEN(abort1)) == 0) {
-            SoFT_parse_conf(abort2, XSTRLEN(abort2), submoduleCryptHdrs,
+            strncmp(line, abort1, strlen(abort1)) == 0) {
+            SoFT_parse_conf(abort2, strlen(abort2), submoduleCryptHdrs,
                            fStream);
             fillCryptHdrs = 1;
             fseek(fStream, 0, SEEK_SET);
         }
         if (fillCryptSrcs == 0 &&
-            XSTRNCMP(line, abort2, XSTRLEN(abort2)) == 0) {
-            SoFT_parse_conf(abort3, XSTRLEN(abort3), submoduleCryptSrcs,
+            strncmp(line, abort2, strlen(abort2)) == 0) {
+            SoFT_parse_conf(abort3, strlen(abort3), submoduleCryptSrcs,
                            fStream);
             fillCryptSrcs = 1;
             fseek(fStream, 0, SEEK_SET);
         }
         if (fillTlsHdrs == 0 &&
-            XSTRNCMP(line, abort3, XSTRLEN(abort3)) == 0) {
-            SoFT_parse_conf(abort4, XSTRLEN(abort4), submoduleTlsHdrs,
+            strncmp(line, abort3, strlen(abort3)) == 0) {
+            SoFT_parse_conf(abort4, strlen(abort4), submoduleTlsHdrs,
                            fStream);
             fillTlsHdrs = 1;
             fseek(fStream, 0, SEEK_SET);
         }
         if (fillTlsSrcs == 0 &&
-            XSTRNCMP(line, abort4, XSTRLEN(abort4)) == 0) {
-            SoFT_parse_conf(abort5, XSTRLEN(abort5), submoduleTlsSrcs,
+            strncmp(line, abort4, strlen(abort4)) == 0) {
+            SoFT_parse_conf(abort5, strlen(abort5), submoduleTlsSrcs,
                            fStream);
             fillTlsSrcs = 1;
             fseek(fStream, 0, SEEK_SET);
         }
         if (fillUserSettings == 0 &&
-            XSTRNCMP(line, abort5, XSTRLEN(abort5)) == 0) {
-            SoFT_parse_conf(abort6, XSTRLEN(abort6), submoduleUserSettings,
+            strncmp(line, abort5, strlen(abort5)) == 0) {
+            SoFT_parse_conf(abort6, strlen(abort6), submoduleUserSettings,
                            fStream);
             fillUserSettings = 1;
         }
@@ -156,14 +156,14 @@ void SoFT_parse_conf(const char* abortLine, size_t abortLen,
     int position = 0;
 
     while ((read = getline(&line, &len, fStream)) != -1 &&
-            XSTRNCMP(line, abortLine, abortLen) != 0) {
+            strncmp(line, abortLine, abortLen) != 0) {
 // TODO: Ignore lines that have # or are blank
-        if (read < 2 || XSTRSTR(line, "#") || XSTRNCMP(line, "EMPTY", 5) == 0 ||
-            XSTRNCMP(line, "EOF", 3) == 0 || XSTRSTR(line, "//")) {
+        if (read < 2 || strstr(line, "#") || strncmp(line, "EMPTY", 5) == 0 ||
+            strncmp(line, "EOF", 3) == 0 || strstr(line, "//")) {
             continue;
         }
         fillNode = SoFT_d_lnkd_list_node_fill_single(fillNode, line,
-                                                     (int) (XSTRLEN(line) - 1));
+                                                     (int) (strlen(line) - 1));
         position++;
     }
 
@@ -194,7 +194,7 @@ void SoFT_build_custom_specific(char* testFile, char* dst,
     SoFT_setup_traditional(dst);
 
     /* set to a common test app */
-    if (XSTRNCMP(testFile, "submodule_cert_manager_only.c", 12) == 0) {
+    if (strncmp(testFile, "submodule_cert_manager_only.c", 12) == 0) {
         SoFT_build_cmd(c_cmd, "cp SoFT-custom-test-apps/", customFName,
                   " SoFT-custom-test-apps/SoFT_custom_test.c", NULL);
     } else {
@@ -208,7 +208,7 @@ void SoFT_build_custom_specific(char* testFile, char* dst,
 
     /* create the project makefile (generic solution) */
 
-    if (XSTRNCMP(ARM_THUMB, toolChain, (int)XSTRLEN(ARM_THUMB)) == 0)
+    if (strncmp(ARM_THUMB, toolChain, (int)strlen(ARM_THUMB)) == 0)
         SoFT_create_arm_thumb_makefile(dst, toolChain);
     else
         SoFT_create_makefile(dst);
@@ -389,7 +389,7 @@ void SoFT_copy_crypto_hdr(char* src, char* dst, char* cryptoH)
     SoFT_clear_cmd(srcPath);
     SoFT_clear_cmd(dstPath);
 
-    if (XSTRNCMP(cryptoH, allTrigger, XSTRLEN(allTrigger)) == 0) {
+    if (strncmp(cryptoH, allTrigger, strlen(allTrigger)) == 0) {
         SoFT_build_cmd(srcPath, src, "/wolfssl/wolfcrypt/* ", NULL, NULL);
         SoFT_build_cmd(dstPath, dst, "/wolfssl/wolfssl/wolfcrypt/", NULL, NULL);
         SoFT_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
@@ -421,7 +421,7 @@ void SoFT_copy_tls_hdr(char* src, char* dst, char* tlsH)
     SoFT_clear_cmd(srcPath);
     SoFT_clear_cmd(dstPath);
 
-    if (XSTRNCMP(tlsH, allTrigger, XSTRLEN(allTrigger)) == 0) {
+    if (strncmp(tlsH, allTrigger, strlen(allTrigger)) == 0) {
         SoFT_build_cmd(srcPath, src, "/wolfssl/* ", NULL, NULL);
         SoFT_build_cmd(dstPath, dst, "/wolfssl/wolfssl/", NULL, NULL);
         SoFT_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
@@ -464,7 +464,7 @@ void SoFT_copy_crypto_src(char* src, char* dst, char* cryptoS)
     SoFT_clear_cmd(c_cmd);
 
 
-    if (XSTRNCMP(cryptoS, allTrigger, XSTRLEN(allTrigger)) == 0) {
+    if (strncmp(cryptoS, allTrigger, strlen(allTrigger)) == 0) {
         SoFT_build_cmd(srcPath, src, "/wolfcrypt/src/* ", NULL, NULL);
         SoFT_build_cmd(dstPath, dst, "/wolfssl/wolfcrypt/src/", NULL, NULL);
         SoFT_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
@@ -494,7 +494,7 @@ void SoFT_copy_tls_src(char* src, char* dst, char* tlsS)
     SoFT_clear_cmd(c_cmd);
 
 
-    if (XSTRNCMP(tlsS, allTrigger, XSTRLEN(allTrigger)) == 0) {
+    if (strncmp(tlsS, allTrigger, strlen(allTrigger)) == 0) {
         SoFT_build_cmd(srcPath, src, "/src/* ", NULL, NULL);
         SoFT_build_cmd(dstPath, dst, "/wolfssl/src/", NULL, NULL);
         SoFT_build_cmd(c_cmd, "cp ", srcPath, dstPath, NULL);
@@ -531,7 +531,7 @@ void SoFT_create_makefile(char* dst)
 
     fStream = SoFT_open_file_append_mode(fName);
 
-    bufLen = XSTRLEN(MakefileBuf);
+    bufLen = strlen(MakefileBuf);
     ret = fwrite(MakefileBuf, 1, bufLen, fStream);
     SoFT_check_fwrite_success(ret, bufLen);
 
@@ -555,7 +555,7 @@ void SoFT_create_arm_thumb_makefile(char* dst, char* toolChain)
     char* line = NULL;
     size_t len = 0;
     ssize_t read = 0;
-    int advancePtr = (int) (XSTRLEN(ARM_THUMB) + 1);
+    int advancePtr = (int) (strlen(ARM_THUMB) + 1);
     char* justThePath = toolChain+advancePtr;
     size_t ret;
 
@@ -591,21 +591,21 @@ void SoFT_create_arm_thumb_makefile(char* dst, char* toolChain)
             int writeLen = 0;
             char* commentIn = "#Custom insertion from wolfCFG\n";
 
-            writeLen = (int) XSTRLEN(commentIn);
+            writeLen = (int) strlen(commentIn);
             ret = fwrite(commentIn, 1, writeLen, outputStream);
             SoFT_check_fwrite_success(ret, writeLen);
 
             SoFT_build_cmd(c_cmd, "TOOLCHAIN = ", justThePath, "\n", NULL);
-            writeLen = (int) XSTRLEN(c_cmd);
+            writeLen = (int) strlen(c_cmd);
             ret = fwrite(c_cmd, 1, writeLen, outputStream);
             SoFT_check_fwrite_success(ret, writeLen);
 
-            writeLen = (int) XSTRLEN(commentIn);
+            writeLen = (int) strlen(commentIn);
             ret = fwrite(commentIn, 1, writeLen, outputStream);
             SoFT_check_fwrite_success(ret, writeLen);
         } else {
-            ret = fwrite(line, 1, XSTRLEN(line), outputStream);
-            SoFT_check_fwrite_success(ret, XSTRLEN(line));
+            ret = fwrite(line, 1, strlen(line), outputStream);
+            SoFT_check_fwrite_success(ret, strlen(line));
         }
     }
 
@@ -672,12 +672,12 @@ void SoFT_create_user_settings(char* dst)
     fStream = SoFT_open_file_append_mode(fName);
 
     SoFT_build_cmd(c_cmd, "#ifndef USER_SETTINGS_H\n", NULL, NULL, NULL);
-    writeLen = XSTRLEN(c_cmd);
+    writeLen = strlen(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
     SoFT_clear_cmd(c_cmd);
 
     SoFT_build_cmd(c_cmd, "#define USER_SETTINGS_H\n\n", NULL, NULL, NULL);
-    writeLen = XSTRLEN(c_cmd);
+    writeLen = strlen(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
     SoFT_clear_cmd(c_cmd);
 
@@ -698,7 +698,7 @@ void SoFT_write_user_settings(char* dst, char* setting)
     SoFT_clear_cmd(fName);
     SoFT_clear_cmd(finSet);
 
-    setLen = XSTRLEN(setting);
+    setLen = strlen(setting);
     if (setLen == 0)
         return;
 
@@ -707,13 +707,13 @@ void SoFT_write_user_settings(char* dst, char* setting)
     fStream = SoFT_open_file_append_mode(fName);
 
     SoFT_build_cmd(finSet, "#undef ", setting, "\n", NULL);
-    finSetLen = XSTRLEN(finSet);
+    finSetLen = strlen(finSet);
 
     ret = fwrite(finSet, 1, finSetLen, fStream);
     SoFT_clear_cmd(finSet);
 
     SoFT_build_cmd(finSet, "#define ", setting, "\n\n", NULL);
-    finSetLen = XSTRLEN(finSet);
+    finSetLen = strlen(finSet);
 
     ret = fwrite(finSet, 1, finSetLen, fStream);
     SoFT_clear_cmd(finSet);
@@ -739,7 +739,7 @@ void SoFT_close_user_settings(char* dst)
     fStream = SoFT_open_file_append_mode(fName);
 
     SoFT_build_cmd(c_cmd, "#endif /* USER_SETTINGS_H */\n", NULL, NULL, NULL);
-    writeLen = XSTRLEN(c_cmd);
+    writeLen = strlen(c_cmd);
     ret = fwrite(c_cmd, 1, writeLen, fStream);
     //SoFT_check_fwrite_success(ret, writeLen);
     SoFT_clear_cmd(c_cmd);

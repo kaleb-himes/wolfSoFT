@@ -6,10 +6,7 @@
 #include <unistd.h> /* path to working directory */
 #include <dirent.h>
 #include <stdarg.h> /* to use va_start */
-
-#include <wolfssl/options.h>
-#include <wolfssl/ssl.h>
-
+#include <string.h>
 #include <SoFT_configs.h>
 
 /*----------------------------------------------------------------------------*/

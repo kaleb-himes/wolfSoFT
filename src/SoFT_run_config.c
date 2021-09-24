@@ -25,7 +25,7 @@ int SoFT_run_config_opts(char* c_pwd, char* config_opts)
             SoFT_abort();
     }
 
-    XMEMSET(c_cmd, 0, SOFT_LONGEST_COMMAND);
+    memset(c_cmd, 0, SOFT_LONGEST_COMMAND);
 
     /* build the change to directory, configure and make command */
     SoFT_build_cd_cmd(c_cmd, c_pwd);

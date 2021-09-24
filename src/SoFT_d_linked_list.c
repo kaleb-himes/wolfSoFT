@@ -9,7 +9,7 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_fill_single(D_LINKED_LIST_NODE* curr,
     int duplicateCheck = -1;
     char c_tmp[SOFT_LONGEST_LINE];
 
-    XMEMSET(c_tmp, 0, sizeof(c_tmp));
+    memset(c_tmp, 0, sizeof(c_tmp));
 
     SoFT_assrt_ne_null(curr, "Called SoFT_d_lnkd_list_node_fill_single"
                              "with null argument");
@@ -56,7 +56,7 @@ D_LINKED_LIST_NODE* SoFT_d_lnkd_list_node_init(D_LINKED_LIST_NODE* in)
 
     in->previous = NULL;
     in->next = NULL;
-    XMEMSET(in->value, 0, sizeof(in->value));
+    memset(in->value, 0, sizeof(in->value));
     in->value[0] = '\n';
     in->isGood = -1;
 
@@ -181,7 +181,7 @@ int SoFT_d_lnkd_list_check_for_dup(D_LINKED_LIST_NODE* in, char* target)
 
     while (curr != NULL) {
 
-        if (XSTRNCMP(curr->value, target, XSTRLEN(target)) == 0) {
+        if (strncmp(curr->value, target, strlen(target)) == 0) {
             return SOFT_FOUND_DUP;
         }
 

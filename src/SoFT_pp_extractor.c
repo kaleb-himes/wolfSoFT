@@ -49,9 +49,9 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
         }
 
         while ( (currF = readdir(dStream)) ) {
-            if (XSTRNCMP(currF->d_name, ".", 1) == 0)
+            if (strncmp(currF->d_name, ".", 1) == 0)
                 continue;
-            if (XSTRNCMP(currF->d_name, "..", 2) == 0)
+            if (strncmp(currF->d_name, "..", 2) == 0)
                 continue;
 
             if (getcwd(cmdArray, SOFT_LONGEST_PATH) == NULL)
@@ -93,7 +93,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                 #endif
 
                         curr = SoFT_d_lnkd_list_node_fill_single(curr, multiOpts[0],
-                                                   (int) XSTRLEN(multiOpts[0]));
+                                                   (int) strlen(multiOpts[0]));
                     }
 
                     #ifdef DEBUG_SOFT_CHECK_ITERATE
@@ -119,7 +119,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                         fprintf(stderr, "Adding %s\n", multiOpts[0]);
                 #endif
                         curr = SoFT_d_lnkd_list_node_fill_single(curr, multiOpts[0],
-                                                   (int) XSTRLEN(multiOpts[0]));
+                                                   (int) strlen(multiOpts[0]));
                     }
 
                     #ifdef DEBUG_SOFT_CHECK_ITERATE
@@ -142,7 +142,7 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
 
                     /* call fill single with each string in array */
                     for (i = 0; i < SOFT_OPTS_IN_A_LINE; i++) {
-                        XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
+                        memset(multiOpts[i], 0, sizeof(multiOpts[i]));
                     }
 
                     SoFT_pp_string_extract_multi(multiOpts, line,
@@ -156,12 +156,12 @@ void SoFT_pp_extract_from_multi_dirs(char* tD1, char* tD2, char* tD3, char* tD4,
                             fprintf(stderr, "Adding %s\n", multiOpts[i]);
                     #endif
                             curr = SoFT_d_lnkd_list_node_fill_single(curr, multiOpts[i],
-                                                   (int) XSTRLEN(multiOpts[i]));
+                                                   (int) strlen(multiOpts[i]));
                         }
                     }
                     /* clear out the arrays */
                     for (i = 0; i < SOFT_OPTS_IN_A_LINE; i++) {
-                        XMEMSET(multiOpts[i], 0, sizeof(multiOpts[i]));
+                        memset(multiOpts[i], 0, sizeof(multiOpts[i]));
                     }
                     /* reset optsFound */
                     optsFound = 0;
@@ -230,7 +230,7 @@ void SoFT_pp_string_extract_single(char(*out)[SOFT_LONGEST_PP_OPT], char* line,
         }
 
         if (line[i] == SOFT_HASHTAG && line[i+1] == 'i' && line[i+2] == 'f') {
-            XMEMSET(out[0], 0, sizeof(out[0]));
+            memset(out[0], 0, sizeof(out[0]));
             checkForSpaceAfter = 1;
             if (strstr(line, "#ifdef"))
                 i+=6;
@@ -347,14 +347,14 @@ int SoFT_pp_check_ignore(char* pp_to_check)
     int i = 0;
     int lenIn, lenChk, lenCmp;
 
-    lenIn = (int) XSTRLEN(pp_to_check);
+    lenIn = (int) strlen(pp_to_check);
 
-    while (XSTRNCMP(END_ALERT, ignore_pp_opts[i], XSTRLEN(END_ALERT)) != 0) {
-        lenChk = (int) XSTRLEN(ignore_pp_opts[i]);
+    while (strncmp(END_ALERT, ignore_pp_opts[i], strlen(END_ALERT)) != 0) {
+        lenChk = (int) strlen(ignore_pp_opts[i]);
 
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
-        if (XSTRNCMP(pp_to_check, ignore_pp_opts[i], (size_t) lenCmp) == 0) {
+        if (strncmp(pp_to_check, ignore_pp_opts[i], (size_t) lenCmp) == 0) {
 #ifdef DEBUG_SOFT
             fprintf(stderr, "DEBUG: Return 1, %s and %s match\n",
                     pp_to_check, ignore_pp_opts[i]);
@@ -367,12 +367,12 @@ int SoFT_pp_check_ignore(char* pp_to_check)
 
     i = 0;
 
-    while (XSTRNCMP(END_ALERT, ignore_pp_opts_partial[i],
-                    XSTRLEN(END_ALERT)) != 0) {
-        lenChk = (int) XSTRLEN(ignore_pp_opts_partial[i]);
+    while (strncmp(END_ALERT, ignore_pp_opts_partial[i],
+                    strlen(END_ALERT)) != 0) {
+        lenChk = (int) strlen(ignore_pp_opts_partial[i]);
         lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
-        if (XSTRNCMP(pp_to_check, ignore_pp_opts_partial[i],
+        if (strncmp(pp_to_check, ignore_pp_opts_partial[i],
                      (size_t) lenCmp) == 0) {
             fprintf(stderr, "DEBUG: Return 1, %s and %s match\n", pp_to_check,
                     ignore_pp_opts_partial[i]);
@@ -408,14 +408,14 @@ void SoFT_pp_builder(D_LINKED_LIST_NODE* in)
 
         /* Single setting to test */
         pp_to_check = curr->value;
-        lenIn = (int) XSTRLEN(pp_to_check);
+        lenIn = (int) strlen(pp_to_check);
 
-        while (XSTRNCMP(END_ALERT, ignore_pp_opts_single_testing[i],
-                        XSTRLEN(END_ALERT)) != 0) {
-            lenChk = (int) XSTRLEN(ignore_pp_opts_single_testing[i]);
+        while (strncmp(END_ALERT, ignore_pp_opts_single_testing[i],
+                        strlen(END_ALERT)) != 0) {
+            lenChk = (int) strlen(ignore_pp_opts_single_testing[i]);
             lenCmp = (lenIn < lenChk) ? lenIn : lenChk;
 
-            if (XSTRNCMP(pp_to_check, ignore_pp_opts_single_testing[i],
+            if (strncmp(pp_to_check, ignore_pp_opts_single_testing[i],
                          (size_t) lenCmp) == 0) {
                 fprintf(stderr, "SKIPPING PP MACRO:\"%s\" Logging it for later"
                         " review\n", pp_to_check);

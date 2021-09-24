@@ -44,15 +44,15 @@ void SoFT_bench_all_configs()
     /* scrub the file for configure options */
     /* store configure options in a char[][] */
     for (i = 0; i < SOFT_MOST_CONFIGS; i++) {
-        XMEMSET(allConfigEnables[i], 0, SOFT_LONGEST_CONFIG);
-        XMEMSET(allConfigDisables[i], 0, SOFT_LONGEST_CONFIG);
+        memset(allConfigEnables[i], 0, SOFT_LONGEST_CONFIG);
+        memset(allConfigDisables[i], 0, SOFT_LONGEST_CONFIG);
     }
 
     SoFT_scrub_config_out(configOutFname, allConfigEnables, allConfigDisables);
 
     /* read out the options one at a time and compare to baseline */
     for (i = 0; i < SOFT_MOST_CONFIGS; i++) {
-        if (XSTRNCMP(allConfigEnables[i], "LAST_LINE", 9) == 0) {
+        if (strncmp(allConfigEnables[i], "LAST_LINE", 9) == 0) {
             printf("Tested a total of %d enable options\n", i);
             break;
         }
@@ -60,7 +60,7 @@ void SoFT_bench_all_configs()
     }
 
     for (i = 0; i < SOFT_MOST_CONFIGS; i++) {
-        if (XSTRNCMP(allConfigDisables[i], "LAST_LINE", 9) == 0) {
+        if (strncmp(allConfigDisables[i], "LAST_LINE", 9) == 0) {
             printf("Tested a total of %d disable options\n", i);
             break;
         }

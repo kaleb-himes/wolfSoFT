@@ -56,20 +56,20 @@ int main(int argc, char** argv)
                     tD2 = argv[SOFT_FOURTH_INPUT];
                     tD3 = argv[SOFT_FIFTH_INPUT];
                     tD4 = argv[SOFT_SIXTH_INPUT];
-                    if (XSTRNCMP("1", argv[SOFT_SEVENTH_INPUT], 1) == 0)
+                    if (strncmp("1", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 1;
-                    else if (XSTRNCMP("2", argv[SOFT_SEVENTH_INPUT], 1) == 0)
+                    else if (strncmp("2", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 2;
-                    else if (XSTRNCMP("3", argv[SOFT_SEVENTH_INPUT], 1) == 0)
+                    else if (strncmp("3", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 3;
-                    else if (XSTRNCMP("4", argv[SOFT_SEVENTH_INPUT], 1) == 0)
+                    else if (strncmp("4", argv[SOFT_SEVENTH_INPUT], 1) == 0)
                         numDirs = 4;
                     else {
                         usage_m();
                         break;
                     }
 
-                    if (XSTRNCMP("0", argv[SOFT_EIGHTH_INPUT], 1) == 0)
+                    if (strncmp("0", argv[SOFT_EIGHTH_INPUT], 1) == 0)
                         runBuilder = 0;
                     else
                         runBuilder = 1;

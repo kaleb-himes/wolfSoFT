@@ -21,7 +21,7 @@ void SoFT_scrub_config_out(char* configOutFname,
     size_t len = 0;
     ssize_t read;
 
-    XMEMSET(truncLine, 0, SOFT_LONGEST_CONFIG);
+    memset(truncLine, 0, SOFT_LONGEST_CONFIG);
 
 
     fStream = fopen(configOutFname, "rb");
@@ -49,8 +49,8 @@ void SoFT_scrub_config_out(char* configOutFname,
             SoFT_truncate_trim_line(line, truncLine);
 
             for (j = 0; j < SOFT_MOST_IGNORES; j++) {
-                if (XSTRNCMP(truncLine, ignore_opts[j],
-                    XSTRLEN(truncLine)) == 0) {
+                if (strncmp(truncLine, ignore_opts[j],
+                    strlen(truncLine)) == 0) {
                     if (addOpE)
                         addOpE = 0;
                     if (addOpD)
@@ -60,20 +60,20 @@ void SoFT_scrub_config_out(char* configOutFname,
             }
 
             if (addOpE == 1) {
-                XSTRNCAT(allConfigEnables[i], truncLine, XSTRLEN(truncLine));
+                strncat(allConfigEnables[i], truncLine, strlen(truncLine));
                 i++;
                 addOpE = 0;
             } else if (addOpD) {
-                XSTRNCAT(allConfigDisables[k], truncLine, XSTRLEN(truncLine));
+                strncat(allConfigDisables[k], truncLine, strlen(truncLine));
                 k++;
                 addOpD = 0;
             }
 
-            XMEMSET(truncLine, 0, SOFT_LONGEST_CONFIG);
+            memset(truncLine, 0, SOFT_LONGEST_CONFIG);
         }
     }
-    XSTRNCAT(allConfigEnables[i], lastLine, XSTRLEN(lastLine));
-    XSTRNCAT(allConfigDisables[k], lastLine, XSTRLEN(lastLine));
+    strncat(allConfigEnables[i], lastLine, strlen(lastLine));
+    strncat(allConfigDisables[k], lastLine, strlen(lastLine));
 
     fclose(fStream);
     if (line)
@@ -121,7 +121,7 @@ void SoFT_truncate_trim_line(char* line, char* truncatedLine)
         return;
     }
     /* failure */
-    XMEMSET(truncatedLine, 0, SOFT_LONGEST_CONFIG);
+    memset(truncatedLine, 0, SOFT_LONGEST_CONFIG);
     return;
 }
 

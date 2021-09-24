@@ -29,8 +29,8 @@ int SoFT_auto_build_from_file(char* configOpsFile)
             SoFT_clear_cmd(c_cmd);
             tmpLine = (char*) malloc(sizeof(char) * read);
             SoFT_assrt_ne_null(tmpLine, "tmpLine malloc");
-            XMEMSET(tmpLine, 0, read);
-            XMEMCPY(tmpLine, line, read-1);
+            memset(tmpLine, 0, read);
+            memcpy(tmpLine, line, read-1);
 
 /* Config without opensslextra */
             ret = SoFT_run_config(tmpLine, 0);

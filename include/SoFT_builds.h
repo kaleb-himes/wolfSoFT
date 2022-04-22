@@ -35,7 +35,7 @@ program_NAME := run\n\
 program_C_SRCS_TMP := $(wildcard *.c */*/*.c */*/*/*.c)\n\
 #remove misc.c from the buid objects\n\
 program_C_SRCS := $(filter-out $(wildcard */*/*/misc.c\\\n\
-                    */*/*/asm.c */*/bio.c */*/*/evp.c),\\\n\
+                    */*/*/asm.c */*/bio.c */*/*/evp.c */*/conf.c),\\\n\
                     $(program_C_SRCS_TMP))\n\
 program_C_OBJS := ${program_C_SRCS:.c=.o}\n\
 \n\
